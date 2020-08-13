@@ -26,5 +26,8 @@
         "vue-template-compiler": "^2.6.10",
         "vuetify": "^2.3.8",
         "vuetifyjs-mix-extension": "0.0.14"
+    },
+    "dependencies": {
+        "vue-router": "^3.4.3"
     }
 }

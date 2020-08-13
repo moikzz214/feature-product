@@ -20,7 +20,7 @@
 <body>
     <div id="app">
         <v-app>
-        <dashboard-navigation></dashboard-navigation>
+        <builder-navigation></builder-navigation>
         <main class="py-4">
             @yield('content')
         </main>

@@ -4,7 +4,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+require("./bootstrap");
 
 // window.Vue = require('vue');
 
@@ -19,7 +19,10 @@ require('./bootstrap');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('dashboard-navigation', require('./components/DashboardNavigation.vue').default);
+Vue.component(
+    "builder-navigation",
+    require("./components/BuilderNavigation.vue").default
+);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -27,17 +30,24 @@ Vue.component('dashboard-navigation', require('./components/DashboardNavigation.
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-// const app = new Vue({
-//     el: '#app',
-// });
-import Vue from 'vue'
-import vuetify from '../plugins/vuetify' // path to vuetify export
+import Vue from "vue";
+import vuetify from "../plugins/vuetify"; // path to vuetify export
+import VueRouter from "vue-router";
+import { routes } from "../plugins/routes";
+
+// Vue Router
+Vue.use(VueRouter);
+const router = new VueRouter({
+    routes,
+    mode: "history"
+});
 
 // new Vue({
 //     vuetify
 // }).$mount('#app')
 
 const app = new Vue({
-    el: '#app',
+    el: "#app",
+    router,
     vuetify
 });
