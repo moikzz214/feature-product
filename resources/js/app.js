@@ -42,10 +42,6 @@ const router = new VueRouter({
     mode: "history"
 });
 
-// new Vue({
-//     vuetify
-// }).$mount('#app')
-
 const app = new Vue({
     el: "#app",
     router,

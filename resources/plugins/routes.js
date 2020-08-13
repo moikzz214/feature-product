@@ -1,6 +1,7 @@
 import BuilderDashboard from "../js/components/builder/BuilderDashboard";
 import BuilderProducts from "../js/components/builder/BuilderProducts";
 import BuilderNewProduct from "../js/components/builder/BuilderNewProduct";
+import BuilderEditProduct from "../js/components/builder/BuilderEditProduct";
 
 export const routes = [
     {
@@ -18,6 +19,12 @@ export const routes = [
     {
         path: "/builder/product/new",
         component: BuilderNewProduct
+    },
+    {
+        path: "/builder/product/edit/:slug",
+        name: 'BuilderEditProduct',
+        component: BuilderEditProduct,
+        props: true
     }
     // {
     //     path: '/admin/post/edit/:id',
