@@ -1,6 +1,6 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col class="px-5">
+  <v-row align="center">
+    <v-col cols="6" class="px-5">
       <div class="d-flex align-center mb-5">
         <v-btn
           to="/builder/product/new"
@@ -15,7 +15,7 @@
         </v-btn>
         <h3 class="font-weight-light">Products</h3>
       </div>
-      <v-card class="mr-auto" max-width="600">
+      <v-card>
         <v-simple-table>
           <template v-slot:default>
             <thead>
@@ -26,17 +26,19 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in desserts" :key="item.name">
-                <td>{{ item.name }}</td>
-                <td>{{ item.calories }}</td>
+              <tr v-for="item in products" :key="item.name">
+                <td>{{ item.title }}</td>
+                <td
+                  :class="`${item.status == 1 ? 'green--text' : 'blue--text'} text-left`"
+                >{{ item.status == 1 ? 'actove' : 'inactive' }}</td>
                 <td class="text-right">
-                  <v-btn title="Preview" icon small @click="actionFn(item.name)" color="green">
+                  <v-btn title="Preview" icon small @click="actionFn(item.id)" color="green">
                     <v-icon small>mdi-eye-outline</v-icon>
                   </v-btn>
-                  <v-btn title="Edit" icon small @click="actionFn(item.name)" color="blue">
+                  <v-btn title="Edit" icon small @click="editProduct(item.id)" color="blue">
                     <v-icon small>mdi-pencil</v-icon>
                   </v-btn>
-                  <v-btn title="Delete" icon small @click="actionFn(item.name)" color="red">
+                  <v-btn title="Delete" icon small @click="actionFn(item.id)" color="red">
                     <v-icon small>mdi-trash-can-outline</v-icon>
                   </v-btn>
                 </td>
@@ -45,6 +47,13 @@
           </template>
         </v-simple-table>
       </v-card>
+      <v-pagination
+        v-if="pageCount > 1"
+        class="mt-3"
+        v-model="page"
+        :length="pageCount"
+        @input="onPageChange"
+      ></v-pagination>
     </v-col>
   </v-row>
 </template>
@@ -54,54 +63,37 @@ export default {
   name: "Products",
   data() {
     return {
-      desserts: [
-        {
-          name: "Frozen Yogurt",
-          calories: "active",
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: "active",
-        },
-        {
-          name: "Eclair",
-          calories: "inactive",
-        },
-        {
-          name: "Cupcake",
-          calories: "inactive",
-        },
-        {
-          name: "Gingerbread",
-          calories: "active",
-        },
-        {
-          name: "Jelly bean",
-          calories: "active",
-        },
-        {
-          name: "Lollipop",
-          calories: "active",
-        },
-        {
-          name: "Honeycomb",
-          calories: "active",
-        },
-        {
-          name: "Donut",
-          calories: "active",
-        },
-        {
-          name: "KitKat",
-          calories: "active",
-        },
-      ],
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
+      products: [],
     };
   },
   methods: {
     actionFn(i) {
       console.log(i);
     },
+    editProduct(i){
+        this.$router.push("/builder/product/edit/" + i);
+    },
+    getProducts(p) {
+      axios
+        .get("/builder/products/all/?page=" + p)
+        .then((response) => {
+          this.products = response.data.data;
+          this.page = response.data.current_page;
+          this.pageCount = response.data.last_page;
+        })
+        .catch((error) => {
+          console.log("Error: " + error);
+        });
+    },
+    onPageChange() {
+      this.getProducts(this.page);
+    },
+  },
+  mounted() {
+    this.getProducts(1);
   },
 };
 </script>

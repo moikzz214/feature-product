@@ -5,9 +5,9 @@
         <h3 class="font-weight-light">New Product</h3>
       </div>
       <v-card class="mr-auto pa-3" max-width="600">
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field v-model="title" :rules="titleRules" label="Product Title" required></v-text-field>
-          <v-btn :disabled="!valid" color="primary" small class="mr-4" @click="saveProduct">Create</v-btn>
+        <v-form ref="form" @submit.prevent="saveProduct" v-model="valid" lazy-validation>
+          <v-text-field v-model="title" :rules="titleRules" v-on:keyup.enter="saveProduct" label="Product Title" required></v-text-field>
+          <v-btn :disabled="!valid" color="primary" small class="mr-4" @click.prevent="saveProduct">Create</v-btn>
         </v-form>
       </v-card>
     </v-col>

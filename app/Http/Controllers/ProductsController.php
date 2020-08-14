@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +21,12 @@ class ProductsController extends Controller
     public function index()
     {
         //
+    }
+
+    public function productsAPI()
+    {
+        $products = Product::paginate(10);
+        return response()->json($products, 200);
     }
 
     /**

@@ -21,7 +21,7 @@ export const routes = [
         component: BuilderNewProduct
     },
     {
-        path: "/builder/product/edit/:slug",
+        path: "/builder/product/edit/:id",
         name: 'BuilderEditProduct',
         component: BuilderEditProduct,
         props: true

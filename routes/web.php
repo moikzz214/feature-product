@@ -22,6 +22,11 @@ Auth::routes();
 Route::get('/builder', 'BuilderController@index')->name('builder');
 Route::get('/builder/dashboard', 'BuilderController@index')->name('builder.dashboard');
 Route::get('/builder/product/new', 'BuilderController@index')->name('builder.new.product');
-Route::post('/builder/product/store', 'ProductsController@store')->name('builder.store.product');
-Route::get('/builder/product/edit/{slug}', 'BuilderController@index')->name('builder.edit.product');
+Route::get('/builder/product/edit/{id}', 'BuilderController@index')->name('builder.edit.product');
 Route::get('/builder/products', 'BuilderController@index')->name('builder.products');
+
+Route::get('/builder/products/all', 'ProductsController@productsAPI')->name('builder.all.products');
+Route::post('/builder/product/store', 'ProductsController@store')->name('builder.store.product');
+
+Route::get('/builder/scenes/all', 'ScenesController@scenesAll')->name('builder.all.scenes');
+Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.store.scene');

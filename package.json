@@ -29,6 +29,7 @@
     },
     "dependencies": {
         "@sindresorhus/slugify": "^1.1.0",
+        "vee-validate": "^3.3.9",
         "vue-router": "^3.4.3"
     }
 }
