@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex align-center mb-5">
+    <div class="d-flex align-center flex-start mb-3">
       <v-btn
         @click.stop="dialog = true"
         class="mr-3 text--primary"
@@ -12,24 +12,31 @@
       >
         <v-icon dark>mdi-plus</v-icon>
       </v-btn>
-      <h4 class="font-weight-light">Scenes</h4>
+      <h4 class="font-weight-light mr-3">Scenes:</h4>
+      <v-sheet class="mx-auto" max-width="900">
+        <v-slide-group show-arrows>
+          <v-slide-item v-for="item in scenes" :key="item.id" @click="0">
+            <v-card class="my-1 mx-2">
+              <v-list-item dense two-line>
+                <v-list-item-avatar
+                  size="26"
+                  :color="`${item.type == 'Panoramic' ? 'orange' : 'teal'}`"
+                >
+                  <v-icon
+                    dark
+                    small
+                  >{{ item.type == "Panoramic" ? 'mdi-panorama-horizontal' : 'mdi-axis-z-rotate-clockwise' }}</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title v-html="item.title"></v-list-item-title>
+                  <v-list-item-subtitle v-html="item.type"></v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-card>
+          </v-slide-item>
+        </v-slide-group>
+      </v-sheet>
     </div>
-    <v-card>
-      <v-list two-line dense>
-        <v-list-item v-for="item in scenes" :key="item.id" @click="0">
-          <v-list-item-avatar size="36" :color="`${item.type == 'Panoramic' ? 'orange' : 'teal'}`">
-            <v-icon
-              dark
-              small
-            >{{ item.type == "Panoramic" ? 'mdi-panorama-horizontal' : 'mdi-axis-z-rotate-clockwise' }}</v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title v-html="item.title"></v-list-item-title>
-            <v-list-item-subtitle v-html="item.type"></v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-card>
     <v-dialog v-model="dialog" max-width="450">
       <create-scene :product-id="product" @close="closeDialog"></create-scene>
     </v-dialog>
@@ -67,13 +74,11 @@ export default {
         })
         .catch((error) => {
           console.log("Error: " + error);
-          //   console.log("Error: " + error);
         });
     },
   },
   mounted() {
     this.getScenes();
-    // console.log(this.product);
   },
 };
 </script>

@@ -5,13 +5,17 @@
         <h3 class="font-weight-light">Edit Product</h3>
       </div>
     </div>
+    <div class="col-12">
+      <Scenes :product="this.$route.params.id"/>
+      <v-divider></v-divider>
+    </div>
     <div class="col-3">
-      <Scenes :product="this.$route.params.id" />
+      <scene-settings :product="this.$route.params.id"></scene-settings>
     </div>
     <div class="col-9" style="min-height:768px;">
       <div class="d-flex align-center mb-5">
         <h4 class="font-weight-light">Settings</h4>
-        <v-btn
+        <!-- <v-btn
           @click.stop="0"
           class="ml-3 text--primary"
           elevation="2"
@@ -21,7 +25,7 @@
           color="white"
         >
           <v-icon small dark>mdi-cog</v-icon>
-        </v-btn>
+        </v-btn> -->
         <v-btn
           @click.stop="0"
           class="ml-3 text--primary"
@@ -48,9 +52,11 @@
 
 <script>
 import Scenes from "./edit/Scenes";
+import SceneSettings from "./edit/SceneSettings";
 export default {
   components: {
     Scenes,
+    SceneSettings,
   },
   data() {
     return {};
