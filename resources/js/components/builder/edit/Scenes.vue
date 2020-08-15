@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="d-flex align-center flex-start mb-3">
+  <div class="row">
+    <div class="col-2 d-flex align-center flex-start">
       <v-btn
         @click.stop="dialog = true"
         class="mr-3 text--primary"
@@ -13,7 +13,9 @@
         <v-icon dark>mdi-plus</v-icon>
       </v-btn>
       <h4 class="font-weight-light mr-3">Scenes:</h4>
-      <v-sheet class="mx-auto" max-width="900">
+    </div>
+    <div class="col-10">
+      <v-sheet class="w-100">
         <v-slide-group show-arrows>
           <v-slide-item v-for="item in scenes" :key="item.id" @click="0">
             <v-card class="my-1 mx-2">
@@ -38,7 +40,7 @@
       </v-sheet>
     </div>
     <v-dialog v-model="dialog" max-width="450">
-      <create-scene :product-id="product" @close="closeDialog"></create-scene>
+      <create-scene :product-id="product" @close="closeDialog" @sceneCreated="reloadScenes"></create-scene>
     </v-dialog>
   </div>
 </template>
@@ -75,6 +77,9 @@ export default {
         .catch((error) => {
           console.log("Error: " + error);
         });
+    },
+    reloadScenes() {
+      this.getScenes();
     },
   },
   mounted() {

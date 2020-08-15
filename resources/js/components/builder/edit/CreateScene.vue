@@ -63,12 +63,13 @@ export default {
         type: this.sceneType,
         product: this.productId,
       };
-    //   console.log(data);
+      //   console.log(data);
       axios
         .post("/builder/scene/store", data)
         .then((response) => {
           this.$emit("close", false);
-          console.log(response);
+          this.$emit("sceneCreated", false);
+          //   console.log(response);
           //   this.successUI(response.data.message);
           //   this.originalSlug = this.slug;
         })
