@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex align-center mb-5">
+    <!-- <div class="d-flex align-center mb-5">
       <h4 class="font-weight-light">Settings</h4>
       <v-btn
         @click.stop="0"
@@ -18,7 +18,7 @@
         rounded
         color="white"
       >Preview</v-btn>
-    </div>
+    </div> -->
     <v-card class="mr-auto pa-3" style="min-height:480px;">
       <v-card-text>This is the builder</v-card-text>
     </v-card>

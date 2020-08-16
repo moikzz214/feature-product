@@ -1,5 +1,5 @@
 <template>
-  <v-row align="center">
+  <v-row>
     <v-col cols="6" class="px-5">
       <div class="d-flex align-center mb-5">
         <v-btn
@@ -32,8 +32,8 @@
                   :class="`${item.status == 1 ? 'green--text' : 'blue--text'} text-left`"
                 >{{ item.status == 1 ? 'actove' : 'inactive' }}</td>
                 <td class="text-right">
-                  <v-btn title="Preview" icon small @click="actionFn(item.id)" color="green">
-                    <v-icon small>mdi-eye-outline</v-icon>
+                  <v-btn title="Preview" icon small :to="`/product/${item.slug}`" target="_blank" color="green">
+                    <v-icon small>mdi-open-in-new</v-icon>
                   </v-btn>
                   <v-btn title="Edit" icon small @click="editProduct(item.id)" color="blue">
                     <v-icon small>mdi-pencil</v-icon>

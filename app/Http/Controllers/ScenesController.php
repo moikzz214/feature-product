@@ -23,6 +23,12 @@ class ScenesController extends Controller
         return response()->json($scenes, 200);
     }
 
+    public function scenesByProductId($id)
+    {
+        $scenes = Scene::where('product', '=', $id)->paginate(20);
+        return response()->json($scenes, 200);
+    }
+
     public function store(Request $request)
     {
         // validate request

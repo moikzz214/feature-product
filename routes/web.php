@@ -27,8 +27,10 @@ Route::get('/builder/products', 'BuilderController@index')->name('builder.produc
 
 Route::get('/builder/products/all', 'ProductsController@productsAPI')->name('builder.all.products');
 Route::post('/builder/product/store', 'ProductsController@store')->name('builder.store.product');
+// Route::get('/builder/scenes/scenes', 'ProductsController@scenesByProductId')->name('builder.scenes.by.product.id');
 
-Route::get('/builder/scenes/all', 'ScenesController@scenesAll')->name('builder.all.scenes');
+Route::get('/builder/scenes/product/{id}', 'ScenesController@scenesByProductId')->name('builder.scenes.by.product.id');
+// Route::get('/builder/scenes/all', 'ScenesController@scenesAll')->name('builder.all.scenes');
 Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.store.scene');
 
 

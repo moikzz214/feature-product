@@ -3510,6 +3510,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -3523,6 +3530,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      loading: false,
       dialog: false,
       scenes: []
     };
@@ -3534,16 +3542,19 @@ __webpack_require__.r(__webpack_exports__);
     getScenes: function getScenes() {
       var _this = this;
 
-      axios.get("/builder/scenes/all").then(function (response) {
+      this.loading = true;
+      axios.get("/builder/scenes/product/" + this.product).then(function (response) {
         _this.scenes = Object.assign({}, response.data.data);
-        console.log(_this.scenes);
+        _this.loading = false;
+        console.log(_this.scenes[0]);
       })["catch"](function (error) {
         console.log("Error: " + error);
+        console.log(_this.scenes);
       });
-    },
-    reloadScenes: function reloadScenes() {
-      this.getScenes();
-    }
+    } // reloadScenes() {
+    //   this.getScenes();
+    // },
+
   },
   mounted: function mounted() {
     this.getScenes();
@@ -24362,7 +24373,7 @@ var render = function() {
   return _c("v-row", { staticClass: "px-3" }, [
     _c(
       "div",
-      { staticClass: "col-12" },
+      { staticClass: "col-12 py-0" },
       [
         _c("Scenes", { attrs: { product: this.$route.params.id } }),
         _vm._v(" "),
@@ -24528,7 +24539,6 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "v-row",
-    { attrs: { align: "center" } },
     [
       _c(
         "v-col",
@@ -24621,17 +24631,14 @@ var render = function() {
                                         title: "Preview",
                                         icon: "",
                                         small: "",
+                                        to: "/product/" + item.slug,
+                                        target: "_blank",
                                         color: "green"
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.actionFn(item.id)
-                                        }
                                       }
                                     },
                                     [
                                       _c("v-icon", { attrs: { small: "" } }, [
-                                        _vm._v("mdi-eye-outline")
+                                        _vm._v("mdi-open-in-new")
                                       ])
                                     ],
                                     1
@@ -24897,45 +24904,6 @@ var render = function() {
     "div",
     [
       _c(
-        "div",
-        { staticClass: "d-flex align-center mb-5" },
-        [
-          _c("h4", { staticClass: "font-weight-light" }, [_vm._v("Settings")]),
-          _vm._v(" "),
-          _c(
-            "v-btn",
-            {
-              staticClass: "ml-3 text--primary",
-              attrs: { elevation: "2", small: "", rounded: "", color: "white" },
-              on: {
-                click: function($event) {
-                  $event.stopPropagation()
-                  0
-                }
-              }
-            },
-            [_vm._v("Hotspots")]
-          ),
-          _vm._v(" "),
-          _c(
-            "v-btn",
-            {
-              staticClass: "ml-3 text--primary",
-              attrs: { elevation: "2", small: "", rounded: "", color: "white" },
-              on: {
-                click: function($event) {
-                  $event.stopPropagation()
-                  0
-                }
-              }
-            },
-            [_vm._v("Preview")]
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
         "v-card",
         { staticClass: "mr-auto pa-3", staticStyle: { "min-height": "480px" } },
         [_c("v-card-text", [_vm._v("This is the builder")])],
@@ -25186,87 +25154,132 @@ var render = function() {
         { staticClass: "col-10" },
         [
           _c(
-            "v-sheet",
-            { staticClass: "w-100" },
+            "v-skeleton-loader",
+            {
+              attrs: { loading: _vm.loading, type: "list-item-avatar-two-line" }
+            },
             [
-              _c(
-                "v-slide-group",
-                { attrs: { "show-arrows": "" } },
-                _vm._l(_vm.scenes, function(item) {
-                  return _c(
-                    "v-slide-item",
-                    {
-                      key: item.id,
-                      on: {
-                        click: function($event) {
-                          0
-                        }
-                      }
-                    },
+              _vm.scenes[0]
+                ? _c(
+                    "v-sheet",
+                    { staticClass: "w-100" },
                     [
                       _c(
-                        "v-card",
-                        { staticClass: "my-1 mx-2" },
-                        [
-                          _c(
-                            "v-list-item",
-                            { attrs: { dense: "", "two-line": "" } },
+                        "v-slide-group",
+                        { attrs: { "show-arrows": "" } },
+                        _vm._l(_vm.scenes, function(item) {
+                          return _c(
+                            "v-slide-item",
+                            {
+                              key: item.id,
+                              on: {
+                                click: function($event) {
+                                  0
+                                }
+                              }
+                            },
                             [
                               _c(
-                                "v-list-item-avatar",
-                                {
-                                  attrs: {
-                                    size: "26",
-                                    color:
-                                      "" +
-                                      (item.type == "Panoramic"
-                                        ? "orange"
-                                        : "teal")
-                                  }
-                                },
+                                "v-card",
+                                { staticClass: "my-1 mx-2" },
                                 [
                                   _c(
-                                    "v-icon",
-                                    { attrs: { dark: "", small: "" } },
+                                    "v-list-item",
+                                    { attrs: { dense: "", "two-line": "" } },
                                     [
-                                      _vm._v(
-                                        _vm._s(
-                                          item.type == "Panoramic"
-                                            ? "mdi-panorama-horizontal"
-                                            : "mdi-axis-z-rotate-clockwise"
-                                        )
+                                      _c(
+                                        "v-list-item-avatar",
+                                        {
+                                          attrs: {
+                                            size: "26",
+                                            color:
+                                              "" +
+                                              (item.type == "panoramic"
+                                                ? "orange"
+                                                : "teal")
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "v-icon",
+                                            { attrs: { dark: "", small: "" } },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  item.type == "panoramic"
+                                                    ? "mdi-panorama-horizontal"
+                                                    : "mdi-axis-z-rotate-clockwise"
+                                                )
+                                              )
+                                            ]
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-list-item-content",
+                                        [
+                                          _c("v-list-item-title", {
+                                            domProps: {
+                                              innerHTML: _vm._s(item.title)
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _c("v-list-item-subtitle", {
+                                            domProps: {
+                                              innerHTML: _vm._s(item.type)
+                                            }
+                                          })
+                                        ],
+                                        1
                                       )
-                                    ]
+                                    ],
+                                    1
                                   )
-                                ],
-                                1
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "v-list-item-content",
-                                [
-                                  _c("v-list-item-title", {
-                                    domProps: { innerHTML: _vm._s(item.title) }
-                                  }),
-                                  _vm._v(" "),
-                                  _c("v-list-item-subtitle", {
-                                    domProps: { innerHTML: _vm._s(item.type) }
-                                  })
                                 ],
                                 1
                               )
                             ],
                             1
                           )
-                        ],
+                        }),
                         1
                       )
                     ],
                     1
                   )
-                }),
-                1
-              )
+                : _c(
+                    "v-sheet",
+                    { staticClass: "w-100" },
+                    [
+                      _c(
+                        "v-alert",
+                        {
+                          staticClass:
+                            "my-1 pa-5 mx-2 caption d-flex align-center justify-center",
+                          attrs: { color: "grey lighten-4", dense: "" }
+                        },
+                        [
+                          _vm._v("\n          No scene found. Add your "),
+                          _c(
+                            "a",
+                            {
+                              on: {
+                                click: function($event) {
+                                  $event.stopPropagation()
+                                  _vm.dialog = true
+                                }
+                              }
+                            },
+                            [_vm._v("new scene now")]
+                          ),
+                          _vm._v(".\n        ")
+                        ]
+                      )
+                    ],
+                    1
+                  )
             ],
             1
           )
@@ -25289,7 +25302,7 @@ var render = function() {
         [
           _c("create-scene", {
             attrs: { "product-id": _vm.product },
-            on: { close: _vm.closeDialog, sceneCreated: _vm.reloadScenes }
+            on: { close: _vm.closeDialog, sceneCreated: _vm.getScenes }
           })
         ],
         1

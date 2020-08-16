@@ -5,7 +5,7 @@
         <h3 class="font-weight-light">Edit Product</h3>
       </div>
     </div> -->
-    <div class="col-12">
+    <div class="col-12 py-0">
       <Scenes :product="this.$route.params.id" />
       <v-divider></v-divider>
     </div>

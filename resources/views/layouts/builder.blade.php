@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,16 +18,16 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
+
 <body>
     <div id="app">
         <v-app>
-        <builder-navigation></builder-navigation>
-        <main class="py-4">
+            <builder-navigation></builder-navigation>
             @yield('content')
-        </main>
-    </v-app>
+        </v-app>
     </div>
-      <!-- Scripts -->
-      <script src="{{ asset('js/app.js') }}" defer></script>
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
+
 </html>
