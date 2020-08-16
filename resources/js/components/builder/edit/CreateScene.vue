@@ -14,14 +14,16 @@
             ></v-text-field>
           </ValidationProvider>
           <ValidationProvider v-slot="{ errors }" name="type" rules="required">
-            <v-select
+            <v-autocomplete
               v-model="sceneType"
               :items="items"
+              :item-text="items.text"
+              :item-value="items.value"
               :error-messages="errors"
               label="Select"
               data-vv-name="select"
               required
-            ></v-select>
+            ></v-autocomplete>
           </ValidationProvider>
         </v-card-text>
         <v-card-actions>
@@ -49,7 +51,16 @@ export default {
     return {
       title: "",
       sceneType: null,
-      items: ["360 Rotate", "Panoramic"],
+      items: [
+        {
+          text: "360 Degree",
+          value: "360-degree",
+        },
+        {
+          text: "Panoramic",
+          value: "panoramic",
+        },
+      ],
     };
   },
   methods: {
@@ -63,7 +74,7 @@ export default {
         type: this.sceneType,
         product: this.productId,
       };
-      //   console.log(data);
+      console.log(data);
       axios
         .post("/builder/scene/store", data)
         .then((response) => {

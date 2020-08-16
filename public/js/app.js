@@ -3279,6 +3279,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["productId"],
@@ -3290,7 +3292,13 @@ __webpack_require__.r(__webpack_exports__);
     return {
       title: "",
       sceneType: null,
-      items: ["360 Rotate", "Panoramic"]
+      items: [{
+        text: "360 Degree",
+        value: "360-degree"
+      }, {
+        text: "Panoramic",
+        value: "panoramic"
+      }]
     };
   },
   methods: {
@@ -3305,8 +3313,8 @@ __webpack_require__.r(__webpack_exports__);
         title: this.title,
         type: this.sceneType,
         product: this.productId
-      }; //   console.log(data);
-
+      };
+      console.log(data);
       axios.post("/builder/scene/store", data).then(function (response) {
         _this.$emit("close", false);
 
@@ -24796,9 +24804,11 @@ var render = function() {
                                 fn: function(ref) {
                                   var errors = ref.errors
                                   return [
-                                    _c("v-select", {
+                                    _c("v-autocomplete", {
                                       attrs: {
                                         items: _vm.items,
+                                        "item-text": _vm.items.text,
+                                        "item-value": _vm.items.value,
                                         "error-messages": errors,
                                         label: "Select",
                                         "data-vv-name": "select",
@@ -85083,8 +85093,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

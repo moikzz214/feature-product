@@ -30,3 +30,6 @@ Route::post('/builder/product/store', 'ProductsController@store')->name('builder
 
 Route::get('/builder/scenes/all', 'ScenesController@scenesAll')->name('builder.all.scenes');
 Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.store.scene');
+
+
+Route::get('/product/{slug}', 'ProductsController@show')->name('single.product');
