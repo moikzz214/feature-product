@@ -18,8 +18,8 @@
       <v-skeleton-loader :loading="loading" type="list-item-avatar-two-line">
         <v-sheet v-if="scenes[0]" class="w-100">
           <v-slide-group show-arrows>
-            <v-slide-item v-for="item in scenes" :key="item.id" @click="0">
-              <v-card class="my-1 mx-2">
+            <v-slide-item v-for="item in scenes" :key="item.id">
+              <v-card class="my-1 mx-2" active-class="primary" @click="0">
                 <v-list-item dense two-line>
                   <v-list-item-avatar
                     size="26"

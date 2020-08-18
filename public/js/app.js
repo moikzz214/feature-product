@@ -25170,18 +25170,19 @@ var render = function() {
                         _vm._l(_vm.scenes, function(item) {
                           return _c(
                             "v-slide-item",
-                            {
-                              key: item.id,
-                              on: {
-                                click: function($event) {
-                                  0
-                                }
-                              }
-                            },
+                            { key: item.id },
                             [
                               _c(
                                 "v-card",
-                                { staticClass: "my-1 mx-2" },
+                                {
+                                  staticClass: "my-1 mx-2",
+                                  attrs: { "active-class": "primary" },
+                                  on: {
+                                    click: function($event) {
+                                      0
+                                    }
+                                  }
+                                },
                                 [
                                   _c(
                                     "v-list-item",
@@ -85106,8 +85107,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
