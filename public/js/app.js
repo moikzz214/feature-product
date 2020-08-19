@@ -2939,10 +2939,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ["authUser"],
   data: function data() {
     return {
       drawer: null,
+      menu: false,
       items: [{
         icon: "mdi-view-dashboard",
         text: "Dashboard",
@@ -2964,12 +3004,16 @@ __webpack_require__.r(__webpack_exports__);
       }]
     };
   },
-  // methods: {
-  //   drawerToggle() {
-  //     this.mini = !this.mini;
-  //     this.drawer = !this.drawer;
-  //   },
-  // },
+  methods: {
+    logout: function logout(event) {
+      event.preventDefault();
+      document.getElementById("logout-form").submit();
+    } // drawerToggle() {
+    //   this.mini = !this.mini;
+    //   this.drawer = !this.drawer;
+    // },
+
+  },
   mounted: function mounted() {// console.log("Component mounted.");
   }
 });
@@ -3193,17 +3237,60 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Products",
   data: function data() {
     return {
+      dialog: false,
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
-      products: []
+      products: [],
+      code: ""
     };
   },
   methods: {
+    openCode: function openCode(slug, title) {
+      this.dialog = true;
+      this.code = '<iframe src="' + window.location + "/" + slug + '" height="768px" width="100%" title="' + title + '"></iframe>';
+    },
+    selectCode: function selectCode() {
+      var theCode = this.$refs.code.$el.querySelector("textarea");
+      theCode.select();
+      document.execCommand("copy");
+    },
     actionFn: function actionFn(i) {
       console.log(i);
     },
@@ -24298,16 +24385,119 @@ var render = function() {
           _vm._v(" "),
           _c("v-toolbar-title", { staticClass: "mr-12 align-center" }, [
             _c("span", { staticClass: "title white--text" }, [
-              _vm._v("Product Feature")
+              _vm._v("Gallega Demo")
             ])
           ]),
           _vm._v(" "),
           _c("v-spacer"),
           _vm._v(" "),
-          _c("v-row", {
-            staticStyle: { "max-width": "650px" },
-            attrs: { align: "center" }
-          })
+          _c(
+            "v-menu",
+            {
+              attrs: {
+                "close-on-content-click": false,
+                "nudge-width": 150,
+                transition: "slide-y-transition",
+                "offset-y": "",
+                "nudge-bottom": 3
+              },
+              scopedSlots: _vm._u([
+                {
+                  key: "activator",
+                  fn: function(ref) {
+                    var on = ref.on
+                    return [
+                      _c(
+                        "v-btn",
+                        _vm._g({ attrs: { text: "", icon: "" } }, on),
+                        [
+                          _c("v-avatar", { attrs: { size: "30" } }, [
+                            _c("img", {
+                              attrs: {
+                                src:
+                                  "https://w5insight.com/wp-content/uploads/2014/07/placeholder-user-400x400.png",
+                                alt: "Romel Indemne"
+                              }
+                            })
+                          ])
+                        ],
+                        1
+                      )
+                    ]
+                  }
+                }
+              ]),
+              model: {
+                value: _vm.menu,
+                callback: function($$v) {
+                  _vm.menu = $$v
+                },
+                expression: "menu"
+              }
+            },
+            [
+              _vm._v(" "),
+              _c(
+                "v-card",
+                [
+                  _c(
+                    "v-list",
+                    [
+                      _c(
+                        "v-list-item",
+                        [
+                          _c("v-list-item-avatar", [
+                            _c("img", {
+                              attrs: {
+                                src:
+                                  "https://w5insight.com/wp-content/uploads/2014/07/placeholder-user-400x400.png",
+                                alt: "Romel Indemne"
+                              }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "v-list-item-content",
+                            [
+                              _c("v-list-item-title", [
+                                _vm._v(_vm._s(_vm.authUser.name))
+                              ]),
+                              _vm._v(" "),
+                              _c("v-list-item-subtitle", [
+                                _vm._v(_vm._s(_vm.authUser.email))
+                              ])
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("v-divider"),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { depressed: "", width: "100%" },
+                          on: { click: _vm.logout }
+                        },
+                        [_vm._v("Logout")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
         ],
         1
       )
@@ -24342,7 +24532,7 @@ var render = function() {
     { attrs: { justify: "center", align: "center" } },
     [
       _c("v-col", { staticClass: "px-5" }, [
-        _c("div", [_vm._v("this is the home view")])
+        _c("div", [_vm._v("Gallega Demo")])
       ])
     ],
     1
@@ -24542,7 +24732,7 @@ var render = function() {
     [
       _c(
         "v-col",
-        { staticClass: "px-5", attrs: { cols: "6" } },
+        { staticClass: "px-5", attrs: { cols: "9" } },
         [
           _c(
             "div",
@@ -24591,6 +24781,10 @@ var render = function() {
                               _vm._v("Status")
                             ]),
                             _vm._v(" "),
+                            _c("th", { staticClass: "text-center" }, [
+                              _vm._v("Embed")
+                            ]),
+                            _vm._v(" "),
                             _c("th", { staticClass: "text-right" }, [
                               _vm._v("Actions")
                             ])
@@ -24614,10 +24808,38 @@ var render = function() {
                                 [
                                   _vm._v(
                                     _vm._s(
-                                      item.status == 1 ? "actove" : "inactive"
+                                      item.status == 1 ? "active" : "inactive"
                                     )
                                   )
                                 ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "td",
+                                { staticClass: "text-center" },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        title: "Embed",
+                                        text: "",
+                                        small: "",
+                                        color: "blue-grey darken-2"
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.openCode(
+                                            item.slug,
+                                            item.title
+                                          )
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("get code")]
+                                  )
+                                ],
+                                1
                               ),
                               _vm._v(" "),
                               _c(
@@ -24720,6 +24942,80 @@ var render = function() {
                 }
               })
             : _vm._e()
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { width: "500" },
+          model: {
+            value: _vm.dialog,
+            callback: function($$v) {
+              _vm.dialog = $$v
+            },
+            expression: "dialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "headline" }, [
+                _vm._v("Embed code")
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-text",
+                [
+                  _c("v-textarea", {
+                    ref: "code",
+                    on: { click: _vm.selectCode },
+                    model: {
+                      value: _vm.code,
+                      callback: function($$v) {
+                        _vm.code = $$v
+                      },
+                      expression: "code"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "grey", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.dialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("Close")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: { click: _vm.selectCode }
+                    },
+                    [_vm._v("Copy Code")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
         ],
         1
       )
@@ -84346,7 +84642,36 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]({
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: "#app",
   router: router,
-  vuetify: _plugins_vuetify__WEBPACK_IMPORTED_MODULE_1__["default"]
+  vuetify: _plugins_vuetify__WEBPACK_IMPORTED_MODULE_1__["default"],
+  data: function data() {
+    return {
+      //login
+      loginValid: true,
+      loginEmail: "",
+      loginEmailrules: [function (value) {
+        return !!value || "Required";
+      }, function (value) {
+        return /.+@.+\..+/.test(value) || "E-mail must be valid";
+      }],
+      loginPassword: "",
+      loginPasswordrules: [function (value) {
+        return !!value || "Required";
+      }, function (value) {
+        return value && value.length > 8 || "Password must be atleast 8 characters";
+      }]
+    };
+  },
+  methods: {
+    validate: function validate() {
+      if (this.$refs.form.validate()) {
+        this.snackbar = true;
+      }
+    },
+    logout: function logout(event) {
+      event.preventDefault();
+      document.getElementById('logout-form').submit();
+    }
+  }
 });
 
 /***/ }),

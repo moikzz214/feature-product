@@ -45,5 +45,34 @@ const router = new VueRouter({
 const app = new Vue({
     el: "#app",
     router,
-    vuetify
+    vuetify,
+    data() {
+        return {
+            //login
+            loginValid: true,
+            loginEmail: "",
+            loginEmailrules: [
+                value => !!value || "Required",
+                value => /.+@.+\..+/.test(value) || "E-mail must be valid"
+            ],
+            loginPassword: "",
+            loginPasswordrules: [
+                value => !!value || "Required",
+                value =>
+                    (value && value.length > 8) ||
+                    "Password must be atleast 8 characters"
+            ]
+        };
+    },
+    methods: {
+        validate () {
+            if (this.$refs.form.validate()) {
+            this.snackbar = true;
+            }
+        },
+        logout: function (event) {
+            event.preventDefault();
+            document.getElementById('logout-form').submit();
+        },
+    },
 });

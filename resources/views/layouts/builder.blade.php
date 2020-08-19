@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- <title>{{ config('app.name', 'Product Feature') }}</title> --}}
-    <title>Product Feature</title>
+    <title>Gallega Demo</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -22,7 +22,10 @@
 <body>
     <div id="app">
         <v-app>
-            <builder-navigation></builder-navigation>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+            <builder-navigation :auth-user="{{ Auth::user() }}"></builder-navigation>
             @yield('content')
         </v-app>
     </div>

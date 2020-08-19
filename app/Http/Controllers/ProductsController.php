@@ -25,7 +25,7 @@ class ProductsController extends Controller
 
     public function productsAPI()
     {
-        $products = Product::paginate(10);
+        $products = Product::orderBy('created_at', 'desc')->paginate(10);
         return response()->json($products, 200);
     }
 

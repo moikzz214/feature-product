@@ -23,19 +23,59 @@
     <v-app-bar app clipped-left color="indigo darken-4" dense>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" color="white"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center">
-        <span class="title white--text">Product Feature</span>
+        <span class="title white--text">Gallega Demo</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-row align="center" style="max-width: 650px"></v-row>
+      <v-menu
+        v-model="menu"
+        :close-on-content-click="false"
+        :nudge-width="150"
+        transition="slide-y-transition"
+        offset-y
+        :nudge-bottom="3"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn text icon v-on="on">
+            <v-avatar size="30">
+              <img
+                src="https://w5insight.com/wp-content/uploads/2014/07/placeholder-user-400x400.png"
+                alt="Romel Indemne"
+              />
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-list>
+            <v-list-item>
+              <v-list-item-avatar>
+                <img
+                  src="https://w5insight.com/wp-content/uploads/2014/07/placeholder-user-400x400.png"
+                  alt="Romel Indemne"
+                />
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ authUser.name }}</v-list-item-title>
+                <v-list-item-subtitle>{{ authUser.email }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn depressed v-on:click="logout" width="100%">Logout</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
     </v-app-bar>
   </div>
 </template>
 
 <script>
 export default {
+  props: ["authUser"],
   data() {
     return {
       drawer: null,
+      menu: false,
       items: [
         {
           icon: "mdi-view-dashboard",
@@ -57,12 +97,16 @@ export default {
       ],
     };
   },
-  // methods: {
-  //   drawerToggle() {
-  //     this.mini = !this.mini;
-  //     this.drawer = !this.drawer;
-  //   },
-  // },
+  methods: {
+    logout: function (event) {
+      event.preventDefault();
+      document.getElementById("logout-form").submit();
+    },
+    // drawerToggle() {
+    //   this.mini = !this.mini;
+    //   this.drawer = !this.drawer;
+    // },
+  },
   mounted() {
     // console.log("Component mounted.");
   },

@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="6" class="px-5">
+    <v-col cols="9" class="px-5">
       <div class="d-flex align-center mb-5">
         <v-btn
           to="/builder/product/new"
@@ -22,6 +22,7 @@
               <tr>
                 <th class="text-left">Product Name</th>
                 <th class="text-left">Status</th>
+                <th class="text-center">Embed</th>
                 <th class="text-right">Actions</th>
               </tr>
             </thead>
@@ -30,9 +31,25 @@
                 <td>{{ item.title }}</td>
                 <td
                   :class="`${item.status == 1 ? 'green--text' : 'blue--text'} text-left`"
-                >{{ item.status == 1 ? 'actove' : 'inactive' }}</td>
+                >{{ item.status == 1 ? 'active' : 'inactive' }}</td>
+                <td class="text-center">
+                  <v-btn
+                    title="Embed"
+                    text
+                    small
+                    color="blue-grey darken-2"
+                    @click="openCode(item.slug, item.title)"
+                  >get code</v-btn>
+                </td>
                 <td class="text-right">
-                  <v-btn title="Preview" icon small :to="`/product/${item.slug}`" target="_blank" color="green">
+                  <v-btn
+                    title="Preview"
+                    icon
+                    small
+                    :to="`/product/${item.slug}`"
+                    target="_blank"
+                    color="green"
+                  >
                     <v-icon small>mdi-open-in-new</v-icon>
                   </v-btn>
                   <v-btn title="Edit" icon small @click="editProduct(item.id)" color="blue">
@@ -55,6 +72,21 @@
         @input="onPageChange"
       ></v-pagination>
     </v-col>
+    <v-dialog v-model="dialog" width="500">
+      <v-card>
+        <v-card-title class="headline">Embed code</v-card-title>
+
+        <v-card-text>
+          <v-textarea ref="code" v-model="code" @click="selectCode"></v-textarea>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" text @click="dialog = false">Close</v-btn>
+          <v-btn color="primary" text @click="selectCode">Copy Code</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 
@@ -63,18 +95,34 @@ export default {
   name: "Products",
   data() {
     return {
+      dialog: false,
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
       products: [],
+      code: "",
     };
   },
   methods: {
+    openCode(slug, title) {
+      this.dialog = true;
+      this.code =
+        '<iframe src="' +
+        window.location +
+        "/" +
+        slug +
+        '" height="768px" width="100%" title="'+title+'"></iframe>';
+    },
+    selectCode() {
+      let theCode = this.$refs.code.$el.querySelector("textarea");
+      theCode.select();
+      document.execCommand("copy");
+    },
     actionFn(i) {
       console.log(i);
     },
-    editProduct(i){
-        this.$router.push("/builder/product/edit/" + i);
+    editProduct(i) {
+      this.$router.push("/builder/product/edit/" + i);
     },
     getProducts(p) {
       axios
