@@ -18,13 +18,16 @@
         rounded
         color="white"
       >Preview</v-btn>
-    </div> -->
-    <v-card class="mr-auto pa-3" style="min-height:480px;">
-      <v-card-text>This is the builder</v-card-text>
+    </div>-->
+    <v-card class="mr-auto pa-3 d-flex justify-center align-center" style="min-height:480px;">
+      <v-card-text class="text-center">
+        <p>Upload your images here</p>
+        <v-btn large color>Upload</v-btn>
+      </v-card-text>
     </v-card>
     <v-sheet elevation="0" class="mt-3 w-100" color="grey lighten-4">
       <v-slide-group v-model="model" class="pa-1" active-class="success" show-arrows>
-        <v-slide-item v-for="n in 15" :key="n" v-slot:default="{ active, toggle }">
+        <v-slide-item v-for="n in 50" :key="n" v-slot:default="{ active, toggle }">
           <v-card
             :color="active ? undefined : 'grey lighten-1'"
             class="ma-1"
@@ -32,11 +35,12 @@
             width="100"
             @click="toggle"
           >
-            <v-row class="fill-height" align="center" justify="center">
+            <v-card-text>{{n}}</v-card-text>
+            <!-- <v-row class="fill-height" align="center" justify="center">
               <v-scale-transition>
                 <v-icon v-if="active" color="white" size="48" v-text="'mdi-close-circle-outline'"></v-icon>
               </v-scale-transition>
-            </v-row>
+            </v-row>-->
           </v-card>
         </v-slide-item>
       </v-slide-group>

@@ -32,8 +32,8 @@ export default {
     return {
       item: 1,
       items: [
-        { text: "Layout", icon: "mdi-crop-free" },
         { text: "Hotspots", icon: "mdi-crosshairs-gps" },
+        { text: "Settings", icon: "mdi-crop-free" },
       ],
     };
   },

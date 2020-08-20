@@ -108,8 +108,8 @@ export default {
       this.dialog = true;
       this.code =
         '<iframe src="' +
-        window.location +
-        "/" +
+        window.location.origin +
+        "/product/" +
         slug +
         '" height="768px" width="100%" title="'+title+'"></iframe>';
     },

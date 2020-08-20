@@ -3075,6 +3075,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -3085,7 +3109,10 @@ __webpack_require__.r(__webpack_exports__);
     ScenePanel: _edit_ScenePanel__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
-    return {};
+    return {
+      activateExterior: true,
+      activateInterior: false
+    };
   },
   methods: {},
   mounted: function mounted() {// console.log(this.$route.params.id);
@@ -3284,7 +3311,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     openCode: function openCode(slug, title) {
       this.dialog = true;
-      this.code = '<iframe src="' + window.location + "/" + slug + '" height="768px" width="100%" title="' + title + '"></iframe>';
+      this.code = '<iframe src="' + window.location.origin + "/product/" + slug + '" height="768px" width="100%" title="' + title + '"></iframe>';
     },
     selectCode: function selectCode() {
       var theCode = this.$refs.code.$el.querySelector("textarea");
@@ -3475,6 +3502,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3528,11 +3559,11 @@ __webpack_require__.r(__webpack_exports__);
     return {
       item: 1,
       items: [{
-        text: "Layout",
-        icon: "mdi-crop-free"
-      }, {
         text: "Hotspots",
         icon: "mdi-crosshairs-gps"
+      }, {
+        text: "Settings",
+        icon: "mdi-crop-free"
       }]
     };
   }
@@ -24560,27 +24591,134 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("v-row", { staticClass: "px-3" }, [
-    _c(
-      "div",
-      { staticClass: "col-12 py-0" },
-      [
-        _c("Scenes", { attrs: { product: this.$route.params.id } }),
-        _vm._v(" "),
-        _c("v-divider")
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "col-2" },
-      [_c("scene-settings", { attrs: { product: this.$route.params.id } })],
-      1
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-10" }, [_c("scene-panel")], 1)
-  ])
+  return _c(
+    "div",
+    [
+      _c("v-row", { staticClass: "px-3" }, [
+        _c(
+          "div",
+          { staticClass: "col-12" },
+          [
+            _c(
+              "v-btn",
+              {
+                attrs: {
+                  large: "",
+                  color:
+                    "" +
+                    (_vm.activateExterior == true
+                      ? "yellow accent-4"
+                      : "primary")
+                },
+                on: {
+                  click: function($event) {
+                    _vm.activateExterior = true
+                    _vm.activateInterior = false
+                  }
+                }
+              },
+              [_vm._v("Exterior")]
+            ),
+            _vm._v(" "),
+            _c(
+              "v-btn",
+              {
+                attrs: {
+                  large: "",
+                  color:
+                    "" +
+                    (_vm.activateInterior == true
+                      ? "yellow accent-4"
+                      : "primary")
+                },
+                on: {
+                  click: function($event) {
+                    _vm.activateInterior = true
+                    _vm.activateExterior = false
+                  }
+                }
+              },
+              [_vm._v("Interior")]
+            )
+          ],
+          1
+        )
+      ]),
+      _vm._v(" "),
+      _c("v-divider"),
+      _vm._v(" "),
+      _vm.activateInterior == true
+        ? _c("v-row", { staticClass: "px-3" }, [
+            _c(
+              "div",
+              { staticClass: "col-12" },
+              [_c("Scenes", { attrs: { product: this.$route.params.id } })],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "col-2" },
+              [
+                _c("scene-settings", {
+                  attrs: { product: this.$route.params.id }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "col-10" },
+              [
+                _c(
+                  "v-card",
+                  {
+                    staticClass:
+                      "mr-auto pa-3 d-flex justify-center align-center",
+                    staticStyle: { "min-height": "480px" }
+                  },
+                  [
+                    _c(
+                      "v-card-text",
+                      { staticClass: "text-center" },
+                      [
+                        _c("p", [_vm._v("Upload your Panoramic Image")]),
+                        _vm._v(" "),
+                        _c("v-btn", { attrs: { large: "", color: "" } }, [
+                          _vm._v("Upload")
+                        ])
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ],
+              1
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.activateExterior == true
+        ? _c("v-row", { staticClass: "px-3" }, [
+            _c(
+              "div",
+              { staticClass: "col-2" },
+              [
+                _c("scene-settings", {
+                  attrs: { product: this.$route.params.id }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-10" }, [_c("scene-panel")], 1)
+          ])
+        : _vm._e()
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -25201,8 +25339,24 @@ var render = function() {
     [
       _c(
         "v-card",
-        { staticClass: "mr-auto pa-3", staticStyle: { "min-height": "480px" } },
-        [_c("v-card-text", [_vm._v("This is the builder")])],
+        {
+          staticClass: "mr-auto pa-3 d-flex justify-center align-center",
+          staticStyle: { "min-height": "480px" }
+        },
+        [
+          _c(
+            "v-card-text",
+            { staticClass: "text-center" },
+            [
+              _c("p", [_vm._v("Upload your images here")]),
+              _vm._v(" "),
+              _c("v-btn", { attrs: { large: "", color: "" } }, [
+                _vm._v("Upload")
+              ])
+            ],
+            1
+          )
+        ],
         1
       ),
       _vm._v(" "),
@@ -25226,7 +25380,7 @@ var render = function() {
                 expression: "model"
               }
             },
-            _vm._l(15, function(n) {
+            _vm._l(50, function(n) {
               return _c("v-slide-item", {
                 key: n,
                 scopedSlots: _vm._u(
@@ -25248,37 +25402,7 @@ var render = function() {
                               },
                               on: { click: toggle }
                             },
-                            [
-                              _c(
-                                "v-row",
-                                {
-                                  staticClass: "fill-height",
-                                  attrs: { align: "center", justify: "center" }
-                                },
-                                [
-                                  _c(
-                                    "v-scale-transition",
-                                    [
-                                      active
-                                        ? _c("v-icon", {
-                                            attrs: {
-                                              color: "white",
-                                              size: "48"
-                                            },
-                                            domProps: {
-                                              textContent: _vm._s(
-                                                "mdi-close-circle-outline"
-                                              )
-                                            }
-                                          })
-                                        : _vm._e()
-                                    ],
-                                    1
-                                  )
-                                ],
-                                1
-                              )
-                            ],
+                            [_c("v-card-text", [_vm._v(_vm._s(n))])],
                             1
                           )
                         ]
@@ -85432,8 +85556,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

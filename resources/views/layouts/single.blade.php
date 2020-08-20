@@ -34,6 +34,7 @@
             width: 90%;
             max-width: 1366px;
             margin: 0 auto;
+            min-height: 100vh;
         }
 
         .spritespin {
@@ -46,10 +47,21 @@
             position: relative;
         }
 
+        .action-wrapper {
+            position: absolute;
+            left: auto;
+            right: auto;
+            top: auto;
+            bottom: 34px;
+            width: 100%;
+        }
+
         .spritespin-buttons-wrapper {
-            margin-top: 30px;
+            /* margin-top: 30px; */
             display: flex;
             justify-content: center;
+            width: 200px;
+            margin: 0 auto;
         }
 
         .spritespin-slider {
@@ -57,13 +69,34 @@
         }
 
         .spritespin-buttons-wrapper .button {
-            font-size: 32px;
-            line-height: 32px;
-            padding: 10px 20px;
+            font-size: 24px;
+            line-height: 24px;
+            padding: 0 10px 5px;
             margin: 0 10px;
             cursor: pointer;
             color: #fff;
             background-color: #191e47;
+        }
+
+        .content-action {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .open-exterior,
+        .open-interior {
+            text-transform: uppercase;
+            cursor: pointer;
+            color: #fff;
+            padding: 13px 20px;
+            background-color: #191e47;
+            font-size: 24px;
+            line-height: 24px;
+        }
+
+        .active {
+            background-color: #fbad18;
         }
 
         /* HotSpot */
@@ -235,8 +268,8 @@
             position: relative;
             z-index: 2;
             display: block;
-            width: 30px;
-            height: 30px;
+            width: 25px;
+            height: 25px;
             border-radius: inherit;
             background: #d95353;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3),
@@ -295,14 +328,14 @@
             animation: cd-pulse 2s infinite;
         }
 
-        .cd-single-point:nth-of-type(1) {
-            bottom: 35%;
-            right: 27%;
+        .cd-single-point.hotspot-1 {
+            bottom: 54%;
+            right: 23%;
         }
 
-        .cd-single-point:nth-of-type(2) {
+        .cd-single-point.hotspot-2 {
             bottom: 45%;
-            right: 53%;
+            right: 38%;
         }
 
         .cd-single-point:nth-of-type(3) {
@@ -346,20 +379,18 @@
                 right 0.3s 0s;
             -moz-transition: opacity 0.3s 0s, visibility 0s 0s, -moz-transform 0.3s 0s,
                 top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;
-            transition: opacity 0.3s 0s, visibility 0s 0s, transform 0.3s 0s,
-                top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;
+            transition: opacity 0.3s 0s, visibility 0s 0s, transform 0.3s 0s, top 0.3s 0s,
+                bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;
         }
 
-        .cd-single-point.visited>a {
-            /* background-color: #475f74; */
-            background-color: #fff;
-        }
-
-        .cd-single-point.visited>a::after,
-        .cd-single-point.visited>a::before {
-            background-color: #191e47;
-        }
-
+        /* .cd-single-point.visited > a {
+  background-color: #475f74;
+  background-color: #fff;
+}
+.cd-single-point.visited > a::after,
+.cd-single-point.visited > a::before {
+  background-color: #191e47;
+} */
         .cd-single-point.visited::after {
             /* pulse effect no more active on visited elements */
             display: none;
@@ -643,6 +674,38 @@
             .cd-close-info {
                 display: none;
             }
+        }
+
+        #panorama {
+            width: 100%;
+            height: 400px;
+        }
+
+        .custom-hotspot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #fbad18;
+        }
+
+        div.custom-tooltip span {
+            visibility: hidden;
+            position: absolute;
+            border-radius: 3px;
+            background-color: #fff;
+            color: #000;
+            text-align: center;
+            max-width: 300px;
+            min-width: 200px;
+            padding: 5px 10px;
+            margin-left: -220px;
+            cursor: default;
+            bottom: -50px;
+            border: 1px solid #eee;
+        }
+
+        div.custom-tooltip:hover span {
+            visibility: visible;
         }
     </style>
 </head>
