@@ -3371,10 +3371,15 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       loading: false,
-      video: null
+      video: null,
+      fileName: ""
     };
   },
   methods: {
+    // selectedVideo(event) {
+    // //   this.fileName = event.target.files[0].name;
+    //   console.log(event.name.split('.').slice(0, -1).join('.'));
+    // },
     uploadVideo: function uploadVideo() {
       var _this = this;
 
@@ -3382,8 +3387,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log(this.video);
       var data = new FormData();
       data.append("video", this.video);
-      data.append("title", this.video.name);
-      data.append("description", this.video.name);
+      data.append("title", this.video.name.split('.').slice(0, -1).join('.'));
       axios.post("/video/store", data, {
         headers: {
           "Content-Type": "multipart/form-data"
@@ -85741,8 +85745,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

@@ -46,14 +46,36 @@ class OptimizeVideo implements ShouldQueue
     public function handle()
     {
         // dd($this->video->path);
-        FFMpeg::fromDisk($this->video->disk)
-            ->open($this->video->path)
-            ->addFilter(function (VideoFilters $filters) {
-                $filters->resize(new \FFMpeg\Coordinate\Dimension(640, 480));
-            })
-            ->export()
-            ->toDisk('optimized_videos')
-            ->inFormat(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'))
-            ->save($this->video->path);
+        // Optimize video
+        // FFMpeg::fromDisk($this->video->disk)
+        //     ->open($this->video->path)
+        //     ->addFilter(function (VideoFilters $filters) {
+        //         $filters->resize(new \FFMpeg\Coordinate\Dimension(1280, 720));
+        //     })
+        //     ->export()
+        //     ->toDisk('optimized_videos')
+        //     ->inFormat(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'))
+        //     ->save($this->video->path);
+
+        // Get frames
+        $mediaOpener = FFMpeg::fromDisk($this->video->disk)->open($this->video->path);
+
+        $mediaDuration = $mediaOpener->getDurationInSeconds();
+        foreach (range(0, $mediaDuration, 1) as $key => $seconds) {
+            $mediaOpener = $mediaOpener->getFrameFromSeconds($seconds)
+                ->export()
+                ->onProgress(function ($percentage, $remaining, $rate) {
+                    echo "{$remaining} seconds left at rate: {$rate}";
+                })
+                ->toDisk('360_images')
+                ->save("{$this->video->title}_{$this->video->id}_{$key}.jpeg");
+        }
+        // Get 1 frame
+        // FFMpeg::fromDisk($this->video->disk)
+        //     ->open($this->video->path)
+        //     ->getFrameFromSeconds(1)
+        //     ->export()
+        //     ->toDisk('360_images')
+        //     ->save('FrameAt10sec.png');
     }
 }

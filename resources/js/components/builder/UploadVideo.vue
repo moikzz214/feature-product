@@ -13,16 +13,20 @@ export default {
     return {
       loading: false,
       video: null,
+      fileName: "",
     };
   },
   methods: {
+    // selectedVideo(event) {
+    // //   this.fileName = event.target.files[0].name;
+    //   console.log(event.name.split('.').slice(0, -1).join('.'));
+    // },
     uploadVideo() {
       this.loading = true;
       console.log(this.video);
       let data = new FormData();
       data.append("video", this.video);
-      data.append("title", this.video.name);
-      data.append("description", this.video.name);
+      data.append("title", this.video.name.split('.').slice(0, -1).join('.'));
       axios
         .post("/video/store", data, {
           headers: {

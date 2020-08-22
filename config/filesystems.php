@@ -85,6 +85,11 @@ return [
             'root' => storage_path('optimized_videos'),
         ],
 
+        '360_images' => [
+            'driver' => 'local',
+            'root' => storage_path('360_images'),
+        ],
+
     ],
 
     /*
@@ -102,6 +107,6 @@ return [
         public_path('storage') => storage_path('app/public'),
     ],
 
-   
+
 
 ];
