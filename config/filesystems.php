@@ -65,6 +65,26 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
 
+        'videos_disk' => [
+            'driver' => 'local',
+            'root' => storage_path('videos'),
+        ],
+
+        'downloadable_videos' => [
+            'driver' => 'local',
+            'root' => storage_path('downloadable_videos'),
+        ],
+
+        'streamable_videos' => [
+            'driver' => 'local',
+            'root' => storage_path('streamable_videos'),
+        ],
+
+        'optimized_videos' => [
+            'driver' => 'local',
+            'root' => storage_path('optimized_videos'),
+        ],
+
     ],
 
     /*
@@ -81,5 +101,7 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
     ],
+
+   
 
 ];

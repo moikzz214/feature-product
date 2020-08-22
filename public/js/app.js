@@ -3364,7 +3364,40 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      loading: false,
+      video: null
+    };
+  },
+  methods: {
+    uploadVideo: function uploadVideo() {
+      var _this = this;
+
+      this.loading = true;
+      console.log(this.video);
+      var data = new FormData();
+      data.append("video", this.video);
+      data.append("title", this.video.name);
+      data.append("description", this.video.name);
+      axios.post("/video/store", data, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }).then(function (response) {
+        _this.loading = false;
+        console.log(response);
+      })["catch"](function (error) {
+        _this.loading = false;
+        console.log(error.response);
+      });
+    }
+  }
+});
 
 /***/ }),
 
@@ -25205,7 +25238,39 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n    This is upload video\n")])
+  return _c(
+    "v-row",
+    [
+      _c(
+        "v-col",
+        { staticClass: "mx-auto", attrs: { cols: "6" } },
+        [
+          _c("v-file-input", {
+            ref: "video",
+            attrs: { "show-size": "", label: "Upload a video" },
+            model: {
+              value: _vm.video,
+              callback: function($$v) {
+                _vm.video = $$v
+              },
+              expression: "video"
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "v-btn",
+            {
+              attrs: { loading: _vm.loading, color: "primary" },
+              on: { click: _vm.uploadVideo }
+            },
+            [_vm._v("Upload")]
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

@@ -29,6 +29,7 @@ Route::get('/builder/products/all', 'ProductsController@productsAPI')->name('bui
 Route::post('/builder/product/store', 'ProductsController@store')->name('builder.store.product');
 // Route::get('/builder/scenes/scenes', 'ProductsController@scenesByProductId')->name('builder.scenes.by.product.id');
 Route::get('/builder/product/upload-video', 'BuilderController@index')->name('builder.upload.video');
+Route::post('/video/store', 'VideoController@store')->name('upload.video');
 
 Route::get('/builder/scenes/product/{id}', 'ScenesController@scenesByProductId')->name('builder.scenes.by.product.id');
 // Route::get('/builder/scenes/all', 'ScenesController@scenesAll')->name('builder.all.scenes');
