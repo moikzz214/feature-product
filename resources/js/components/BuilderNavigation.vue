@@ -87,7 +87,7 @@ export default {
           text: "Products",
           location: "/builder/products",
         },
-        // { icon: "mdi-history", text: "History" },
+        { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
         // { icon: "mdi-playlist-play", text: "Playlists" },
         // { icon: "mdi-clock", text: "Watch Later" },
       ],
