@@ -65,6 +65,16 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
 
+        'temp_uploads' => [
+            'driver' => 'local',
+            'root' => storage_path('temp_uploads'),
+        ],
+        'uploads' => [
+            'driver' => 'local',
+            'root' => storage_path('uploads'),
+        ],
+
+        // To delete
         'videos_disk' => [
             'driver' => 'local',
             'root' => storage_path('videos'),

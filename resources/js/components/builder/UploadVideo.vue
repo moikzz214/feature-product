@@ -25,6 +25,7 @@ export default {
       this.loading = true;
       console.log(this.video);
       let data = new FormData();
+      data.append("product", 1); // needs to be dynamic
       data.append("video", this.video);
       data.append("title", this.video.name.split('.').slice(0, -1).join('.'));
       axios

@@ -2,30 +2,86 @@
 
 namespace App\Http\Controllers;
 
-use App\Video;
 
+use App\User_file;
 use App\Jobs\OptimizeVideo;
 use Illuminate\Http\Request;
-use App\Jobs\ConvertVideoForStreaming;
+
+use FFMpeg\Format\Video\X264;
+use FFMpeg\Coordinate\Dimension;
+use FFMpeg\Filters\Video\VideoFilters;
 use App\Http\Requests\StoreVideoRequest;
-use App\Jobs\ConvertVideoForDownloading;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class VideoController extends Controller
 {
     public function store(StoreVideoRequest $request)
     {
+        $userId = auth()->id();
+        $itemImages = array();
+
         // Upload to temp disk
-        $video = Video::create([
-            'disk'          => 'videos_disk', // should be a temp disk
+        $video = User_file::create([
+            'user'          => auth()->id(),
+            'file_type'     => 'video',
+            'title'         => $request->title,
             'original_name' => $request->video->getClientOriginalName(),
-            'path'          => $request->video->store('/', 'videos_disk'),
-            'title'         => $request->title
+            'disk'          => 'temp_uploads',
+            'path'          => $request->video->store('/', 'temp_uploads'),
         ]);
 
         // Optimize Video and Extract Frames
-        $this->dispatch(new OptimizeVideo($video));
-        // $this->dispatch(new ConvertVideoForStreaming($video));
+        // $this->dispatch(new OptimizeVideo($video));
 
+        // Generate a thumbnail
+        FFMpeg::fromDisk($video->disk)
+        ->open($video->path)
+        ->getFrameFromSeconds(1)
+        ->export()
+        ->toDisk('uploads')
+        ->save("/user-{$userId}/{$request->product}/{$video->title}_{$video->id}_thumbnail.jpeg");
+
+        // Get frames
+        $mediaOpener = FFMpeg::fromDisk($video->disk)->open($video->path);
+        $mediaDuration = $mediaOpener->getDurationInSeconds();
+        foreach (range(0, $mediaDuration, 1) as $key => $seconds) {
+
+            // Prepare array of images to be save in User_files table
+            User_file::create([
+                'user'          => auth()->id(),
+                'file_type'     => 'image',
+                'title'         => "{$video->title}_{$video->id}_{$key}",
+                'original_name' => $video->title,
+                'disk'          => 'uploads',
+                'path'          => "{$video->title}_{$video->id}_{$key}.jpeg",
+            ]);
+
+            // Extract Frames
+            $mediaOpener = $mediaOpener->getFrameFromSeconds($seconds)
+                ->export()
+                ->toDisk('uploads')
+                ->save("/user-{$userId}/{$request->product}/{$video->title}_{$video->id}_{$key}.jpeg");
+        }
+
+        // Save frames to User_files table as image
+        // dd($request);
+        // User_file::create([
+        //     'user'          => $itemImages['user'],
+        //     'file_type'     => $itemImages['file_type'],
+        //     'title'         => $itemImages['title'],
+        //     'original_name' => $itemImages['original_name'],
+        //     'disk'          => $itemImages['disk'],
+        //     'path'          => $itemImages['path'],
+        // ]);
+
+        // Save frames to Items Table
+        // Item::create([
+        //     'item_type' => 'exterior',
+        //     'file_type' => $request->product,
+        //     'title'     => $video->t
+        // ]);
+
+        // return response
         return response()->json([
             'id' => $video->id,
             'video' => $request
