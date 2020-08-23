@@ -14,6 +14,7 @@ class VideoController extends Controller
 {
     public function store(StoreVideoRequest $request)
     {
+        // Upload to temp disk
         $video = Video::create([
             'disk'          => 'videos_disk', // should be a temp disk
             'original_name' => $request->video->getClientOriginalName(),
@@ -21,6 +22,7 @@ class VideoController extends Controller
             'title'         => $request->title
         ]);
 
+        // Optimize Video and Extract Frames
         $this->dispatch(new OptimizeVideo($video));
         // $this->dispatch(new ConvertVideoForStreaming($video));
 
