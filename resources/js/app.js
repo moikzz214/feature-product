@@ -24,6 +24,36 @@ Vue.component(
     require("./components/BuilderNavigation.vue").default
 );
 
+Vue.component('spritespin', {
+    props: ['options'],
+    template: '<div></div>',
+    data: function () {
+      return {
+        api: null,
+        data: null,
+      }
+    },
+    mounted: function() {
+      // create spritespin
+      $(this.$el).spritespin(this.options)
+      // access api object
+      this.api = $(this.$el).spritespin('api')
+      // access data object
+      this.data = $(this.$el).spritespin('data')
+      // watch changes and update spritespin
+      this.$watch('options', (newVal, oldVal) => {
+        $(this.$el).spritespin(newVal)
+      })
+    },
+    updated: function() {
+      // $(this.$el).spritespin(this.options)
+    },
+    beforeDestroy: function() {
+      // destroy spritespin before Vue node is destroyed
+      $(this.$el).spritespin('destroy')
+    },
+  })
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

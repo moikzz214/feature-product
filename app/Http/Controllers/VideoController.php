@@ -77,8 +77,8 @@ class VideoController extends Controller
         // Save frames to Items Table
         // Item::create([
         //     'item_type' => 'exterior',
-        //     'file_type' => $request->product,
-        //     'title'     => $video->t
+        //     'product' => $request->product,
+        //     'file'     => $video->t
         // ]);
 
         // return response

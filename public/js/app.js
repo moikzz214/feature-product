@@ -3367,21 +3367,77 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       loading: false,
       video: null,
-      fileName: ""
+      fileName: "",
+      // exterior images
+      show: true,
+      options: {
+        source: "",
+        width: 1366,
+        height: 650,
+        frames: 34,
+        framesX: 6 // sense: -1,
+
+      }
     };
   },
   methods: {
-    // selectedVideo(event) {
-    // //   this.fileName = event.target.files[0].name;
-    //   console.log(event.name.split('.').slice(0, -1).join('.'));
-    // },
-    uploadVideo: function uploadVideo() {
+    toggleShow: function toggleShow() {
+      this.show = !this.show;
+    },
+    prev: function prev() {
+      if (this.$refs.spritespin) {
+        this.$refs.spritespin.api.stopAnimation();
+        this.$refs.spritespin.api.prevFrame();
+      }
+    },
+    next: function next() {
+      if (this.$refs.spritespin) {
+        this.$refs.spritespin.api.stopAnimation();
+        this.$refs.spritespin.api.nextFrame();
+      }
+    },
+    togglePlayback: function togglePlayback() {
+      if (this.$refs.spritespin) {
+        this.$refs.spritespin.api.toggleAnimation();
+      }
+    },
+    toggleFullscreen: function toggleFullscreen() {
+      if (this.$refs.spritespin) {
+        this.$refs.spritespin.api.requestFullscreen();
+      }
+    },
+    load360: function load360() {
       var _this = this;
+
+      var images = [];
+      axios.get("/files/fetch").then(function (response) {
+        response.data.map(function (file) {
+          images.push("http://127.0.0.1:8000/display/file/" + file.path);
+        });
+        _this.options.source = images;
+        console.log(_this.options);
+      })["catch"](function (error) {
+        console.log(error.response);
+      });
+    },
+    uploadVideo: function uploadVideo() {
+      var _this2 = this;
 
       this.loading = true;
       console.log(this.video);
@@ -3389,19 +3445,21 @@ __webpack_require__.r(__webpack_exports__);
       data.append("product", 1); // needs to be dynamic
 
       data.append("video", this.video);
-      data.append("title", this.video.name.split('.').slice(0, -1).join('.'));
+      data.append("title", this.video.name.split(".").slice(0, -1).join("."));
       axios.post("/video/store", data, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       }).then(function (response) {
-        _this.loading = false;
-        console.log(response);
+        _this2.loading = false;
+        console.log(response); // this.load360();
       })["catch"](function (error) {
-        _this.loading = false;
+        _this2.loading = false;
         console.log(error.response);
       });
     }
+  },
+  mounted: function mounted() {// this.load360();
   }
 });
 
@@ -25271,6 +25329,46 @@ var render = function() {
             },
             [_vm._v("Upload")]
           )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-col",
+        { attrs: { cols: "12" } },
+        [
+          _c("v-btn", { on: { click: _vm.load360 } }, [_vm._v("hey")]),
+          _vm._v(" "),
+          _c("v-img", {
+            attrs: {
+              src: "/display/file/video-footage-example_1_0.jpeg",
+              "aspect-ratio": "1",
+              width: "100px"
+            }
+          }),
+          _vm._v(" "),
+          _c("button", { on: { click: _vm.toggleShow } }, [
+            _vm._v("CREATE DESTROY")
+          ]),
+          _vm._v(" "),
+          _c("button", { on: { click: _vm.next } }, [_vm._v("NEXT")]),
+          _vm._v(" "),
+          _c("button", { on: { click: _vm.prev } }, [_vm._v("PREV")]),
+          _vm._v(" "),
+          _c("button", { on: { click: _vm.togglePlayback } }, [
+            _vm._v("TOGGLE")
+          ]),
+          _vm._v(" "),
+          _c("button", { on: { click: _vm.toggleFullscreen } }, [
+            _vm._v("FULLSCREEN")
+          ]),
+          _vm._v(" "),
+          _vm.show
+            ? _c("spritespin", {
+                ref: "spritespin",
+                attrs: { options: _vm.options }
+              })
+            : _vm._e()
         ],
         1
       )
@@ -84863,6 +84961,36 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js"); // window
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("builder-navigation", __webpack_require__(/*! ./components/BuilderNavigation.vue */ "./resources/js/components/BuilderNavigation.vue")["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('spritespin', {
+  props: ['options'],
+  template: '<div></div>',
+  data: function data() {
+    return {
+      api: null,
+      data: null
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    // create spritespin
+    $(this.$el).spritespin(this.options); // access api object
+
+    this.api = $(this.$el).spritespin('api'); // access data object
+
+    this.data = $(this.$el).spritespin('data'); // watch changes and update spritespin
+
+    this.$watch('options', function (newVal, oldVal) {
+      $(_this.$el).spritespin(newVal);
+    });
+  },
+  updated: function updated() {// $(this.$el).spritespin(this.options)
+  },
+  beforeDestroy: function beforeDestroy() {
+    // destroy spritespin before Vue node is destroyed
+    $(this.$el).spritespin('destroy');
+  }
+});
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -85747,8 +85875,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
