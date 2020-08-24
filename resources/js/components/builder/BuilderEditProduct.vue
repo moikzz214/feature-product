@@ -12,32 +12,32 @@
           :color="`${activateInterior == true ? 'yellow accent-4' : 'primary' }`"
           @click="activateInterior = true; activateExterior = false"
         >Interior</v-btn>
+        <v-btn
+          large
+          color="primary"
+          @click="0"
+        >Video</v-btn>
       </div>
     </v-row>
     <v-divider></v-divider>
-    <v-row v-if="activateInterior == true" class="px-3">
-      <div class="col-12">
-        <Scenes :product="this.$route.params.id" />
-      </div>
-      <div class="col-2">
+    <v-row>
+      <v-col cols="2">
         <scene-settings :product="this.$route.params.id"></scene-settings>
-      </div>
-      <div class="col-10">
-        <v-card class="mr-auto pa-3 d-flex justify-center align-center" style="min-height:480px;">
-          <v-card-text class="text-center">
-            <p>Upload your Panoramic Image</p>
-            <v-btn large color>Upload</v-btn>
-          </v-card-text>
-        </v-card>
-      </div>
-    </v-row>
-    <v-row v-if="activateExterior == true" class="px-3">
-      <div class="col-2">
-        <scene-settings :product="this.$route.params.id"></scene-settings>
-      </div>
-      <div class="col-10">
-        <scene-panel></scene-panel>
-      </div>
+      </v-col>
+      <v-col cols="10">
+        <div v-if="activateExterior == true">
+          <scene-panel></scene-panel>
+        </div>
+        <div v-if="activateInterior == true">
+          <Scenes :product="this.$route.params.id" />
+          <v-card class="mr-auto pa-3 d-flex justify-center align-center" style="min-height:480px;">
+            <v-card-text class="text-center">
+              <p>Upload your Panoramic Image</p>
+              <v-btn large color>Upload</v-btn>
+            </v-card-text>
+          </v-card>
+        </div>
+      </v-col>
     </v-row>
   </div>
 </template>

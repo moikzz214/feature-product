@@ -47,8 +47,7 @@ class ProductsController extends Controller
         ]);
         // response
         return response()->json([
-            'author' => auth()->id(),
-            'product' => $product,
+            'product' => $product->id,
             'message' => 'Product has been created',
         ], 200);
     }
@@ -66,7 +65,7 @@ class ProductsController extends Controller
 
     public function uploadVideo()
     {
-        
+
     }
 
 

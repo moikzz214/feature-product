@@ -1,6 +1,6 @@
 import BuilderDashboard from "../js/components/builder/BuilderDashboard";
 import BuilderProducts from "../js/components/builder/BuilderProducts";
-import BuilderNewProduct from "../js/components/builder/BuilderNewProduct";
+// import BuilderNewProduct from "../js/components/builder/BuilderNewProduct";
 import BuilderEditProduct from "../js/components/builder/BuilderEditProduct";
 import UploadVideo from "../js/components/builder/UploadVideo";
 
@@ -17,10 +17,10 @@ export const routes = [
         path: "/builder/products",
         component: BuilderProducts
     },
-    {
-        path: "/builder/product/new",
-        component: BuilderNewProduct
-    },
+    // {
+    //     path: "/builder/product/new",
+    //     component: BuilderNewProduct
+    // },
     {
         path: "/builder/product/upload-video",
         component: UploadVideo

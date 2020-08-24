@@ -65,14 +65,12 @@ export default {
       }
     },
     load360() {
-      let images = [];
       axios
         .get("/files/fetch")
         .then((response) => {
           response.data.map(function (file) {
-            images.push("http://127.0.0.1:8000/display/file/" + file.path);
+            this.options.source.push("http://127.0.0.1:8000/display/file/" + file.path);
           });
-          this.options.source = images;
           console.log(this.options);
         })
         .catch((error) => {

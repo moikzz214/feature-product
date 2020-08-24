@@ -2,8 +2,9 @@
   <v-row>
     <v-col cols="9" class="px-5">
       <div class="d-flex align-center mb-5">
+        <!-- to="/builder/product/new" -->
         <v-btn
-          to="/builder/product/new"
+          @click="newProductDialog = true"
           class="mr-3 text--primary"
           elevation="2"
           fab
@@ -75,11 +76,9 @@
     <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title class="headline">Embed code</v-card-title>
-
         <v-card-text>
           <v-textarea ref="code" v-model="code" @click="selectCode"></v-textarea>
         </v-card-text>
-
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" text @click="dialog = false">Close</v-btn>
@@ -87,14 +86,22 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="newProductDialog" width="500">
+      <new-product></new-product>
+    </v-dialog>
   </v-row>
 </template>
 
 <script>
+import NewProduct from "./NewProduct";
 export default {
+  components: {
+    NewProduct,
+  },
   name: "Products",
   data() {
     return {
+      newProductDialog: false,
       dialog: false,
       page: 1,
       pageCount: 0,
@@ -111,7 +118,9 @@ export default {
         window.location.origin +
         "/product/" +
         slug +
-        '" height="768px" width="100%" title="'+title+'"></iframe>';
+        '" height="768px" width="100%" title="' +
+        title +
+        '"></iframe>';
     },
     selectCode() {
       let theCode = this.$refs.code.$el.querySelector("textarea");
@@ -138,6 +147,21 @@ export default {
     },
     onPageChange() {
       this.getProducts(this.page);
+    },
+    saveProduct() {
+      let data = {
+        title: "auto draft",
+        slug: "auto-draft",
+      };
+      axios
+        .post("/builder/product/store", data)
+        .then((response) => {
+          this.valid = true;
+          this.$router.push("/builder/product/edit/" + data.slug);
+        })
+        .catch((error) => {
+          console.log(error.response);
+        });
     },
   },
   mounted() {
