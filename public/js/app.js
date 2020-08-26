@@ -3872,7 +3872,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       model: null,
       dropzoneOptions: {
-        url: "/u/my-messages/conversation/send",
+        url: "/files/upload",
         thumbnailWidth: 40,
         thumbnailHeight: 40,
         uploadMultiple: true,
@@ -3904,9 +3904,10 @@ __webpack_require__.r(__webpack_exports__);
       // this.dragging = false;
     },
     sendingEvent: function sendingEvent(file, xhr, formData) {
-      console.log(file); // formData.append("text", this.message);
-      // formData.append("contact_id", this.contactwith);
-      // formData.append("attachment", 1);
+      //   console.log(formData);
+      //   formData.append("text", this.message);
+      //   formData.append("contact_id", this.contactwith);
+      formData.append("attachment", 1);
     },
     removeAllFiles: function removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -3916,10 +3917,14 @@ __webpack_require__.r(__webpack_exports__);
       this.$refs.myVueDropzone.getQueuedFiles().length == 0 ? this.sendWithFile = false : "";
     },
     uploadSuccess: function uploadSuccess(files, response) {
-      this.$emit("send", response);
-      this.$refs.myVueDropzone.removeAllFiles();
-      this.sendWithFile = false;
-      this.loading = false;
+      this.btnLoading = false;
+      console.log(response); //   this.$emit("send", response);
+
+      this.$refs.myVueDropzone.removeAllFiles(); //   this.sendWithFile = false;
+      //   this.loading = false;
+    },
+    upload: function upload() {
+      this.$refs.myVueDropzone.processQueue();
     }
   }
 });
@@ -26753,7 +26758,7 @@ var render = function() {
           {
             staticClass: "ml-3",
             attrs: { color: "primary", loading: _vm.btnLoading },
-            on: { click: _vm.sendingEvent }
+            on: { click: _vm.upload }
           },
           [_vm._v("Save")]
         )
@@ -86820,8 +86825,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

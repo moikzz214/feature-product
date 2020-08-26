@@ -23,7 +23,7 @@
     <div class="pa-3 d-flex">
       <v-spacer></v-spacer>
       <v-btn class="ml-3" text @click="removeAllFiles">clear all</v-btn>
-      <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="sendingEvent">Save</v-btn>
+      <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="upload">Save</v-btn>
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
     return {
       model: null,
       dropzoneOptions: {
-        url: "/u/my-messages/conversation/send",
+        url: "/files/upload",
         thumbnailWidth: 40,
         thumbnailHeight: 40,
         uploadMultiple: true,
@@ -100,10 +100,10 @@ export default {
       // this.dragging = false;
     },
     sendingEvent(file, xhr, formData) {
-      console.log(file);
-      // formData.append("text", this.message);
-      // formData.append("contact_id", this.contactwith);
-      // formData.append("attachment", 1);
+      //   console.log(formData);
+      //   formData.append("text", this.message);
+      //   formData.append("contact_id", this.contactwith);
+      formData.append("attachment", 1);
     },
     removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -115,10 +115,15 @@ export default {
         : "";
     },
     uploadSuccess(files, response) {
-      this.$emit("send", response);
+      this.btnLoading = false;
+      console.log(response);
+      //   this.$emit("send", response);
       this.$refs.myVueDropzone.removeAllFiles();
-      this.sendWithFile = false;
-      this.loading = false;
+      //   this.sendWithFile = false;
+      //   this.loading = false;
+    },
+    upload() {
+      this.$refs.myVueDropzone.processQueue();
     },
   },
 };
