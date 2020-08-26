@@ -21,12 +21,12 @@
     </v-row>
     <v-divider></v-divider>
     <v-row>
-      <v-col cols="2">
+      <v-col cols="3">
         <scene-settings :product="this.$route.params.id"></scene-settings>
       </v-col>
-      <v-col cols="10">
+      <v-col cols="9">
         <div v-if="activateExterior == true">
-          <scene-panel></scene-panel>
+          <exterior-panel></exterior-panel>
         </div>
         <div v-if="activateInterior == true">
           <Scenes :product="this.$route.params.id" />
@@ -45,12 +45,12 @@
 <script>
 import Scenes from "./edit/Scenes";
 import SceneSettings from "./edit/SceneSettings";
-import ScenePanel from "./edit/ScenePanel";
+import ExteriorPanel from "./edit/ExteriorPanel";
 export default {
   components: {
     Scenes,
     SceneSettings,
-    ScenePanel,
+    ExteriorPanel,
   },
   data() {
     return {

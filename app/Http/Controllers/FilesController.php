@@ -12,6 +12,11 @@ class FilesController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * Images
+     * https://drive.google.com/drive/folders/1aaI4LEJKpWq1paURHcrIeXnJrGUb6JcG
+     */
+
     public function getItemImages()
     {
         $files = User_file::where(['user' => 1, 'file_type' => 'image'])->take(50)->get();
