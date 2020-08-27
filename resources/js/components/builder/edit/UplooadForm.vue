@@ -11,6 +11,7 @@
         v-on:vdropzone-success-multiple="uploadSuccess"
         v-on:vdropzone-removed-file="removedFile"
         v-on:vdropzone-processing-multiple="processing"
+        v-on:vdropzone-error-multiple="uploadError"
         :include-styling="false"
         :useCustomSlot="preview"
       >
@@ -44,9 +45,10 @@ export default {
         thumbnailHeight: 40,
         uploadMultiple: true,
         autoProcessQueue: false,
-        maxFiles: 60,
-        parallelUploads: 60,
-        maxFilesize: 20,
+        maxFiles: 100,
+        parallelUploads: 100,
+        maxFilesize: 1,
+        timeout: 180000,
         previewTemplate: this.dropzoneTemplate(),
         clickable: ".open-uploader",
         headers: {
@@ -68,7 +70,7 @@ export default {
                   <div class="px-1 caption">
                     <div class="dz-filename" data-dz-name></div>
                      <div class="dz-size px-1 caption" data-dz-size></div>
-                    <div class="error--text overline" data-dz-errormessage></div>
+                    <div class="error--text" data-dz-errormessage></div>
                   </div>
                   <div class="dz-progress d-flex align-center justify-center caption">
                     <span class="dz-upload" data-dz-uploadprogress></span>
@@ -103,7 +105,7 @@ export default {
       //   console.log(formData);
       //   formData.append("text", this.message);
       //   formData.append("contact_id", this.contactwith);
-      formData.append("attachment", 1);
+      formData.append("product", this.$route.params.id);
     },
     removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -121,6 +123,9 @@ export default {
       this.$refs.myVueDropzone.removeAllFiles();
       //   this.sendWithFile = false;
       //   this.loading = false;
+    },
+    uploadError(files, message, xhr){
+      console.log(message);
     },
     upload() {
       this.$refs.myVueDropzone.processQueue();

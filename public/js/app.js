@@ -3862,6 +3862,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3877,9 +3878,10 @@ __webpack_require__.r(__webpack_exports__);
         thumbnailHeight: 40,
         uploadMultiple: true,
         autoProcessQueue: false,
-        maxFiles: 60,
-        parallelUploads: 60,
-        maxFilesize: 20,
+        maxFiles: 100,
+        parallelUploads: 100,
+        maxFilesize: 1,
+        timeout: 180000,
         previewTemplate: this.dropzoneTemplate(),
         clickable: ".open-uploader",
         headers: {
@@ -3893,7 +3895,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     dropzoneTemplate: function dropzoneTemplate() {
-      return "<div class=\"dz-preview dz-file-preview d-flex pa-2 blue lighten-5\">\n                <img data-dz-thumbnail />\n                <div class=\"dz-details d-flex align-center justify-start\">\n                  <div class=\"px-1 caption\">\n                    <div class=\"dz-filename\" data-dz-name></div>\n                     <div class=\"dz-size px-1 caption\" data-dz-size></div>\n                    <div class=\"error--text overline\" data-dz-errormessage></div>\n                  </div>\n                  <div class=\"dz-progress d-flex align-center justify-center caption\">\n                    <span class=\"dz-upload\" data-dz-uploadprogress></span>\n                  </div>\n                </div>\n                <v-spacer></v-spacer>\n                <button\n                  data-dz-remove\n                  type=\"button\"\n                  class=\"ml-auto v-btn v-btn--flat v-btn--icon v-btn--round theme--light v-size--x-small error--text\"\n                >\n                  <span class=\"v-btn__content\">\n                    <i\n                      aria-hidden=\"true\"\n                      class=\"v-icon notranslate mdi mdi-trash-can-outline theme--light\"\n                      style=\"font-size: 12px;\"\n                    ></i>\n                  </span>\n                </button>\n              </div>";
+      return "<div class=\"dz-preview dz-file-preview d-flex pa-2 blue lighten-5\">\n                <img data-dz-thumbnail />\n                <div class=\"dz-details d-flex align-center justify-start\">\n                  <div class=\"px-1 caption\">\n                    <div class=\"dz-filename\" data-dz-name></div>\n                     <div class=\"dz-size px-1 caption\" data-dz-size></div>\n                    <div class=\"error--text\" data-dz-errormessage></div>\n                  </div>\n                  <div class=\"dz-progress d-flex align-center justify-center caption\">\n                    <span class=\"dz-upload\" data-dz-uploadprogress></span>\n                  </div>\n                </div>\n                <v-spacer></v-spacer>\n                <button\n                  data-dz-remove\n                  type=\"button\"\n                  class=\"ml-auto v-btn v-btn--flat v-btn--icon v-btn--round theme--light v-size--x-small error--text\"\n                >\n                  <span class=\"v-btn__content\">\n                    <i\n                      aria-hidden=\"true\"\n                      class=\"v-icon notranslate mdi mdi-trash-can-outline theme--light\"\n                      style=\"font-size: 12px;\"\n                    ></i>\n                  </span>\n                </button>\n              </div>";
     },
     processing: function processing() {
       this.btnLoading = true;
@@ -3907,7 +3909,7 @@ __webpack_require__.r(__webpack_exports__);
       //   console.log(formData);
       //   formData.append("text", this.message);
       //   formData.append("contact_id", this.contactwith);
-      formData.append("attachment", 1);
+      formData.append("product", this.$route.params.id);
     },
     removeAllFiles: function removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -3922,6 +3924,9 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$refs.myVueDropzone.removeAllFiles(); //   this.sendWithFile = false;
       //   this.loading = false;
+    },
+    uploadError: function uploadError(files, message, xhr) {
+      console.log(message);
     },
     upload: function upload() {
       this.$refs.myVueDropzone.processQueue();
@@ -26708,7 +26713,8 @@ var render = function() {
               "vdropzone-drop": _vm.dropFunction,
               "vdropzone-success-multiple": _vm.uploadSuccess,
               "vdropzone-removed-file": _vm.removedFile,
-              "vdropzone-processing-multiple": _vm.processing
+              "vdropzone-processing-multiple": _vm.processing,
+              "vdropzone-error-multiple": _vm.uploadError
             }
           },
           [
@@ -86825,8 +86831,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
