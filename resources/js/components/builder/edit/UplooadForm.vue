@@ -103,8 +103,6 @@ export default {
     },
     sendingEvent(file, xhr, formData) {
       //   console.log(formData);
-      //   formData.append("text", this.message);
-      //   formData.append("contact_id", this.contactwith);
       formData.append("product", this.$route.params.id);
     },
     removeAllFiles() {
@@ -119,12 +117,13 @@ export default {
     uploadSuccess(files, response) {
       this.btnLoading = false;
       console.log(response);
-      //   this.$emit("send", response);
       this.$refs.myVueDropzone.removeAllFiles();
+      //   this.$emit("send", response);
       //   this.sendWithFile = false;
       //   this.loading = false;
     },
-    uploadError(files, message, xhr){
+    uploadError(files, message, xhr) {
+      this.btnLoading = false;
       console.log(message);
     },
     upload() {

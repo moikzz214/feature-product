@@ -72,7 +72,7 @@ class FilesController extends Controller
                 'original_name' => $fileName,
                 'disk' => 'uploads',
                 'path' => $fileName,
-                'user' => auth()->id(),
+                'user_id' => auth()->id(),
                 'created_at' => Carbon::now()
             ));
 
@@ -90,8 +90,8 @@ class FilesController extends Controller
         foreach ($recentlySavedFiles as $file) {
             array_push($itemsArray, array(
                 'item_type' => '360',
-                'product' => $request->product,
-                'file' => $file->id,
+                'product_id' => $request->product,
+                'user_files_id' => $file->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ));
@@ -108,7 +108,7 @@ class FilesController extends Controller
 
     public function getItemImages()
     {
-        $files = User_file::where(['user' => 1, 'file_type' => 'image'])->take(50)->get();
+        $files = User_file::where(['user_id' => 1, 'file_type' => 'image'])->take(50)->get();
         return response()->json($files, 200);
     }
 

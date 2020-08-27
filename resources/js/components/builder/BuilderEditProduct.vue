@@ -26,7 +26,7 @@
       </v-col>
       <v-col cols="9">
         <div v-if="activateExterior == true">
-          <exterior-panel></exterior-panel>
+          <exterior-panel :product="this.$route.params.id"></exterior-panel>
         </div>
         <div v-if="activateInterior == true">
           <Scenes :product="this.$route.params.id" />

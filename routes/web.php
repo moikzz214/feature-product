@@ -43,3 +43,7 @@ Route::post('/files/upload', 'FilesController@upload')->name('upload');
 Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files');
 // Route::get('/display/file/{msgid}/{extn}/{filename}', 'FileController@show')->name('file.show');
 Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file');
+
+
+// Items Controller
+Route::get('/items/by-product/{id}', 'ItemsController@getItemsByProduct')->name('items.by.product');

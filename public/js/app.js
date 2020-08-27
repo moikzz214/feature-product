@@ -3627,8 +3627,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['product'],
   components: {
     UploadForm: _UplooadForm__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
@@ -3637,7 +3644,15 @@ __webpack_require__.r(__webpack_exports__);
       model: null
     };
   },
-  methods: {}
+  methods: {
+    getImagesByProduct: function getImagesByProduct() {
+      axios.get("/items/by-product/" + this.product).then(function (response) {
+        console.log(response);
+      })["catch"](function (error) {
+        console.log(error.response);
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -3907,8 +3922,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     sendingEvent: function sendingEvent(file, xhr, formData) {
       //   console.log(formData);
-      //   formData.append("text", this.message);
-      //   formData.append("contact_id", this.contactwith);
       formData.append("product", this.$route.params.id);
     },
     removeAllFiles: function removeAllFiles() {
@@ -3920,12 +3933,13 @@ __webpack_require__.r(__webpack_exports__);
     },
     uploadSuccess: function uploadSuccess(files, response) {
       this.btnLoading = false;
-      console.log(response); //   this.$emit("send", response);
-
-      this.$refs.myVueDropzone.removeAllFiles(); //   this.sendWithFile = false;
+      console.log(response);
+      this.$refs.myVueDropzone.removeAllFiles(); //   this.$emit("send", response);
+      //   this.sendWithFile = false;
       //   this.loading = false;
     },
     uploadError: function uploadError(files, message, xhr) {
+      this.btnLoading = false;
       console.log(message);
     },
     upload: function upload() {
@@ -25595,7 +25609,15 @@ var render = function() {
           _vm._v(" "),
           _c("v-col", { attrs: { cols: "9" } }, [
             _vm.activateExterior == true
-              ? _c("div", [_c("exterior-panel")], 1)
+              ? _c(
+                  "div",
+                  [
+                    _c("exterior-panel", {
+                      attrs: { product: this.$route.params.id }
+                    })
+                  ],
+                  1
+                )
               : _vm._e(),
             _vm._v(" "),
             _vm.activateInterior == true
@@ -26350,6 +26372,93 @@ var render = function() {
         "v-card",
         { staticClass: "mr-auto d-flex justify-center align-center" },
         [_c("upload-form")],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-card",
+        { staticClass: "mr-auto d-flex justify-center align-center" },
+        [
+          _c(
+            "div",
+            {
+              staticStyle: {
+                width: "800px",
+                height: "450px",
+                margin: "0 auto",
+                "background-color": "#eee",
+                "border-radius": "0"
+              }
+            },
+            [
+              _c(
+                "v-btn",
+                { attrs: { large: "" }, on: { click: _vm.getImagesByProduct } },
+                [_vm._v("Load Images")]
+              )
+            ],
+            1
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "v-sheet",
+        {
+          staticClass: "mt-3 w-100",
+          attrs: { elevation: "0", color: "grey lighten-4" }
+        },
+        [
+          _c(
+            "v-slide-group",
+            {
+              staticClass: "pa-1",
+              attrs: { "active-class": "success", "show-arrows": "" },
+              model: {
+                value: _vm.model,
+                callback: function($$v) {
+                  _vm.model = $$v
+                },
+                expression: "model"
+              }
+            },
+            _vm._l(50, function(n) {
+              return _c("v-slide-item", {
+                key: n,
+                scopedSlots: _vm._u(
+                  [
+                    {
+                      key: "default",
+                      fn: function(ref) {
+                        var active = ref.active
+                        var toggle = ref.toggle
+                        return [
+                          _c(
+                            "v-card",
+                            {
+                              staticClass: "ma-1",
+                              attrs: {
+                                color: active ? undefined : "grey lighten-1",
+                                height: "75",
+                                width: "75"
+                              },
+                              on: { click: toggle }
+                            },
+                            [_c("v-card-text", [_vm._v(_vm._s(n))])],
+                            1
+                          )
+                        ]
+                      }
+                    }
+                  ],
+                  null,
+                  true
+                )
+              })
+            }),
+            1
+          )
+        ],
         1
       )
     ],

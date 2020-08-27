@@ -20,7 +20,8 @@ class CreateUserFilesTable extends Migration
             $table->string('original_name');
             $table->string('disk');
             $table->string('path');
-            $table->integer('user')->unsigned();
+            $table->integer('user_id')->unsigned();
+            $table->integer('item_id')->unsigned();
             $table->timestamps();
         });
     }
