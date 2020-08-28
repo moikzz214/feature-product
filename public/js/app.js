@@ -3633,25 +3633,62 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['product'],
+  props: ["product"],
   components: {
     UploadForm: _UplooadForm__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   data: function data() {
     return {
-      model: null
+      withItems: false,
+      model: null,
+      items: [],
+      baseUrl: window.location.origin,
+      // 360
+      show: true,
+      options: {
+        source: [],
+        width: 1366,
+        height: 650,
+        frames: 0,
+        framesX: 6 // sense: -1,
+
+      }
     };
   },
   methods: {
     getImagesByProduct: function getImagesByProduct() {
+      var _this = this;
+
       axios.get("/items/by-product/" + this.product).then(function (response) {
-        console.log(response);
+        _this.withItems = true;
+        _this.items = response.data.items; // Setup 360
+
+        _this.options.frames = response.data.items.length;
+        _this.options.source = _this.items.map(function (item, index) {
+          return window.location.origin + "/storage/uploads/user-1/" + item.user_file.path;
+        });
       })["catch"](function (error) {
-        console.log(error.response);
+        _this.withItems = false;
+        console.log("Error fetching items");
+        console.log(error);
       });
     }
+  },
+  mounted: function mounted() {
+    this.getImagesByProduct();
   }
 });
 
@@ -3933,9 +3970,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     uploadSuccess: function uploadSuccess(files, response) {
       this.btnLoading = false;
-      console.log(response);
-      this.$refs.myVueDropzone.removeAllFiles(); //   this.$emit("send", response);
-      //   this.sendWithFile = false;
+      this.$refs.myVueDropzone.removeAllFiles();
+      this.$emit("uploaded", response); //   this.sendWithFile = false;
       //   this.loading = false;
     },
     uploadError: function uploadError(files, message, xhr) {
@@ -26365,105 +26401,136 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c(
-        "v-card",
-        { staticClass: "mr-auto d-flex justify-center align-center" },
-        [_c("upload-form")],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-card",
-        { staticClass: "mr-auto d-flex justify-center align-center" },
-        [
-          _c(
-            "div",
-            {
-              staticStyle: {
-                width: "800px",
-                height: "450px",
-                margin: "0 auto",
-                "background-color": "#eee",
-                "border-radius": "0"
-              }
-            },
-            [
-              _c(
-                "v-btn",
-                { attrs: { large: "" }, on: { click: _vm.getImagesByProduct } },
-                [_vm._v("Load Images")]
-              )
-            ],
-            1
-          )
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "v-sheet",
-        {
-          staticClass: "mt-3 w-100",
-          attrs: { elevation: "0", color: "grey lighten-4" }
-        },
-        [
-          _c(
-            "v-slide-group",
-            {
-              staticClass: "pa-1",
-              attrs: { "active-class": "success", "show-arrows": "" },
-              model: {
-                value: _vm.model,
-                callback: function($$v) {
-                  _vm.model = $$v
-                },
-                expression: "model"
-              }
-            },
-            _vm._l(50, function(n) {
-              return _c("v-slide-item", {
-                key: n,
-                scopedSlots: _vm._u(
-                  [
-                    {
-                      key: "default",
-                      fn: function(ref) {
-                        var active = ref.active
-                        var toggle = ref.toggle
-                        return [
-                          _c(
-                            "v-card",
-                            {
-                              staticClass: "ma-1",
-                              attrs: {
-                                color: active ? undefined : "grey lighten-1",
-                                height: "75",
-                                width: "75"
-                              },
-                              on: { click: toggle }
-                            },
-                            [_c("v-card-text", [_vm._v(_vm._s(n))])],
-                            1
-                          )
-                        ]
-                      }
+  return _c("div", [
+    _vm.withItems == false
+      ? _c(
+          "div",
+          [
+            _c(
+              "v-card",
+              { staticClass: "mr-auto d-flex justify-center align-center" },
+              [_c("upload-form", { on: { uploaded: _vm.getImagesByProduct } })],
+              1
+            )
+          ],
+          1
+        )
+      : _c(
+          "div",
+          [
+            _c(
+              "v-card",
+              { staticClass: "mr-auto d-flex justify-center align-center" },
+              [
+                _c(
+                  "div",
+                  {
+                    staticStyle: {
+                      width: "800px",
+                      height: "450px",
+                      margin: "0 auto",
+                      "background-color": "#eee",
+                      "border-radius": "0"
                     }
+                  },
+                  [
+                    _vm.show
+                      ? _c("spritespin", {
+                          ref: "spritespin",
+                          attrs: { options: _vm.options }
+                        })
+                      : _vm._e()
                   ],
-                  null,
-                  true
+                  1
                 )
-              })
-            }),
-            1
-          )
-        ],
-        1
-      )
-    ],
-    1
-  )
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "v-sheet",
+              {
+                staticClass: "mt-3 w-100",
+                attrs: { elevation: "0", color: "grey lighten-4" }
+              },
+              [
+                _c(
+                  "v-slide-group",
+                  {
+                    staticClass: "pa-1",
+                    attrs: { "active-class": "success", "show-arrows": "" },
+                    model: {
+                      value: _vm.model,
+                      callback: function($$v) {
+                        _vm.model = $$v
+                      },
+                      expression: "model"
+                    }
+                  },
+                  _vm._l(_vm.items, function(item) {
+                    return _c("v-slide-item", {
+                      key: item.id,
+                      scopedSlots: _vm._u(
+                        [
+                          {
+                            key: "default",
+                            fn: function(ref) {
+                              var active = ref.active
+                              var toggle = ref.toggle
+                              return [
+                                _c(
+                                  "v-card",
+                                  {
+                                    staticClass: "ma-1",
+                                    attrs: {
+                                      color: active
+                                        ? undefined
+                                        : "grey lighten-1",
+                                      height: "75",
+                                      width: "75"
+                                    },
+                                    on: { click: toggle }
+                                  },
+                                  [
+                                    _c(
+                                      "v-img",
+                                      {
+                                        staticClass: "white--text align-end",
+                                        attrs: {
+                                          "aspect-ratio": 16 / 9,
+                                          src:
+                                            _vm.baseUrl +
+                                            "/storage/uploads/user-1/" +
+                                            item.user_file.path
+                                        }
+                                      },
+                                      [
+                                        _c("v-card-text", [
+                                          _vm._v(_vm._s(item.product))
+                                        ])
+                                      ],
+                                      1
+                                    )
+                                  ],
+                                  1
+                                )
+                              ]
+                            }
+                          }
+                        ],
+                        null,
+                        true
+                      )
+                    })
+                  }),
+                  1
+                )
+              ],
+              1
+            )
+          ],
+          1
+        )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -86940,8 +87007,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

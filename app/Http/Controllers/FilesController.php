@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Item;
 use App\User_file;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -32,8 +33,11 @@ class FilesController extends Controller
 
         // User_files table
         $userFiles = new User_file;
+        $itemsArray = array();
         $fileArray = array();
-        $fileNames = array();
+
+        $uploadKey = "";
+        $uploadKey = Str::random();
 
         // $userId = auth()->id();
         $userStorage = '/public/uploads/user-'.auth()->id();
@@ -45,7 +49,7 @@ class FilesController extends Controller
         $images = Collection::wrap(request()->file('file'));
 
         // Do something on each files uploaded
-        $images->each( function($image, $key) use(&$userStorage, &$fileArray, &$fileNames){
+        $images->each( function($image, $key) use(&$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey){
             $userStorageDir = storage_path(). '/app'.$userStorage;
             $fileName = $image->getClientOriginalName();
             $title = pathinfo($fileName, PATHINFO_FILENAME);
@@ -64,7 +68,15 @@ class FilesController extends Controller
                 ->fit(1920,1080)
                 ->encode($format, 50)
                 ->save($userStorageDir.'/'.$fileName); // FHD
-          
+
+            array_push($itemsArray, array(
+                'item_type' => '360',
+                'product_id' => $request->product,
+                'upload_key' => $uploadKey,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ));
+
             // Prepare object before saving
             array_push($fileArray, array(
                 'file_type' => 'image',
@@ -75,34 +87,44 @@ class FilesController extends Controller
                 'user_id' => auth()->id(),
                 'created_at' => Carbon::now()
             ));
-
-            array_push($fileNames, $title);
         });
+
+        // Save to Items table
+        Item::insert($itemsArray);
+        $recentlySavedItems = Item::where([
+            'product_id' => $request->product,
+            'upload_key' => $uploadKey,
+        ])->get();
+
+        // Prepare User_files object before saving
+        foreach ($recentlySavedItems as $key => $item) {
+            $fileArray[$key]['item_id'] = $item->id;
+        }
 
         // Save the files to user_files table
         User_file::insert($fileArray);
 
         // Get the files by name
-        $recentlySavedFiles = User_file::whereIn('title', $fileNames )->get();
+        // $recentlySavedFiles = User_file::whereIn('title', $fileNames )->get();
 
-        // Prepare items
-        $itemsArray = array();
-        foreach ($recentlySavedFiles as $file) {
-            array_push($itemsArray, array(
-                'item_type' => '360',
-                'product_id' => $request->product,
-                'user_files_id' => $file->id,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ));
-        }
+        // // Prepare items
+        // $itemsArray = array();
+        // foreach ($recentlySavedFiles as $file) {
+        //     array_push($itemsArray, array(
+        //         'item_type' => '360',
+        //         'product_id' => $request->product,
+        //         'user_files_id' => $file->id,
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now()
+        //     ));
+        // }
 
-        // Save to Items table
-        Item::insert($itemsArray);
+        // // Save to Items table
+        // Item::insert($itemsArray);
 
         // Return response
         return response()->json([
-            'message' => 'upload success',
+            'message' => 'Upload Success',
         ], 200);
     }
 

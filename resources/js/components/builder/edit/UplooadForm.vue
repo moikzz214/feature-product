@@ -116,9 +116,8 @@ export default {
     },
     uploadSuccess(files, response) {
       this.btnLoading = false;
-      console.log(response);
       this.$refs.myVueDropzone.removeAllFiles();
-      //   this.$emit("send", response);
+      this.$emit("uploaded", response);
       //   this.sendWithFile = false;
       //   this.loading = false;
     },

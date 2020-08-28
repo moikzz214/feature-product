@@ -14,8 +14,8 @@ class Item extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    public function user_files()
+    public function user_file()
     {
-        return $this->hasMany(User_file::class);
+        return $this->hasOne(User_file::class);
     }
 }
