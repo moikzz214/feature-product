@@ -26,7 +26,7 @@ Vue.component(
 
 Vue.component('spritespin', {
     props: ['options'],
-    template: '<div></div>',
+    template: '<div class="sp-container"></div>',
     data: function () {
       return {
         api: null,

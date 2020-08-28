@@ -31,7 +31,10 @@
     </div>
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://unpkg.com/spritespin@4.0.11/release/spritespin.js"></script>
+    {{-- <script src="https://unpkg.com/spritespin@4.0.11/release/spritespin.js"></script> --}}
+    {{-- <script src="https://unpkg.com/spritespin@4.1.0/release/spritespin.js"></script> --}}
+    {{-- <script src="https://unpkg.com/spritespin@x.x.x/release/spritespin.js"></script> --}}
+    <script src="{{ asset('js/sp.js') }}"></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
 

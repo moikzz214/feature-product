@@ -6,34 +6,13 @@
       </v-card>
     </div>
     <div v-else>
-      <v-card class="mr-auto d-flex justify-center align-center">
+      <!-- <v-card class="mr-auto d-flex justify-center align-center" style="border-radius:0;">
         <div
-          style="width:800px; height:450px; margin:0 auto; background-color:#eee;border-radius:0;"
-        >
-          <spritespin v-bind:options="options" v-if="show" ref="spritespin" />
-        </div>
-      </v-card>
-      <v-sheet elevation="0" class="mt-3 w-100" color="grey lighten-4">
-        <v-slide-group v-model="model" class="pa-1" active-class="success" show-arrows>
-          <v-slide-item v-for="item in items" :key="item.id" v-slot:default="{ active, toggle }">
-            <v-card
-              :color="active ? undefined : 'grey lighten-1'"
-              class="ma-1"
-              height="75"
-              width="75"
-              @click="toggle"
-            >
-              <v-img
-                :aspect-ratio="16/9"
-                class="white--text align-end"
-                :src="baseUrl+'/storage/uploads/user-1/'+item.user_file.path"
-              >
-                <v-card-text>{{item.product}}</v-card-text>
-              </v-img>
-            </v-card>
-          </v-slide-item>
-        </v-slide-group>
-      </v-sheet>
+          style="background-color:#eee;"
+      >-->
+      <spritespin v-bind:options="options" v-if="show" ref="spritespin" style="margin:0 auto;" />
+      <!-- </div>
+      </v-card>-->
     </div>
   </div>
 </template>
@@ -56,10 +35,15 @@ export default {
       show: true,
       options: {
         source: [],
-        width: 1366,
-        height: 650,
+        animate: false,
+        // responsive: true,
+        // width: 1920,
+        // height: 1080,
+        width: 800,
+        height: 450,
         frames: 0,
         framesX: 6,
+        // plugins: ["drag", "360", "zoom"],
         // sense: -1,
       },
     };
@@ -69,8 +53,15 @@ export default {
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {
+          // If no items found
+          if (response.data.items.length == 0) {
+            this.withItems = false;
+            return;
+          }
+
+          // Emit Items
+          this.$emit("loadedItems", response.data.items);
           this.withItems = true;
-          this.items = response.data.items;
 
           // Setup 360
           this.options.frames = response.data.items.length;
@@ -81,9 +72,12 @@ export default {
               item.user_file.path
             );
           });
+          setTimeout(() => {
+            $(this.$el).spritespin(this.options);
+          }, 300);
+          console.log(this.options);
         })
         .catch((error) => {
-          this.withItems = false;
           console.log("Error fetching items");
           console.log(error);
         });
