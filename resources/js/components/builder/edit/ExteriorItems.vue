@@ -33,7 +33,9 @@ export default {
     };
   },
   mounted() {
-    console.log(this.loadedItems);
+    setTimeout(() => {
+      console.log(this.loadedItems);
+    }, 1000);
   },
 };
 </script>

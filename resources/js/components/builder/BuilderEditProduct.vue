@@ -21,10 +21,9 @@
         <scene-settings :product="this.$route.params.id"></scene-settings>
       </v-col>
       <v-col v-if="activateExterior == true" cols="9">
-        <exterior-items :loadedItems="loadedItems"></exterior-items>
-      </v-col>
-      <v-col v-if="activateExterior == true" cols="9">
-        <exterior-panel :product="this.$route.params.id" @loadedItems="itemsHasBeenLoaded"></exterior-panel>
+        <!-- <exterior-panel :product="this.$route.params.id" @loadedItems="itemsHasBeenLoaded"></exterior-panel> -->
+        <exterior-panel :product="this.$route.params.id"></exterior-panel>
+        <!-- <exterior-items :loadedItems="loadedItems"></exterior-items> -->
       </v-col>
       <v-col v-if="activateInterior == true" cols="9">
         <Scenes :product="this.$route.params.id" />
@@ -43,25 +42,25 @@
 import Scenes from "./edit/Scenes";
 import SceneSettings from "./edit/SceneSettings";
 import ExteriorPanel from "./edit/ExteriorPanel";
-import ExteriorItems from "./edit/ExteriorItems";
+// import ExteriorItems from "./edit/ExteriorItems";
 export default {
   components: {
     Scenes,
     SceneSettings,
     ExteriorPanel,
-    ExteriorItems,
+    // ExteriorItems,
   },
   data() {
     return {
       activateExterior: true,
       activateInterior: false,
-      loadedItems: null,
+    //   loadedItems: null,
     };
   },
   methods: {
-    itemsHasBeenLoaded(items) {
-      console.log("items: " + items);
-    },
+    // itemsHasBeenLoaded(items) {
+    // //   console.log("items: " + items);
+    // },
   },
   mounted() {
     // console.log(this.$route.params.id);
