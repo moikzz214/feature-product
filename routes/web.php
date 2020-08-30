@@ -47,3 +47,4 @@ Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file
 
 // Items Controller
 Route::get('/items/by-product/{id}', 'ItemsController@getItemsByProduct')->name('items.by.product');
+Route::post('/item/delete/{id}', 'ItemsController@destroy')->name('items.delete');

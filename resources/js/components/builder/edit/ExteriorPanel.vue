@@ -6,7 +6,14 @@
       </v-card>
     </div>
     <div v-else>
-      <spritespin v-bind:options="options" v-if="show" ref="spritespin" style="margin:0 auto;" />
+      <div style="min-height:450px;">
+        <spritespin
+          v-bind:options="options"
+          v-if="show"
+          ref="spritespin"
+          style="margin:0 auto;"
+        />
+      </div>
       <v-card class="mt-3">
         <v-slide-group v-model="model" class="pa-1" active-class="grey" show-arrows>
           <v-slide-item
@@ -46,13 +53,20 @@
       </v-card>
     </div>
     <v-dialog v-model="actionDialog" max-width="300">
-      <v-card>
-        <v-card-title class="subtitle-1">Are you sure you want to delete?</v-card-title>
+      <v-card :loading="dialogLoading">
+        <v-card-title
+          class="subtitle-1"
+        >Are you sure you want to delete {{dialogItem && dialogItem.user_file.path}}?</v-card-title>
         <v-card-text>Deleting this item will delete the file and hotspot information.</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="actionDialog = false">Cancel</v-btn>
-          <v-btn color="red" text @click="actionDialog = false">Delete</v-btn>
+          <v-btn :disabled="dialogLoading" color="primary" text @click="actionDialog = false">Cancel</v-btn>
+          <v-btn
+            :disabled="dialogLoading"
+            color="red"
+            text
+            @click="confirmDelete(dialogItem.id)"
+          >Delete</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -68,6 +82,7 @@ export default {
   },
   data() {
     return {
+      dialogLoading: false,
       dialogItem: null,
       actionDialog: false,
       withItems: false,
@@ -104,7 +119,28 @@ export default {
     deleteItem(item) {
       this.actionDialog = true;
       this.dialogItem = Object.assign({}, item);
-      console.log(this.dialogItem.user_file.path);
+    },
+    confirmDelete(item) {
+      this.dialogLoading = true;
+      console.log(item);
+      axios
+        .post("/item/delete/" + item)
+        .then((response) => {
+          this.dialogLoading = false;
+          this.actionDialog = false;
+          this.getImagesByProduct();
+          this.show = false;
+          setTimeout(() => {
+            this.show = true;
+          }, 1000);
+          console.log(response);
+        })
+        .catch((error) => {
+          this.dialogLoading = false;
+          this.actionDialog = false;
+          console.log("Error Deleting Items");
+          console.log(error);
+        });
     },
     selected(index) {
       this.$refs.spritespin.api.updateFrame(index);
@@ -113,7 +149,7 @@ export default {
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {
-          console.log(response.data.items);
+          // console.log(response.data.items);
           // If no items found
           if (response.data.items.length == 0) {
             this.withItems = false;
@@ -121,19 +157,11 @@ export default {
           }
 
           // Emit Items
-          //   this.$emit("loadedItems", response.data.items);
           this.withItems = true;
           this.items = response.data.items;
 
           // Setup 360
           this.options.frames = response.data.items.length;
-          //   this.items.map(function (item, index) {
-          //     this.options.source.push(
-          //       window.location.origin +
-          //         "/storage/uploads/user-1/" +
-          //         item.user_file.path
-          //     );
-          //   });
           this.options.source = response.data.items.map(
             (item) =>
               window.location.origin +
@@ -144,7 +172,6 @@ export default {
             // $(this.$el).spritespin(this.options);
             this.show = true;
           }, 1);
-          //   console.log(this.options);
         })
         .catch((error) => {
           console.log("Error fetching items");

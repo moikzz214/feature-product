@@ -3667,6 +3667,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["product"],
@@ -3675,6 +3689,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      dialogLoading: false,
       dialogItem: null,
       actionDialog: false,
       withItems: false,
@@ -3709,42 +3724,56 @@ __webpack_require__.r(__webpack_exports__);
     deleteItem: function deleteItem(item) {
       this.actionDialog = true;
       this.dialogItem = Object.assign({}, item);
-      console.log(this.dialogItem.user_file.path);
+    },
+    confirmDelete: function confirmDelete(item) {
+      var _this = this;
+
+      this.dialogLoading = true;
+      console.log(item);
+      axios.post("/item/delete/" + item).then(function (response) {
+        _this.dialogLoading = false;
+        _this.actionDialog = false;
+
+        _this.getImagesByProduct();
+
+        _this.show = false;
+        setTimeout(function () {
+          _this.show = true;
+        }, 1000);
+        console.log(response);
+      })["catch"](function (error) {
+        _this.dialogLoading = false;
+        _this.actionDialog = false;
+        console.log("Error Deleting Items");
+        console.log(error);
+      });
     },
     selected: function selected(index) {
       this.$refs.spritespin.api.updateFrame(index);
     },
     getImagesByProduct: function getImagesByProduct() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get("/items/by-product/" + this.product).then(function (response) {
-        console.log(response.data.items); // If no items found
-
+        // console.log(response.data.items);
+        // If no items found
         if (response.data.items.length == 0) {
-          _this.withItems = false;
+          _this2.withItems = false;
           return;
         } // Emit Items
-        //   this.$emit("loadedItems", response.data.items);
 
 
-        _this.withItems = true;
-        _this.items = response.data.items; // Setup 360
+        _this2.withItems = true;
+        _this2.items = response.data.items; // Setup 360
 
-        _this.options.frames = response.data.items.length; //   this.items.map(function (item, index) {
-        //     this.options.source.push(
-        //       window.location.origin +
-        //         "/storage/uploads/user-1/" +
-        //         item.user_file.path
-        //     );
-        //   });
-
-        _this.options.source = response.data.items.map(function (item) {
+        _this2.options.frames = response.data.items.length;
+        _this2.options.source = response.data.items.map(function (item) {
           return window.location.origin + "/storage/uploads/user-1/" + item.user_file.path;
         });
         setTimeout(function () {
           // $(this.$el).spritespin(this.options);
-          _this.show = true;
-        }, 1); //   console.log(this.options);
+          _this2.show = true;
+        }, 1);
       })["catch"](function (error) {
         console.log("Error fetching items");
         console.log(error);
@@ -26488,13 +26517,20 @@ var render = function() {
         : _c(
             "div",
             [
-              _vm.show
-                ? _c("spritespin", {
-                    ref: "spritespin",
-                    staticStyle: { margin: "0 auto" },
-                    attrs: { options: _vm.options }
-                  })
-                : _vm._e(),
+              _c(
+                "div",
+                { staticStyle: { "min-height": "450px" } },
+                [
+                  _vm.show
+                    ? _c("spritespin", {
+                        ref: "spritespin",
+                        staticStyle: { margin: "0 auto" },
+                        attrs: { options: _vm.options }
+                      })
+                    : _vm._e()
+                ],
+                1
+              ),
               _vm._v(" "),
               _c(
                 "v-card",
@@ -26678,9 +26714,14 @@ var render = function() {
         [
           _c(
             "v-card",
+            { attrs: { loading: _vm.dialogLoading } },
             [
               _c("v-card-title", { staticClass: "subtitle-1" }, [
-                _vm._v("Are you sure you want to delete?")
+                _vm._v(
+                  "Are you sure you want to delete " +
+                    _vm._s(_vm.dialogItem && _vm.dialogItem.user_file.path) +
+                    "?"
+                )
               ]),
               _vm._v(" "),
               _c("v-card-text", [
@@ -26697,7 +26738,11 @@ var render = function() {
                   _c(
                     "v-btn",
                     {
-                      attrs: { color: "primary", text: "" },
+                      attrs: {
+                        disabled: _vm.dialogLoading,
+                        color: "primary",
+                        text: ""
+                      },
                       on: {
                         click: function($event) {
                           _vm.actionDialog = false
@@ -26710,10 +26755,14 @@ var render = function() {
                   _c(
                     "v-btn",
                     {
-                      attrs: { color: "red", text: "" },
+                      attrs: {
+                        disabled: _vm.dialogLoading,
+                        color: "red",
+                        text: ""
+                      },
                       on: {
                         click: function($event) {
-                          _vm.actionDialog = false
+                          return _vm.confirmDelete(_vm.dialogItem.id)
                         }
                       }
                     },
@@ -87207,8 +87256,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
