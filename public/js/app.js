@@ -3646,6 +3646,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["product"],
@@ -3654,6 +3675,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      dialogItem: null,
+      actionDialog: false,
       withItems: false,
       model: null,
       items: [],
@@ -3672,13 +3695,22 @@ __webpack_require__.r(__webpack_exports__);
         framesX: 6,
         plugins: ["drag", "360", "zoom"],
         sense: -1,
-        onFrame: function onFrame(e, data) {
-          console.log(data.frame);
+        onFrame: function onFrame(e, data) {// console.log(data.frame);
         }
       }
     };
   },
   methods: {
+    editItem: function editItem(item) {
+      this.actionDialog = true;
+      this.dialogItem = Object.assign({}, item);
+      console.log(this.dialogItem);
+    },
+    deleteItem: function deleteItem(item) {
+      this.actionDialog = true;
+      this.dialogItem = Object.assign({}, item);
+      console.log(this.dialogItem.user_file.path);
+    },
     selected: function selected(index) {
       this.$refs.spritespin.api.updateFrame(index);
     },
@@ -3686,7 +3718,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get("/items/by-product/" + this.product).then(function (response) {
-        // If no items found
+        console.log(response.data.items); // If no items found
+
         if (response.data.items.length == 0) {
           _this.withItems = false;
           return;
@@ -26432,120 +26465,272 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _vm.withItems == false
-      ? _c(
-          "div",
-          [
-            _c(
-              "v-card",
-              { staticClass: "mr-auto d-flex justify-center align-center" },
-              [_c("upload-form", { on: { uploaded: _vm.getImagesByProduct } })],
-              1
-            )
-          ],
-          1
-        )
-      : _c(
-          "div",
-          [
-            _vm.show
-              ? _c("spritespin", {
-                  ref: "spritespin",
-                  staticStyle: { margin: "0 auto" },
-                  attrs: { options: _vm.options }
-                })
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "v-card",
-              { staticClass: "mt-3" },
-              [
-                _c(
-                  "v-slide-group",
-                  {
-                    staticClass: "pa-1",
-                    attrs: { "active-class": "red", "show-arrows": "" },
-                    model: {
-                      value: _vm.model,
-                      callback: function($$v) {
-                        _vm.model = $$v
-                      },
-                      expression: "model"
-                    }
-                  },
-                  _vm._l(_vm.items, function(item, index) {
-                    return _c("v-slide-item", {
-                      key: index,
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(ref) {
-                              var active = ref.active
-                              var toggle = ref.toggle
-                              return [
-                                _c(
-                                  "v-card",
-                                  {
-                                    staticClass: "ma-1",
-                                    attrs: {
-                                      color: active ? undefined : "grey",
-                                      height: "auto",
-                                      width: "75"
-                                    },
-                                    on: { click: toggle }
-                                  },
-                                  [
-                                    _c(
-                                      "v-img",
-                                      {
-                                        staticClass: "white--text align-end",
-                                        staticStyle: {
-                                          border: "0",
-                                          opacity: ".75"
+  return _c(
+    "div",
+    [
+      _vm.withItems == false
+        ? _c(
+            "div",
+            [
+              _c(
+                "v-card",
+                { staticClass: "mr-auto d-flex justify-center align-center" },
+                [
+                  _c("upload-form", {
+                    on: { uploaded: _vm.getImagesByProduct }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        : _c(
+            "div",
+            [
+              _vm.show
+                ? _c("spritespin", {
+                    ref: "spritespin",
+                    staticStyle: { margin: "0 auto" },
+                    attrs: { options: _vm.options }
+                  })
+                : _vm._e(),
+              _vm._v(" "),
+              _c(
+                "v-card",
+                { staticClass: "mt-3" },
+                [
+                  _c(
+                    "v-slide-group",
+                    {
+                      staticClass: "pa-1",
+                      attrs: { "active-class": "grey", "show-arrows": "" },
+                      model: {
+                        value: _vm.model,
+                        callback: function($$v) {
+                          _vm.model = $$v
+                        },
+                        expression: "model"
+                      }
+                    },
+                    _vm._l(_vm.items, function(item, index) {
+                      return _c("v-slide-item", {
+                        key: index,
+                        scopedSlots: _vm._u(
+                          [
+                            {
+                              key: "default",
+                              fn: function(ref) {
+                                var active = ref.active
+                                var toggle = ref.toggle
+                                return [
+                                  _c(
+                                    "v-card",
+                                    { staticClass: "ma-1 elevation-0" },
+                                    [
+                                      _c(
+                                        "v-card",
+                                        {
+                                          staticClass: "ma-1",
+                                          attrs: {
+                                            color: active ? undefined : "white",
+                                            height: "auto",
+                                            width: "100"
+                                          },
+                                          on: { click: toggle }
                                         },
-                                        attrs: {
-                                          "aspect-ratio": 16 / 9,
-                                          src:
-                                            _vm.baseUrl +
-                                            "/storage/uploads/user-1/" +
-                                            item.user_file.path
+                                        [
+                                          _c(
+                                            "v-img",
+                                            {
+                                              staticClass:
+                                                "white--text align-end",
+                                              staticStyle: {
+                                                border: "0",
+                                                opacity: ".75"
+                                              },
+                                              attrs: {
+                                                "aspect-ratio": 16 / 9,
+                                                src:
+                                                  _vm.baseUrl +
+                                                  "/storage/uploads/user-1/" +
+                                                  item.user_file.path
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.selected(index)
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _c("v-card-text", [
+                                                _vm._v(_vm._s(index + 1))
+                                              ])
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "d-flex justify-center py-1"
                                         },
-                                        on: {
-                                          click: function($event) {
-                                            return _vm.selected(index)
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _c("v-card-text", [
-                                          _vm._v(_vm._s(index + 1))
-                                        ])
-                                      ],
-                                      1
-                                    )
-                                  ],
-                                  1
-                                )
-                              ]
+                                        [
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              attrs: {
+                                                "x-small": "",
+                                                icon: ""
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.editItem(item)
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "v-icon",
+                                                {
+                                                  attrs: {
+                                                    "x-small": "",
+                                                    color: "primary"
+                                                  }
+                                                },
+                                                [_vm._v("mdi-pencil")]
+                                              )
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              attrs: {
+                                                "x-small": "",
+                                                icon: ""
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.deleteItem(item)
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "v-icon",
+                                                {
+                                                  attrs: {
+                                                    "x-small": "",
+                                                    color: "red"
+                                                  }
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    "mdi-trash-can-outline"
+                                                  )
+                                                ]
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ]
+                              }
                             }
-                          }
-                        ],
-                        null,
-                        true
-                      )
-                    })
-                  }),
-                  1
+                          ],
+                          null,
+                          true
+                        )
+                      })
+                    }),
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "300" },
+          model: {
+            value: _vm.actionDialog,
+            callback: function($$v) {
+              _vm.actionDialog = $$v
+            },
+            expression: "actionDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "subtitle-1" }, [
+                _vm._v("Are you sure you want to delete?")
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _vm._v(
+                  "Deleting this item will delete the file and hotspot information."
                 )
-              ],
-              1
-            )
-          ],
-          1
-        )
-  ])
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.actionDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("Cancel")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "red", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.actionDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("Delete")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -87022,8 +87207,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
