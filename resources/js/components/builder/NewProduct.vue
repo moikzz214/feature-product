@@ -9,13 +9,11 @@
         label="Product Title"
         required
       ></v-text-field>
-      <v-btn
-        :disabled="!valid"
-        color="primary"
-        small
-        class="mr-4"
-        @click.prevent="saveProduct"
-      >Create</v-btn>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text color="grey" @click.prevent="close">Cancel</v-btn>
+        <v-btn :disabled="!valid" color="primary" @click.prevent="saveProduct">Create</v-btn>
+      </v-card-actions>
     </v-form>
   </v-card>
 </template>
@@ -30,6 +28,9 @@ export default {
     };
   },
   methods: {
+    close() {
+      this.$emit("close");
+    },
     saveProduct() {
       this.valid = false;
       let data = {
@@ -40,7 +41,7 @@ export default {
       axios
         .post("/builder/product/store", data)
         .then((response) => {
-        //   console.log(response.data.product);
+          //   console.log(response.data.product);
           this.valid = true;
           this.$router.push("/builder/product/edit/" + response.data.product);
         })

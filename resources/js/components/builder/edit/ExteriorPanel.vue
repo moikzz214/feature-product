@@ -1,56 +1,69 @@
 <template>
   <div>
-    <div v-if="withItems == false">
+    <!-- <div v-if="withItems == false">
       <v-card class="mr-auto d-flex justify-center align-center">
         <upload-form @uploaded="getImagesByProduct"></upload-form>
       </v-card>
-    </div>
-    <div v-else>
+    </div>-->
+    <!-- <div v-else> -->
+    <div>
       <div style="min-height:450px;">
+        <upload-form v-if="uploader == true" @uploaded="getImagesByProduct"></upload-form>
         <spritespin
           v-bind:options="options"
-          v-if="show"
+          v-if="show && uploader == false"
           ref="spritespin"
           style="margin:0 auto;"
         />
       </div>
-      <v-card class="mt-3">
-        <v-slide-group v-model="model" class="pa-1" active-class="grey" show-arrows>
-          <v-slide-item
-            v-for="(item, index) in items"
-            :key="index"
-            v-slot:default="{ active, toggle }"
-          >
-            <v-card class="ma-1 elevation-0">
-              <v-card
-                :color="active ? undefined : 'white'"
-                class="ma-1"
-                height="auto"
-                width="100"
-                @click="toggle"
-              >
-                <v-img
-                  @click="selected(index)"
-                  :aspect-ratio="16/9"
-                  class="white--text align-end"
-                  :src="baseUrl+'/storage/uploads/user-1/'+item.user_file.path"
-                  style="border:0;opacity:.75;"
+      <div class="d-flex" v-if="withItems == true">
+        <v-card class="mt-3" style="width:90%;">
+          <v-slide-group v-model="model" class="pa-1" active-class="grey" show-arrows>
+            <v-slide-item
+              v-for="(item, index) in items"
+              :key="index"
+              v-slot:default="{ active, toggle }"
+            >
+              <v-card class="ma-1 elevation-0">
+                <v-card
+                  :color="active ? undefined : 'white'"
+                  class="ma-1"
+                  height="auto"
+                  width="100"
+                  @click="toggle"
                 >
-                  <v-card-text>{{index+1}}</v-card-text>
-                </v-img>
+                  <v-img
+                    @click="selected(index)"
+                    :aspect-ratio="16/9"
+                    class="white--text align-end"
+                    :src="baseUrl+'/storage/uploads/user-1/'+item.user_file.path"
+                    style="border:0;opacity:.75;"
+                  >
+                    <v-card-text>{{index+1}}</v-card-text>
+                  </v-img>
+                </v-card>
+                <div class="d-flex justify-center py-1">
+                  <v-btn x-small icon @click="editItem(item)">
+                    <v-icon x-small color="primary">mdi-pencil</v-icon>
+                  </v-btn>
+                  <v-btn x-small icon @click="deleteItem(item)">
+                    <v-icon x-small color="red">mdi-trash-can-outline</v-icon>
+                  </v-btn>
+                </div>
               </v-card>
-              <div class="d-flex justify-center py-1">
-                <v-btn x-small icon @click="editItem(item)">
-                  <v-icon x-small color="primary">mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn x-small icon @click="deleteItem(item)">
-                  <v-icon x-small color="red">mdi-trash-can-outline</v-icon>
-                </v-btn>
-              </div>
-            </v-card>
-          </v-slide-item>
-        </v-slide-group>
-      </v-card>
+            </v-slide-item>
+          </v-slide-group>
+        </v-card>
+        <v-card
+          dark
+          :class="`mt-3 ml-2 d-flex align-center justify-center ${uploader == false ? 'primary' : 'error'}`"
+          active-class="red"
+          style="width:10%"
+          @click="uploader = !uploader"
+        >
+          <v-icon>{{uploader == false ? 'mdi-image-plus' : 'mdi-image-remove'}}</v-icon>
+        </v-card>
+      </div>
     </div>
     <v-dialog v-model="actionDialog" max-width="300">
       <v-card :loading="dialogLoading">
@@ -91,6 +104,7 @@ export default {
       baseUrl: window.location.origin,
 
       // 360
+      uploader: true,
       show: false,
       options: {
         source: [],
@@ -149,15 +163,17 @@ export default {
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {
-          // console.log(response.data.items);
+          console.log(response.data.items);
           // If no items found
           if (response.data.items.length == 0) {
             this.withItems = false;
+            this.uploader = true;
             return;
           }
 
           // Emit Items
           this.withItems = true;
+          this.uploader = false;
           this.items = response.data.items;
 
           // Setup 360

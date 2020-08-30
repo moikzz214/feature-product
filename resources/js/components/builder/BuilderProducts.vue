@@ -87,7 +87,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="newProductDialog" width="500">
-      <new-product></new-product>
+      <new-product @close="newProductDialog = false"></new-product>
     </v-dialog>
   </v-row>
 </template>
