@@ -4,6 +4,7 @@ namespace App;
 
 use App\Product;
 use App\User_file;
+use App\Media_file;
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
@@ -14,8 +15,12 @@ class Item extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    public function user_file()
+    // public function user_file()
+    // {
+    //     return $this->hasOne(User_file::class);
+    // }
+    public function media_file()
     {
-        return $this->hasOne(User_file::class);
+        return $this->hasOne(Media_file::class);
     }
 }

@@ -3051,20 +3051,52 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["openMediaFiles"],
+  props: {
+    open: {
+      type: Boolean,
+      "default": false
+    },
+    dialog: {
+      type: Boolean,
+      "default": false
+    }
+  },
   watch: {
-    openMediaFiles: function openMediaFiles(val) {
-      console.log(val);
+    open: function open(val) {
+      this.mediaDialog = val;
     }
   },
   data: function data() {
     return {
       mediaDialog: false,
-      mediaLoading: false
+      mediaLoading: false,
+      tab: null
     };
   },
-  mounted: function mounted() {}
+  methods: {
+    closeMediaDialog: function closeMediaDialog() {
+      this.mediaDialog = false;
+      this.$emit("close", false);
+    }
+  },
+  mounted: function mounted() {// console.log(this.dialog);
+  }
 });
 
 /***/ }),
@@ -3149,6 +3181,12 @@ __webpack_require__.r(__webpack_exports__);
  // import ExteriorItems from "./edit/ExteriorItems";
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    authUser: {
+      type: Object,
+      "default": null
+    }
+  },
   components: {
     Scenes: _edit_Scenes__WEBPACK_IMPORTED_MODULE_0__["default"],
     SceneSettings: _edit_SceneSettings__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -3166,7 +3204,8 @@ __webpack_require__.r(__webpack_exports__);
     // //   console.log("items: " + items);
     // },
   },
-  mounted: function mounted() {// console.log(this.$route.params.id);
+  mounted: function mounted() {// console.log(this.authUser);
+    // console.log(this.$route.params.id);
   }
 });
 
@@ -3740,7 +3779,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["product"],
+  props: {
+    product: {
+      type: String,
+      "default": ""
+    },
+    authUser: {
+      type: Object,
+      "default": null
+    }
+  },
   components: {
     MediaFiles: _MediaFiles__WEBPACK_IMPORTED_MODULE_0__["default"],
     UploadForm: _UplooadForm__WEBPACK_IMPORTED_MODULE_1__["default"]
@@ -3748,7 +3796,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       // MediaFiles
-      mediaFilesToggle: false,
+      mediaDialog: false,
       dialogLoading: false,
       dialogItem: null,
       actionDialog: false,
@@ -3777,11 +3825,18 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    closeMedia: function closeMedia(v) {
+      this.mediaDialog = false;
+    },
     editItem: function editItem(item) {
-      this.mediaFilesToggle = true; // this.actionDialog = true;
+      // if (this.mediaDialog == true) {
+      //   this.mediaDialog;
+      // }
+      //  true
+      this.mediaDialog = !this.mediaDialog; // console.log(this.mediaDialog);
+      // this.actionDialog = true;
       // this.dialogItem = Object.assign({}, item);
-
-      console.log(this.dialogItem);
+      // console.log(this.dialogItem);
     },
     deleteItem: function deleteItem(item) {
       this.actionDialog = true;
@@ -3791,7 +3846,6 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.dialogLoading = true;
-      console.log(item);
       axios.post("/item/delete/" + item).then(function (response) {
         _this.dialogLoading = false;
         _this.actionDialog = false;
@@ -3801,7 +3855,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.show = false;
         setTimeout(function () {
           _this.show = true;
-        }, 1000);
+        }, 300);
         console.log(response);
       })["catch"](function (error) {
         _this.dialogLoading = false;
@@ -3817,8 +3871,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       axios.get("/items/by-product/" + this.product).then(function (response) {
-        console.log(response.data.items); // If no items found
-
+        // console.log(response.data.items);
+        // If no items found
         if (response.data.items.length == 0) {
           _this2.withItems = false;
           _this2.uploader = true;
@@ -3832,7 +3886,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.options.frames = response.data.items.length;
         _this2.options.source = response.data.items.map(function (item) {
-          return window.location.origin + "/storage/uploads/user-1/" + item.user_file.path;
+          return window.location.origin + "/storage/uploads/user-" + _this2.authUser.id + "/" + item.media_file.path;
         });
         setTimeout(function () {
           // $(this.$el).spritespin(this.options);
@@ -25685,36 +25739,127 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "v-dialog",
-    {
-      attrs: { "max-width": "300" },
-      model: {
-        value: _vm.mediaDialog,
-        callback: function($$v) {
-          _vm.mediaDialog = $$v
-        },
-        expression: "mediaDialog"
-      }
-    },
+    "div",
     [
-      _c(
-        "v-card",
-        { attrs: { loading: _vm.mediaLoading } },
-        [
-          _c("v-card-title", { staticClass: "subtitle-1" }, [
-            _vm._v("Are you sure you want to delete?")
-          ]),
-          _vm._v(" "),
-          _c("v-card-text", [
-            _vm._v(
-              "Deleting this item will delete the file and hotspot information."
-            )
-          ]),
-          _vm._v(" "),
-          _c("v-card-actions", [_c("v-spacer")], 1)
-        ],
-        1
-      )
+      _vm.dialog == true
+        ? _c(
+            "v-dialog",
+            {
+              attrs: { persistent: "", "max-width": "800" },
+              model: {
+                value: _vm.mediaDialog,
+                callback: function($$v) {
+                  _vm.mediaDialog = $$v
+                },
+                expression: "mediaDialog"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                { attrs: { loading: _vm.mediaLoading } },
+                [
+                  _c("div", { staticClass: "overline px-3" }, [
+                    _vm._v("Media Files")
+                  ]),
+                  _vm._v(" "),
+                  _c("v-divider"),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticStyle: { "min-height": "450px" } },
+                    [
+                      _c(
+                        "v-tabs",
+                        {
+                          attrs: { "background-color": "transparent" },
+                          model: {
+                            value: _vm.tab,
+                            callback: function($$v) {
+                              _vm.tab = $$v
+                            },
+                            expression: "tab"
+                          }
+                        },
+                        [
+                          _c("v-tab", [_vm._v("Upload")]),
+                          _vm._v(" "),
+                          _c("v-tab", [_vm._v("Media Files")]),
+                          _vm._v(" "),
+                          _c(
+                            "v-tab-item",
+                            [
+                              _c(
+                                "v-card",
+                                { attrs: { color: "basil", flat: "" } },
+                                [_c("v-card-text", [_vm._v("This is upload")])],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-tab-item",
+                            [
+                              _c(
+                                "v-card",
+                                { attrs: { color: "basil", flat: "" } },
+                                [
+                                  _c("v-card-text", [
+                                    _vm._v("This is media files")
+                                  ])
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("v-divider"),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "grey", text: "" },
+                          on: { click: _vm.closeMediaDialog }
+                        },
+                        [_vm._v("Cancel")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "primary", text: "" },
+                          on: {
+                            click: function($event) {
+                              0
+                            }
+                          }
+                        },
+                        [_vm._v("Select")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        : _vm._e()
     ],
     1
   )
@@ -25863,7 +26008,10 @@ var render = function() {
                 { attrs: { cols: "9" } },
                 [
                   _c("exterior-panel", {
-                    attrs: { product: this.$route.params.id }
+                    attrs: {
+                      "auth-user": _vm.authUser,
+                      product: this.$route.params.id
+                    }
                   })
                 ],
                 1
@@ -26732,7 +26880,7 @@ var render = function() {
                                                   src:
                                                     _vm.baseUrl +
                                                     "/storage/uploads/user-1/" +
-                                                    item.user_file.path
+                                                    item.media_file.path
                                                 },
                                                 on: {
                                                   click: function($event) {
@@ -26891,7 +27039,7 @@ var render = function() {
               _c("v-card-title", { staticClass: "subtitle-1" }, [
                 _vm._v(
                   "Are you sure you want to delete " +
-                    _vm._s(_vm.dialogItem && _vm.dialogItem.user_file.path) +
+                    _vm._s(_vm.dialogItem && _vm.dialogItem.media_file.path) +
                     "?"
                 )
               ]),
@@ -26950,7 +27098,10 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("media-files", { attrs: { "open-media-files": _vm.mediaFilesToggle } })
+      _c("media-files", {
+        attrs: { open: _vm.mediaDialog, dialog: true },
+        on: { close: _vm.closeMedia }
+      })
     ],
     1
   )

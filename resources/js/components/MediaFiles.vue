@@ -1,36 +1,69 @@
 <template>
-  <v-dialog v-model="mediaDialog" max-width="300">
-    <v-card :loading="mediaLoading">
-      <v-card-title class="subtitle-1">Are you sure you want to delete?</v-card-title>
-      <v-card-text>Deleting this item will delete the file and hotspot information.</v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <!-- <v-btn :disabled="dialogLoading" color="primary" text @click="actionDialog = false">Cancel</v-btn>
-          <v-btn
-            :disabled="dialogLoading"
-            color="red"
-            text
-            @click="confirmDelete(dialogItem.id)"
-        >Delete</v-btn>-->
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <div>
+    <v-dialog v-if="dialog == true" v-model="mediaDialog" persistent max-width="800">
+      <v-card :loading="mediaLoading">
+        <div class="overline px-3">Media Files</div>
+        <v-divider></v-divider>
+        <div style="min-height:450px;">
+          <v-tabs v-model="tab" background-color="transparent">
+            <v-tab>Upload</v-tab>
+            <v-tab>Media Files</v-tab>
+
+            <v-tab-item>
+              <v-card color="basil" flat>
+                <v-card-text>This is upload</v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card color="basil" flat>
+                <v-card-text>This is media files</v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+        </div>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" text @click="closeMediaDialog">Cancel</v-btn>
+          <v-btn color="primary" text @click="0">Select</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
 export default {
-  props: ["openMediaFiles"],
+  props: {
+    open: {
+      type: Boolean,
+      default: false,
+    },
+    dialog: {
+      type: Boolean,
+      default: false,
+    },
+  },
   watch: {
-    openMediaFiles: function (val) {
-      console.log(val);
+    open: function (val) {
+      this.mediaDialog = val;
     },
   },
   data() {
     return {
       mediaDialog: false,
       mediaLoading: false,
+      tab: null,
     };
   },
-  mounted() {},
+  methods: {
+    closeMediaDialog() {
+      this.mediaDialog = false;
+      this.$emit("close", false);
+    },
+  },
+  mounted() {
+    // console.log(this.dialog);
+  },
 };
 </script>

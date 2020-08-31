@@ -22,7 +22,7 @@
       </v-col>
       <v-col v-if="activateExterior == true" cols="9">
         <!-- <exterior-panel :product="this.$route.params.id" @loadedItems="itemsHasBeenLoaded"></exterior-panel> -->
-        <exterior-panel :product="this.$route.params.id"></exterior-panel>
+        <exterior-panel :auth-user="authUser" :product="this.$route.params.id"></exterior-panel>
         <!-- <exterior-items :loadedItems="loadedItems"></exterior-items> -->
       </v-col>
       <v-col v-if="activateInterior == true" cols="9">
@@ -44,6 +44,12 @@ import SceneSettings from "./edit/SceneSettings";
 import ExteriorPanel from "./edit/ExteriorPanel";
 // import ExteriorItems from "./edit/ExteriorItems";
 export default {
+  props: {
+    authUser: {
+      type: Object,
+      default: null,
+    },
+  },
   components: {
     Scenes,
     SceneSettings,
@@ -54,7 +60,7 @@ export default {
     return {
       activateExterior: true,
       activateInterior: false,
-    //   loadedItems: null,
+      //   loadedItems: null,
     };
   },
   methods: {
@@ -63,6 +69,7 @@ export default {
     // },
   },
   mounted() {
+    // console.log(this.authUser);
     // console.log(this.$route.params.id);
   },
 };

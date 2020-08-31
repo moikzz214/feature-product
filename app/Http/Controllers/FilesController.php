@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Item;
-use App\User_file;
+use App\Media_file;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -31,8 +31,8 @@ class FilesController extends Controller
         //     'file' => 'required|image|mimes:jpeg,png,jpg|max:204800',
         // ]);
 
-        // User_files table
-        $userFiles = new User_file;
+        // Media_files table
+        $userFiles = new Media_file;
         $itemsArray = array();
         $fileArray = array();
 
@@ -96,16 +96,16 @@ class FilesController extends Controller
             'upload_key' => $uploadKey,
         ])->get();
 
-        // Prepare User_files object before saving
+        // Prepare Media_files object before saving
         foreach ($recentlySavedItems as $key => $item) {
             $fileArray[$key]['item_id'] = $item->id;
         }
 
-        // Save the files to user_files table
-        User_file::insert($fileArray);
+        // Save the files to Media_files table
+        Media_file::insert($fileArray);
 
         // Get the files by name
-        // $recentlySavedFiles = User_file::whereIn('title', $fileNames )->get();
+        // $recentlySavedFiles = Media_file::whereIn('title', $fileNames )->get();
 
         // // Prepare items
         // $itemsArray = array();
@@ -113,7 +113,7 @@ class FilesController extends Controller
         //     array_push($itemsArray, array(
         //         'item_type' => '360',
         //         'product_id' => $request->product,
-        //         'user_files_id' => $file->id,
+        //         'Media_files_id' => $file->id,
         //         'created_at' => Carbon::now(),
         //         'updated_at' => Carbon::now()
         //     ));
@@ -130,13 +130,13 @@ class FilesController extends Controller
 
     public function getItemImages()
     {
-        $files = User_file::where(['user_id' => 1, 'file_type' => 'image'])->take(50)->get();
+        $files = Media_file::where(['user_id' => 1, 'file_type' => 'image'])->take(50)->get();
         return response()->json($files, 200);
     }
 
     public function showImage($path)
     {
-        $m = User_file::where('path', $path)->firstOrFail();
+        $m = Media_file::where('path', $path)->firstOrFail();
         if( isset($m) ){
             $image = storage_path(). '/uploads/user-1/1/'.$path;
             return response()->file($image, array('Content-Type' => 'image/jpeg'));

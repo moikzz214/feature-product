@@ -12,7 +12,7 @@
           <v-img
             :aspect-ratio="16/9"
             class="white--text align-end"
-            :src="baseUrl+'/storage/uploads/user-1/'+item.user_file.path"
+            :src="baseUrl+'/storage/uploads/user-1/'+item.media_file.path"
           >
             <v-card-text>{{item.product}}</v-card-text>
           </v-img>

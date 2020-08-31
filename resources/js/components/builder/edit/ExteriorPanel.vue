@@ -30,7 +30,7 @@
                     @click="selected(index)"
                     :aspect-ratio="16/9"
                     class="white--text align-end"
-                    :src="baseUrl+'/storage/uploads/user-1/'+item.user_file.path"
+                    :src="baseUrl+'/storage/uploads/user-1/'+item.media_file.path"
                     style="border:0;opacity:.75;"
                   >
                     <v-card-text>{{index+1}}</v-card-text>
@@ -63,7 +63,7 @@
       <v-card :loading="dialogLoading">
         <v-card-title
           class="subtitle-1"
-        >Are you sure you want to delete {{dialogItem && dialogItem.user_file.path}}?</v-card-title>
+        >Are you sure you want to delete {{dialogItem && dialogItem.media_file.path}}?</v-card-title>
         <v-card-text>Deleting this item will delete the file and hotspot information.</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -77,15 +77,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <media-files :open-media-files="mediaFilesToggle"></media-files>
+    <media-files :open="mediaDialog" :dialog="true" @close="closeMedia"></media-files>
   </div>
 </template>
 
 <script>
-import MediaFiles from "../../MediaFiles"
+import MediaFiles from "../../MediaFiles";
 import UploadForm from "./UplooadForm";
 export default {
-  props: ["product"],
+  props: {
+    product: {
+      type: String,
+      default: "",
+    },
+    authUser: {
+      type: Object,
+      default: null,
+    },
+  },
   components: {
     MediaFiles,
     UploadForm,
@@ -93,7 +102,7 @@ export default {
   data() {
     return {
       // MediaFiles
-      mediaFilesToggle: false,
+      mediaDialog: false,
 
       dialogLoading: false,
       dialogItem: null,
@@ -125,11 +134,19 @@ export default {
     };
   },
   methods: {
+    closeMedia(v) {
+      this.mediaDialog = false;
+    },
     editItem(item) {
-      this.mediaFilesToggle = true;
+      // if (this.mediaDialog == true) {
+      //   this.mediaDialog;
+      // }
+      //  true
+      this.mediaDialog = !this.mediaDialog;
+      // console.log(this.mediaDialog);
       // this.actionDialog = true;
       // this.dialogItem = Object.assign({}, item);
-      console.log(this.dialogItem);
+      // console.log(this.dialogItem);
     },
     deleteItem(item) {
       this.actionDialog = true;
@@ -137,7 +154,6 @@ export default {
     },
     confirmDelete(item) {
       this.dialogLoading = true;
-      console.log(item);
       axios
         .post("/item/delete/" + item)
         .then((response) => {
@@ -147,7 +163,7 @@ export default {
           this.show = false;
           setTimeout(() => {
             this.show = true;
-          }, 1000);
+          }, 300);
           console.log(response);
         })
         .catch((error) => {
@@ -164,7 +180,7 @@ export default {
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {
-          console.log(response.data.items);
+          // console.log(response.data.items);
           // If no items found
           if (response.data.items.length == 0) {
             this.withItems = false;
@@ -182,8 +198,10 @@ export default {
           this.options.source = response.data.items.map(
             (item) =>
               window.location.origin +
-              "/storage/uploads/user-1/" +
-              item.user_file.path
+              "/storage/uploads/user-" +
+              this.authUser.id +
+              "/" +
+              item.media_file.path
           );
           setTimeout(() => {
             // $(this.$el).spritespin(this.options);

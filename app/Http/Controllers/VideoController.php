@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 
-use App\User_file;
+use App\Media_file;
 use App\Jobs\OptimizeVideo;
 use Illuminate\Http\Request;
 
@@ -21,7 +21,7 @@ class VideoController extends Controller
         $itemImages = array();
 
         // Upload to temp disk
-        $video = User_file::create([
+        $video = Media_file::create([
             'user'          => auth()->id(),
             'file_type'     => 'video',
             'title'         => $request->title,
@@ -46,8 +46,8 @@ class VideoController extends Controller
         $mediaDuration = $mediaOpener->getDurationInSeconds();
         foreach (range(0, $mediaDuration, 1) as $key => $seconds) {
 
-            // Prepare array of images to be save in User_files table
-            User_file::create([
+            // Prepare array of images to be save in Media_files table
+            Media_file::create([
                 'user'          => auth()->id(),
                 'file_type'     => 'image',
                 'title'         => "{$video->title}_{$video->id}_{$key}",
@@ -63,9 +63,9 @@ class VideoController extends Controller
                 ->save("/user-{$userId}/{$request->product}/{$video->title}_{$video->id}_{$key}.jpeg");
         }
 
-        // Save frames to User_files table as image
+        // Save frames to Media_files table as image
         // dd($request);
-        // User_file::create([
+        // Media_file::create([
         //     'user'          => $itemImages['user'],
         //     'file_type'     => $itemImages['file_type'],
         //     'title'         => $itemImages['title'],
