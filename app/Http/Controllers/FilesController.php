@@ -144,4 +144,10 @@ class FilesController extends Controller
             return abort('403');
         }
     }
+
+    public function getUserFilesByID($id)
+    {
+        $files = Media_file::where(['user_id' => 1])->paginate(50);
+        return response()->json($files, 200);
+    }
 }

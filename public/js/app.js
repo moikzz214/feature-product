@@ -3066,6 +3066,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     open: {
@@ -3075,6 +3082,10 @@ __webpack_require__.r(__webpack_exports__);
     dialog: {
       type: Boolean,
       "default": false
+    },
+    user: {
+      type: Object,
+      "default": null
     }
   },
   watch: {
@@ -3084,15 +3095,42 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      tabItem: "upload",
+      userId: this.user.id,
+      files: [],
+      baseUrl: window.location.origin,
       mediaDialog: false,
       mediaLoading: false,
       tab: null
     };
   },
   methods: {
+    mediaTab: function mediaTab() {
+      this.tabItem = "mediafiles";
+      this.getUserFiles();
+    },
+    uploadTab: function uploadTab() {
+      this.tabItem = "upload";
+    },
+    selectedFile: function selectedFile(id) {
+      console.log(id);
+    },
     closeMediaDialog: function closeMediaDialog() {
       this.mediaDialog = false;
       this.$emit("close", false);
+    },
+    getUserFiles: function getUserFiles() {
+      var _this = this;
+
+      if (this.files.length == 0) {
+        axios.get("/user/files/" + this.userId).then(function (response) {
+          console.log("requested");
+          _this.files = Object.assign({}, response.data.data);
+        })["catch"](function (error) {
+          console.log("Error Fetching Files");
+          console.log(error);
+        });
+      }
     }
   },
   mounted: function mounted() {// console.log(this.dialog);
@@ -25745,7 +25783,7 @@ var render = function() {
         ? _c(
             "v-dialog",
             {
-              attrs: { persistent: "", "max-width": "800" },
+              attrs: { scrollable: "", persistent: "", "max-width": "80%" },
               model: {
                 value: _vm.mediaDialog,
                 callback: function($$v) {
@@ -25757,65 +25795,106 @@ var render = function() {
             [
               _c(
                 "v-card",
-                { attrs: { loading: _vm.mediaLoading } },
+                {
+                  staticStyle: { "min-height": "500px" },
+                  attrs: { loading: _vm.mediaLoading }
+                },
                 [
-                  _c("div", { staticClass: "overline px-3" }, [
+                  _c("v-card-title", { staticClass: "overline px-3 py-0" }, [
                     _vm._v("Media Files")
                   ]),
                   _vm._v(" "),
                   _c("v-divider"),
                   _vm._v(" "),
                   _c(
-                    "div",
-                    { staticStyle: { "min-height": "450px" } },
+                    "v-card-title",
+                    { staticClass: "overline px-3" },
                     [
                       _c(
-                        "v-tabs",
+                        "v-btn",
+                        { attrs: { text: "" }, on: { click: _vm.uploadTab } },
+                        [_vm._v("Upload")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        { attrs: { text: "" }, on: { click: _vm.mediaTab } },
+                        [_vm._v("Media Files")]
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-text",
+                    {
+                      directives: [
                         {
-                          attrs: { "background-color": "transparent" },
-                          model: {
-                            value: _vm.tab,
-                            callback: function($$v) {
-                              _vm.tab = $$v
-                            },
-                            expression: "tab"
-                          }
-                        },
-                        [
-                          _c("v-tab", [_vm._v("Upload")]),
-                          _vm._v(" "),
-                          _c("v-tab", [_vm._v("Media Files")]),
-                          _vm._v(" "),
-                          _c(
-                            "v-tab-item",
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.tabItem == "upload",
+                          expression: "tabItem == 'upload'"
+                        }
+                      ]
+                    },
+                    [_c("p", [_vm._v("This is upload tab")])]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-text",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.tabItem == "mediafiles",
+                          expression: "tabItem == 'mediafiles'"
+                        }
+                      ]
+                    },
+                    [
+                      _c(
+                        "v-row",
+                        { staticClass: "px-2" },
+                        _vm._l(_vm.files, function(file) {
+                          return _c(
+                            "v-col",
+                            { key: file.id, attrs: { cols: "2" } },
                             [
                               _c(
                                 "v-card",
-                                { attrs: { color: "basil", flat: "" } },
-                                [_c("v-card-text", [_vm._v("This is upload")])],
-                                1
-                              )
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-tab-item",
-                            [
-                              _c(
-                                "v-card",
-                                { attrs: { color: "basil", flat: "" } },
+                                {
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.selectedFile(file.id)
+                                    }
+                                  }
+                                },
                                 [
-                                  _c("v-card-text", [
-                                    _vm._v("This is media files")
-                                  ])
+                                  _c("v-img", {
+                                    staticClass: "grey darken-4",
+                                    attrs: {
+                                      src:
+                                        _vm.baseUrl +
+                                        "/storage/uploads/user-" +
+                                        _vm.userId +
+                                        "/" +
+                                        file.path,
+                                      "max-height": "200",
+                                      contain: ""
+                                    }
+                                  })
                                 ],
                                 1
-                              )
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "overline" }, [
+                                _vm._v(_vm._s(file.title))
+                              ])
                             ],
                             1
                           )
-                        ],
+                        }),
                         1
                       )
                     ],
@@ -27099,7 +27178,7 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("media-files", {
-        attrs: { open: _vm.mediaDialog, dialog: true },
+        attrs: { open: _vm.mediaDialog, dialog: true, user: _vm.authUser },
         on: { close: _vm.closeMedia }
       })
     ],

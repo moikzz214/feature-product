@@ -77,7 +77,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <media-files :open="mediaDialog" :dialog="true" @close="closeMedia"></media-files>
+    <media-files :open="mediaDialog" :dialog="true" @close="closeMedia" :user="authUser"></media-files>
   </div>
 </template>
 

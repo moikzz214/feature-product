@@ -38,11 +38,12 @@ Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.sto
 
 Route::get('/product/{slug}', 'ProductsController@show')->name('single.product');
 
-// User_files
+// Media_files
 Route::post('/files/upload', 'FilesController@upload')->name('upload');
 Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files');
 // Route::get('/display/file/{msgid}/{extn}/{filename}', 'FileController@show')->name('file.show');
 Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file');
+Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.user.files');
 
 
 // Items Controller
