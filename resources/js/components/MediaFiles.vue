@@ -5,13 +5,19 @@
         <v-card-title class="overline px-3 py-0">Media Files</v-card-title>
         <v-divider></v-divider>
         <v-card-title class="overline px-3">
-          <v-btn text @click="uploadTab">Upload</v-btn>
-          <v-btn text @click="mediaTab">Media Files</v-btn>
+          <v-btn class="mr-3" :class="`${tabItem == 'upload' ? 'primary' : ''}`" depressed @click="uploadTab">
+            Upload
+            <v-icon small right>mdi-cloud-upload</v-icon>
+          </v-btn>
+          <v-btn :class="`${tabItem == 'mediafiles' ? 'primary' : ''}`" depressed @click="mediaTab">
+            Media Files
+            <v-icon small right>mdi-image-album</v-icon>
+          </v-btn>
         </v-card-title>
-        <v-card-text v-show="tabItem == 'upload'">
+        <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
           <p>This is upload tab</p>
         </v-card-text>
-        <v-card-text v-show="tabItem == 'mediafiles'">
+        <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'mediafiles'">
           <v-row class="px-2">
             <v-col v-for="file in files" :key="file.id" cols="2" class="pa-2">
               <v-card @click="selectedFile(file.id)">

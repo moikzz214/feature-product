@@ -3071,6 +3071,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     open: {
@@ -25810,14 +25816,37 @@ var render = function() {
                     [
                       _c(
                         "v-btn",
-                        { attrs: { text: "" }, on: { click: _vm.uploadTab } },
-                        [_vm._v("Upload")]
+                        {
+                          staticClass: "mr-3",
+                          class:
+                            "" + (_vm.tabItem == "upload" ? "primary" : ""),
+                          attrs: { depressed: "" },
+                          on: { click: _vm.uploadTab }
+                        },
+                        [
+                          _vm._v("\n          Upload\n          "),
+                          _c("v-icon", { attrs: { small: "", right: "" } }, [
+                            _vm._v("mdi-cloud-upload")
+                          ])
+                        ],
+                        1
                       ),
                       _vm._v(" "),
                       _c(
                         "v-btn",
-                        { attrs: { text: "" }, on: { click: _vm.mediaTab } },
-                        [_vm._v("Media Files")]
+                        {
+                          class:
+                            "" + (_vm.tabItem == "mediafiles" ? "primary" : ""),
+                          attrs: { depressed: "" },
+                          on: { click: _vm.mediaTab }
+                        },
+                        [
+                          _vm._v("\n          Media Files\n          "),
+                          _c("v-icon", { attrs: { small: "", right: "" } }, [
+                            _vm._v("mdi-image-album")
+                          ])
+                        ],
+                        1
                       )
                     ],
                     1
@@ -25833,7 +25862,8 @@ var render = function() {
                           value: _vm.tabItem == "upload",
                           expression: "tabItem == 'upload'"
                         }
-                      ]
+                      ],
+                      staticClass: "blue-grey lighten-5 pt-3"
                     },
                     [_c("p", [_vm._v("This is upload tab")])]
                   ),
@@ -25848,7 +25878,8 @@ var render = function() {
                           value: _vm.tabItem == "mediafiles",
                           expression: "tabItem == 'mediafiles'"
                         }
-                      ]
+                      ],
+                      staticClass: "blue-grey lighten-5 pt-3"
                     },
                     [
                       _c(
@@ -87732,8 +87763,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
