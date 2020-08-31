@@ -1,11 +1,5 @@
 <template>
   <div>
-    <!-- <div v-if="withItems == false">
-      <v-card class="mr-auto d-flex justify-center align-center">
-        <upload-form @uploaded="getImagesByProduct"></upload-form>
-      </v-card>
-    </div>-->
-    <!-- <div v-else> -->
     <div>
       <div style="min-height:450px;">
         <upload-form v-if="uploader == true" @uploaded="getImagesByProduct"></upload-form>
@@ -126,8 +120,8 @@ export default {
   },
   methods: {
     editItem(item) {
-      this.actionDialog = true;
-      this.dialogItem = Object.assign({}, item);
+      // this.actionDialog = true;
+      // this.dialogItem = Object.assign({}, item);
       console.log(this.dialogItem);
     },
     deleteItem(item) {

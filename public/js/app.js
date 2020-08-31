@@ -3689,12 +3689,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["product"],
@@ -3732,8 +3726,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     editItem: function editItem(item) {
-      this.actionDialog = true;
-      this.dialogItem = Object.assign({}, item);
+      // this.actionDialog = true;
+      // this.dialogItem = Object.assign({}, item);
       console.log(this.dialogItem);
     },
     deleteItem: function deleteItem(item) {
@@ -87324,8 +87318,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
