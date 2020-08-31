@@ -3071,8 +3071,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     open: {
@@ -25859,7 +25857,11 @@ var render = function() {
                         _vm._l(_vm.files, function(file) {
                           return _c(
                             "v-col",
-                            { key: file.id, attrs: { cols: "2" } },
+                            {
+                              key: file.id,
+                              staticClass: "pa-2",
+                              attrs: { cols: "2" }
+                            },
                             [
                               _c(
                                 "v-card",
@@ -25888,7 +25890,7 @@ var render = function() {
                                 1
                               ),
                               _vm._v(" "),
-                              _c("div", { staticClass: "overline" }, [
+                              _c("div", { staticClass: "caption" }, [
                                 _vm._v(_vm._s(file.title))
                               ])
                             ],

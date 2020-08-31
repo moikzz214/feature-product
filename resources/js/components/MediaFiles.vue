@@ -8,14 +8,12 @@
           <v-btn text @click="uploadTab">Upload</v-btn>
           <v-btn text @click="mediaTab">Media Files</v-btn>
         </v-card-title>
-        <!-- style="min-height:500px" -->
         <v-card-text v-show="tabItem == 'upload'">
           <p>This is upload tab</p>
         </v-card-text>
-        <!-- style="min-height:450px" -->
         <v-card-text v-show="tabItem == 'mediafiles'">
           <v-row class="px-2">
-            <v-col v-for="file in files" :key="file.id" cols="2">
+            <v-col v-for="file in files" :key="file.id" cols="2" class="pa-2">
               <v-card @click="selectedFile(file.id)">
                 <v-img
                   :src="baseUrl+'/storage/uploads/user-'+userId+'/'+file.path"
@@ -24,7 +22,7 @@
                   class="grey darken-4"
                 ></v-img>
               </v-card>
-              <div class="overline">{{file.title}}</div>
+              <div class="caption">{{file.title}}</div>
             </v-col>
           </v-row>
         </v-card-text>
