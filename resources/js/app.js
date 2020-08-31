@@ -23,6 +23,11 @@ Vue.component(
     "builder-navigation",
     require("./components/BuilderNavigation.vue").default
 );
+Vue.component(
+  "media-files",
+  require("./components/MediaFiles.vue").default
+);
+
 
 Vue.component('spritespin', {
     props: ['options'],

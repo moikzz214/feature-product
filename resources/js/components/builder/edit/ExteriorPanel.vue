@@ -77,18 +77,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <media-files :open-media-files="mediaFilesToggle"></media-files>
   </div>
 </template>
 
 <script>
+import MediaFiles from "../../MediaFiles"
 import UploadForm from "./UplooadForm";
 export default {
   props: ["product"],
   components: {
+    MediaFiles,
     UploadForm,
   },
   data() {
     return {
+      // MediaFiles
+      mediaFilesToggle: false,
+
       dialogLoading: false,
       dialogItem: null,
       actionDialog: false,
@@ -120,6 +126,7 @@ export default {
   },
   methods: {
     editItem(item) {
+      this.mediaFilesToggle = true;
       // this.actionDialog = true;
       // this.dialogItem = Object.assign({}, item);
       console.log(this.dialogItem);
