@@ -33,6 +33,16 @@
 import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
 export default {
+  props: {
+    addItems: {
+      type: Boolean,
+      default: false,
+    },
+    itemType: {
+      type: String,
+      default: "360",
+    },
+  },
   components: {
     vueDropzone: vue2Dropzone,
   },
@@ -104,6 +114,8 @@ export default {
     sendingEvent(file, xhr, formData) {
       //   console.log(formData);
       formData.append("product", this.$route.params.id);
+      formData.append("add_items", this.addItems);
+      formData.append("item_type", this.itemType);
     },
     removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -128,6 +140,10 @@ export default {
     upload() {
       this.$refs.myVueDropzone.processQueue();
     },
+  },
+  mounted() {
+    //   console.log(this.addItems);
+    //   console.log(this.itemType);
   },
 };
 </script>

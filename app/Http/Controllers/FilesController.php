@@ -25,7 +25,8 @@ class FilesController extends Controller
 
     public function upload(Request $request)
     {
-
+        // dd($request->add_items);
+        // dd(gettype($request->add_items));
         // Validate request
         // $this->validate($request, [
         //     'file' => 'required|image|mimes:jpeg,png,jpg|max:204800',
@@ -70,12 +71,14 @@ class FilesController extends Controller
                 ->encode($format, 50)
                 ->save($userStorageDir.'/'.$fileName); // FHD
 
-            array_push($itemsArray, array(
-                'item_type' => '360',
-                'product_id' => $request->product,
-                'created_at' => $uploadKey,
-                'updated_at' => Carbon::now()
-            ));
+            if($request->add_items == 'true'){
+                array_push($itemsArray, array(
+                    'item_type' => $request->item_type,
+                    'product_id' => $request->product,
+                    'created_at' => $uploadKey,
+                    'updated_at' => Carbon::now()
+                ));
+            }
 
             // Prepare object before saving
             array_push($fileArray, array(
@@ -85,21 +88,26 @@ class FilesController extends Controller
                 'disk' => 'uploads',
                 'path' => $fileName,
                 'user_id' => auth()->id(),
+                'item_id' => null,
                 'created_at' => Carbon::now()
             ));
         });
 
         // Save to Items table
-        Item::insert($itemsArray);
-        $recentlySavedItems = Item::where([
-            'product_id' => $request->product,
-            'created_at' => $uploadKey,
-        ])->get();
+        if($request->add_items == 'true'){
+            Item::insert($itemsArray);
+            $recentlySavedItems = Item::where([
+                'product_id' => $request->product,
+                'created_at' => $uploadKey,
+                ])->get();
 
-        // Prepare Media_files object before saving
-        foreach ($recentlySavedItems as $key => $item) {
-            $fileArray[$key]['item_id'] = $item->id;
+            // Prepare Media_files object before saving Set Connection
+            foreach ($recentlySavedItems as $key => $item) {
+                $fileArray[$key]['item_id'] = $item->id;
+            }
         }
+
+
 
         // Save the files to Media_files table
         Media_file::insert($fileArray);

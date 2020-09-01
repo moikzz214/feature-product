@@ -3251,6 +3251,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    addItems: {
+      type: Boolean,
+      "default": false
+    },
+    itemType: {
+      type: String,
+      "default": "360"
+    }
+  },
   components: {
     vueDropzone: vue2_dropzone__WEBPACK_IMPORTED_MODULE_0___default.a
   },
@@ -3293,6 +3303,8 @@ __webpack_require__.r(__webpack_exports__);
     sendingEvent: function sendingEvent(file, xhr, formData) {
       //   console.log(formData);
       formData.append("product", this.$route.params.id);
+      formData.append("add_items", this.addItems);
+      formData.append("item_type", this.itemType);
     },
     removeAllFiles: function removeAllFiles() {
       this.$refs.myVueDropzone.removeAllFiles();
@@ -3314,6 +3326,9 @@ __webpack_require__.r(__webpack_exports__);
     upload: function upload() {
       this.$refs.myVueDropzone.processQueue();
     }
+  },
+  mounted: function mounted() {//   console.log(this.addItems);
+    //   console.log(this.itemType);
   }
 });
 
@@ -27086,7 +27101,10 @@ var render = function() {
           { staticStyle: { "min-height": "450px" } },
           [
             _vm.uploader == true
-              ? _c("upload-zone", { on: { uploaded: _vm.getImagesByProduct } })
+              ? _c("upload-zone", {
+                  attrs: { "item-type": "panorama", "add-items": false },
+                  on: { uploaded: _vm.getImagesByProduct }
+                })
               : _vm._e(),
             _vm._v(" "),
             _vm.show && _vm.uploader == false

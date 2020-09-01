@@ -2,7 +2,7 @@
   <div>
     <div>
       <div style="min-height:450px;">
-        <upload-zone v-if="uploader == true" @uploaded="getImagesByProduct"></upload-zone>
+        <upload-zone v-if="uploader == true" :item-type="'panorama'" :add-items="false" @uploaded="getImagesByProduct"></upload-zone>
         <spritespin
           v-bind:options="options"
           v-if="show && uploader == false"
