@@ -3189,14 +3189,13 @@ __webpack_require__.r(__webpack_exports__);
     getUserFiles: function getUserFiles() {
       var _this2 = this;
 
-      // if (this.files.length == 0) {
       axios.get("/user/files/" + this.userId).then(function (response) {
         console.log("requested");
         _this2.files = Object.assign({}, response.data.data);
       })["catch"](function (error) {
         console.log("Error Fetching Files");
         console.log(error);
-      }); // }
+      });
     }
   },
   mounted: function mounted() {// console.log(this.mediaOptions);
@@ -4050,19 +4049,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     mediaResponse: function mediaResponse(res) {
-      // console.log(res.data.data.status);
-      console.log(res.status);
-
+      // console.log(res.status);
       if (res.status == "error") {
         return;
       }
 
-      this.mediaFilesSettings.dialogStatus = false; // if (res.data.data.status == "success") {
-
-      this.getImagesByProduct(); // setTimeout(() => {
-      //   this.show = true;
-      // }, 300);
-      // }
+      this.mediaFilesSettings.dialogStatus = false;
+      this.getImagesByProduct();
     },
     editItem: function editItem(item) {
       // Toggle Dialog
@@ -4081,8 +4074,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.dialogLoading = false;
         _this.actionDialog = false;
 
-        _this.getImagesByProduct(); // console.log(response);
-
+        _this.getImagesByProduct();
       })["catch"](function (error) {
         _this.dialogLoading = false;
         _this.actionDialog = false;
@@ -4110,22 +4102,12 @@ __webpack_require__.r(__webpack_exports__);
         _this2.uploader = false;
         _this2.items = response.data.items; // Setup 360
 
-        _this2.options.frames = response.data.items.length; // this.options.source = response.data.items.map(function (item) {
-        //   if (item.media_file == null) {
-        //     window.location.origin +
-        //       "/storage/uploads/user-" +
-        //       this.authUser.id +
-        //       "/" +
-        //       item.media_file.path;
-        //   }
-        // });
-
+        _this2.options.frames = response.data.items.length;
         _this2.options.source = response.data.items.map(function (item) {
           return window.location.origin + "/storage/uploads/user-" + _this2.authUser.id + "/" + item.media_file.path;
         }); // console.log(this.items);
 
         setTimeout(function () {
-          // $(this.$el).spritespin(this.options);
           _this2.show = true;
           console.log("show: " + _this2.show);
         }, 1);

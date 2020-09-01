@@ -153,18 +153,16 @@ export default {
       this.$emit("responded", false);
     },
     getUserFiles() {
-      // if (this.files.length == 0) {
-        axios
-          .get("/user/files/" + this.userId)
-          .then((response) => {
-            console.log("requested");
-            this.files = Object.assign({}, response.data.data);
-          })
-          .catch((error) => {
-            console.log("Error Fetching Files");
-            console.log(error);
-          });
-      // }
+      axios
+        .get("/user/files/" + this.userId)
+        .then((response) => {
+          console.log("requested");
+          this.files = Object.assign({}, response.data.data);
+        })
+        .catch((error) => {
+          console.log("Error Fetching Files");
+          console.log(error);
+        });
     },
   },
   mounted() {

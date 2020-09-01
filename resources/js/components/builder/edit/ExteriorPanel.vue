@@ -140,19 +140,12 @@ export default {
   },
   methods: {
     mediaResponse(res) {
-      // console.log(res.data.data.status);
-      console.log(res.status);
+      // console.log(res.status);
       if (res.status == "error") {
         return;
       }
       this.mediaFilesSettings.dialogStatus = false;
-      // if (res.data.data.status == "success") {
       this.getImagesByProduct();
-
-      // setTimeout(() => {
-      //   this.show = true;
-      // }, 300);
-      // }
     },
     editItem(item) {
       // Toggle Dialog
@@ -172,8 +165,6 @@ export default {
           this.dialogLoading = false;
           this.actionDialog = false;
           this.getImagesByProduct();
-          
-          // console.log(response);
         })
         .catch((error) => {
           this.dialogLoading = false;
@@ -204,16 +195,6 @@ export default {
 
           // Setup 360
           this.options.frames = response.data.items.length;
-
-          // this.options.source = response.data.items.map(function (item) {
-          //   if (item.media_file == null) {
-          //     window.location.origin +
-          //       "/storage/uploads/user-" +
-          //       this.authUser.id +
-          //       "/" +
-          //       item.media_file.path;
-          //   }
-          // });
           this.options.source = response.data.items.map(
             (item) =>
               window.location.origin +
@@ -225,7 +206,6 @@ export default {
 
           // console.log(this.items);
           setTimeout(() => {
-            // $(this.$el).spritespin(this.options);
             this.show = true;
             console.log("show: " + this.show);
           }, 1);
