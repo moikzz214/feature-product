@@ -36,8 +36,9 @@ class FilesController extends Controller
         $itemsArray = array();
         $fileArray = array();
 
-        $uploadKey = "";
-        $uploadKey = Str::random();
+        $uploadKey = Carbon::now();
+        // $uploadKey = "";
+        // $uploadKey = Str::random();
 
         // $userId = auth()->id();
         $userStorage = '/public/uploads/user-'.auth()->id();
@@ -72,8 +73,7 @@ class FilesController extends Controller
             array_push($itemsArray, array(
                 'item_type' => '360',
                 'product_id' => $request->product,
-                'upload_key' => $uploadKey,
-                'created_at' => Carbon::now(),
+                'created_at' => $uploadKey,
                 'updated_at' => Carbon::now()
             ));
 
@@ -93,7 +93,7 @@ class FilesController extends Controller
         Item::insert($itemsArray);
         $recentlySavedItems = Item::where([
             'product_id' => $request->product,
-            'upload_key' => $uploadKey,
+            'created_at' => $uploadKey,
         ])->get();
 
         // Prepare Media_files object before saving
