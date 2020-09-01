@@ -40,11 +40,24 @@
           </v-slide-group>
         </v-sheet>
         <v-sheet v-else class="w-100">
-          <v-alert color="grey lighten-4" dense class="my-1 pa-5 mx-2 caption d-flex align-center justify-center">
-            No scene found. Add your <a @click.stop="dialog = true">new scene now</a>.
+          <v-alert
+            color="grey lighten-4"
+            dense
+            class="my-1 pa-5 mx-2 caption d-flex align-center justify-center"
+          >
+            No scene found. Add your
+            <a @click.stop="dialog = true">new scene now</a>.
           </v-alert>
         </v-sheet>
       </v-skeleton-loader>
+    </div>
+    <div class="col-12">
+      <v-card class="mr-auto pa-3 d-flex justify-center align-center" style="min-height:480px;">
+        <v-card-text class="text-center">
+          <p>Upload your Panoramic Image</p>
+          <v-btn large color>Upload</v-btn>
+        </v-card-text>
+      </v-card>
     </div>
     <v-dialog v-model="dialog" max-width="450">
       <create-scene :product-id="product" @close="closeDialog" @sceneCreated="getScenes"></create-scene>
@@ -86,12 +99,9 @@ export default {
         })
         .catch((error) => {
           console.log("Error: " + error);
-          console.log(this.scenes)
+          console.log(this.scenes);
         });
     },
-    // reloadScenes() {
-    //   this.getScenes();
-    // },
   },
   mounted() {
     this.getScenes();

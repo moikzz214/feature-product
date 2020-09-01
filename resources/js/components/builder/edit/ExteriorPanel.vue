@@ -216,7 +216,7 @@ export default {
         });
     },
   },
-  mounted() {
+  created() {
     // console.log(this.mediaFilesSettings.dialogStatus);
     this.getImagesByProduct();
   },

@@ -21,28 +21,19 @@
         <scene-settings :product="this.$route.params.id"></scene-settings>
       </v-col>
       <v-col v-if="activateExterior == true" cols="9">
-        <!-- <exterior-panel :product="this.$route.params.id" @loadedItems="itemsHasBeenLoaded"></exterior-panel> -->
-        <exterior-panel :auth-user="authUser" :product="this.$route.params.id"></exterior-panel>
-        <!-- <exterior-items :loadedItems="loadedItems"></exterior-items> -->
+        <exterior-panel :auth-user="authUser" :product="this.$route.params.id" />
       </v-col>
       <v-col v-if="activateInterior == true" cols="9">
-        <Scenes :product="this.$route.params.id" />
-        <v-card class="mr-auto pa-3 d-flex justify-center align-center" style="min-height:480px;">
-          <v-card-text class="text-center">
-            <p>Upload your Panoramic Image</p>
-            <v-btn large color>Upload</v-btn>
-          </v-card-text>
-        </v-card>
+        <interior-panel :product="this.$route.params.id" />
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import Scenes from "./edit/Scenes";
 import SceneSettings from "./edit/SceneSettings";
 import ExteriorPanel from "./edit/ExteriorPanel";
-// import ExteriorItems from "./edit/ExteriorItems";
+import InteriorPanel from "./edit/InteriorPanel";
 export default {
   props: {
     authUser: {
@@ -51,16 +42,14 @@ export default {
     },
   },
   components: {
-    Scenes,
     SceneSettings,
     ExteriorPanel,
-    // ExteriorItems,
+    InteriorPanel,
   },
   data() {
     return {
-      activateExterior: true,
-      activateInterior: false,
-      //   loadedItems: null,
+      activateExterior: false,
+      activateInterior: true,
     };
   },
   methods: {

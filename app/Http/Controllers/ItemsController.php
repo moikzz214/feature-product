@@ -38,10 +38,10 @@ class ItemsController extends Controller
     {
         // Decode string
         $requestData = json_decode($data, true);
-        
+
         // Check file Media_file id if exist
         $selectedFile = Media_file::where('id', '=', $requestData['selected'])->firstOrFail();
-        
+
         // Check if already assigned
         if($selectedFile->item_id != null){
             // Return error response
@@ -58,12 +58,22 @@ class ItemsController extends Controller
         // Update item_id value
         $selectedFile->update(['item_id' => $requestData['item']]);
 
-     
+
         // Return response
         return response()->json([
             'status' => 'success',
             'message' => 'Item has been updated'
         ], 200);
+    }
+
+
+    /**
+     * Panoramic Images
+     */
+    public function scenesAll()
+    {
+        $scenes = Item::where('item_type', '=', 'panorama')->paginate(20);
+        return response()->json($scenes, 200);
     }
 
 }
