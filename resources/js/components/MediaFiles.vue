@@ -31,15 +31,27 @@
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'mediafiles'">
           <v-row class="px-2">
             <v-col v-for="file in files" :key="file.id" cols="2" class="pa-2">
-              <v-card @click="selectedFile(file.id)">
+              <v-card
+                @click="selectFile(file.id)"
+                :class="`pa-1 elevation-0 ${selected.includes(file.id) == true ? 'primary dark' : 'transparent'}`"
+              >
                 <v-img
                   :src="baseUrl+'/storage/uploads/user-'+userId+'/'+file.path"
                   max-height="200"
                   contain
                   class="grey darken-4"
-                ></v-img>
+                >
+                  <v-icon
+                    v-if="selected.includes(file.id) == true"
+                    class="primary"
+                    dark
+                    small
+                  >mdi-check</v-icon>
+                </v-img>
               </v-card>
-              <div class="caption">{{file.title}}</div>
+              <div
+                class="caption"
+              >{{file.title.substring(0, 20)}}{{file.title.length > 20 ? '...': ''}}</div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -47,7 +59,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" text @click="closeMediaDialog">Cancel</v-btn>
-          <v-btn color="primary" text @click="0">Select</v-btn>
+          <v-btn color="primary" text @click="submitSelected(multiple)">Select</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -66,14 +78,9 @@ export default {
     mediaOptions: {
       handler(val) {
         this.mediaDialog = val.dialogStatus;
-        console.log(val);
       },
       deep: true,
     },
-    // mediaOptions: function (val) {
-    //   // this.mediaDialog = val.dialogStatus;
-    //   console.log(val);
-    // },
   },
   data() {
     return {
@@ -84,6 +91,10 @@ export default {
       mediaDialog: false,
       mediaLoading: false,
       tab: null,
+
+      // Selected File
+      multiple: false,
+      selected: [],
     };
   },
   methods: {
@@ -94,15 +105,55 @@ export default {
     uploadTab() {
       this.tabItem = "upload";
     },
-    selectedFile(id) {
-      console.log(id);
+    selectFile(i) {
+      if (this.multiple == false) {
+        if (this.selected.length < 1) {
+          this.selected.push(i);
+        } else {
+          let index = this.selected.indexOf(i);
+          if (index > -1) {
+            this.selected.pop(i);
+          }
+        }
+      } else {
+        if (this.selected.includes(i)) {
+          // if already exist pop out
+          let index = this.selected.indexOf(i);
+          if (index > -1) {
+            this.selected.splice(index, 1);
+          }
+        } else {
+          // otherwise push
+          this.selected.push(i);
+        }
+      }
+    },
+    submitSelected() {
+      let data = {
+        selected: this.selected,
+        item: this.mediaOptions.data.id,
+      };
+      axios
+        .post("/item/replace/" + JSON.stringify(data))
+        .then((response) => {
+          // console.log(response.data);
+          if (response.data.status == "success") {
+            this.$emit("responded", response.data);
+            this.selected = [];
+          }
+        })
+        .catch((error) => {
+          this.selected = [];
+          console.log("Error Fetching Files");
+          console.log(error);
+        });
     },
     closeMediaDialog() {
       this.mediaDialog = false;
-      this.$emit("close", false);
+      this.$emit("responded", false);
     },
     getUserFiles() {
-      if (this.files.length == 0) {
+      // if (this.files.length == 0) {
         axios
           .get("/user/files/" + this.userId)
           .then((response) => {
@@ -113,7 +164,7 @@ export default {
             console.log("Error Fetching Files");
             console.log(error);
           });
-      }
+      // }
     },
   },
   mounted() {

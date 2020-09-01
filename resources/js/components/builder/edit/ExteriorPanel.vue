@@ -77,7 +77,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <media-files :mediaOptions="mediaFilesSettings" @close="closeMedia"></media-files>
+    <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse"></media-files>
   </div>
 </template>
 
@@ -106,6 +106,7 @@ export default {
         dialog: true,
         dialogStatus: false,
         user: this.authUser,
+        data: null,
       },
 
       dialogLoading: false,
@@ -138,24 +139,26 @@ export default {
     };
   },
   methods: {
-    closeMedia(v) {
+    mediaResponse(res) {
+      // console.log(res.data.data.status);
+      console.log(res.status);
+      if (res.status == "error") {
+        return;
+      }
       this.mediaFilesSettings.dialogStatus = false;
+      // if (res.data.data.status == "success") {
+      this.getImagesByProduct();
+
+      // setTimeout(() => {
+      //   this.show = true;
+      // }, 300);
+      // }
     },
     editItem(item) {
-      // if (this.mediaDialog == true) {
-      //   this.mediaDialog;
-      // }
-      //  true
-      // this.mediaDialog = !this.mediaDialog;
-      // console.log(this.mediaFilesSettings.mediaDialog);
       // Toggle Dialog
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
-      // console.log(this.mediaFilesSettings.dialogStatus);
-      // console.log(this.mediaDialog);
-      // this.actionDialog = true;
-      // this.dialogItem = Object.assign({}, item);
-      // console.log(this.dialogItem);
+      this.mediaFilesSettings.data = item;
     },
     deleteItem(item) {
       this.actionDialog = true;
@@ -169,11 +172,8 @@ export default {
           this.dialogLoading = false;
           this.actionDialog = false;
           this.getImagesByProduct();
-          this.show = false;
-          setTimeout(() => {
-            this.show = true;
-          }, 300);
-          console.log(response);
+          
+          // console.log(response);
         })
         .catch((error) => {
           this.dialogLoading = false;
@@ -186,6 +186,7 @@ export default {
       this.$refs.spritespin.api.updateFrame(index);
     },
     getImagesByProduct() {
+      this.show = false;
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {
@@ -197,13 +198,22 @@ export default {
             return;
           }
 
-          // Emit Items
           this.withItems = true;
           this.uploader = false;
           this.items = response.data.items;
 
           // Setup 360
           this.options.frames = response.data.items.length;
+
+          // this.options.source = response.data.items.map(function (item) {
+          //   if (item.media_file == null) {
+          //     window.location.origin +
+          //       "/storage/uploads/user-" +
+          //       this.authUser.id +
+          //       "/" +
+          //       item.media_file.path;
+          //   }
+          // });
           this.options.source = response.data.items.map(
             (item) =>
               window.location.origin +
@@ -212,9 +222,12 @@ export default {
               "/" +
               item.media_file.path
           );
+
+          // console.log(this.items);
           setTimeout(() => {
             // $(this.$el).spritespin(this.options);
             this.show = true;
+            console.log("show: " + this.show);
           }, 1);
         })
         .catch((error) => {

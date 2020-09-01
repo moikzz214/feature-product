@@ -49,3 +49,4 @@ Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.us
 // Items Controller
 Route::get('/items/by-product/{id}', 'ItemsController@getItemsByProduct')->name('items.by.product');
 Route::post('/item/delete/{id}', 'ItemsController@destroy')->name('items.delete');
+Route::post('/item/replace/{data}', 'ItemsController@replace')->name('items.replace');

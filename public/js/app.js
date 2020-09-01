@@ -3088,6 +3088,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     mediaOptions: {
@@ -3099,14 +3111,9 @@ __webpack_require__.r(__webpack_exports__);
     mediaOptions: {
       handler: function handler(val) {
         this.mediaDialog = val.dialogStatus;
-        console.log(val);
       },
       deep: true
-    } // mediaOptions: function (val) {
-    //   // this.mediaDialog = val.dialogStatus;
-    //   console.log(val);
-    // },
-
+    }
   },
   data: function data() {
     return {
@@ -3116,7 +3123,10 @@ __webpack_require__.r(__webpack_exports__);
       baseUrl: window.location.origin,
       mediaDialog: false,
       mediaLoading: false,
-      tab: null
+      tab: null,
+      // Selected File
+      multiple: false,
+      selected: []
     };
   },
   methods: {
@@ -3127,25 +3137,66 @@ __webpack_require__.r(__webpack_exports__);
     uploadTab: function uploadTab() {
       this.tabItem = "upload";
     },
-    selectedFile: function selectedFile(id) {
-      console.log(id);
+    selectFile: function selectFile(i) {
+      if (this.multiple == false) {
+        if (this.selected.length < 1) {
+          this.selected.push(i);
+        } else {
+          var index = this.selected.indexOf(i);
+
+          if (index > -1) {
+            this.selected.pop(i);
+          }
+        }
+      } else {
+        if (this.selected.includes(i)) {
+          // if already exist pop out
+          var _index = this.selected.indexOf(i);
+
+          if (_index > -1) {
+            this.selected.splice(_index, 1);
+          }
+        } else {
+          // otherwise push
+          this.selected.push(i);
+        }
+      }
+    },
+    submitSelected: function submitSelected() {
+      var _this = this;
+
+      var data = {
+        selected: this.selected,
+        item: this.mediaOptions.data.id
+      };
+      axios.post("/item/replace/" + JSON.stringify(data)).then(function (response) {
+        // console.log(response.data);
+        if (response.data.status == "success") {
+          _this.$emit("responded", response.data);
+
+          _this.selected = [];
+        }
+      })["catch"](function (error) {
+        _this.selected = [];
+        console.log("Error Fetching Files");
+        console.log(error);
+      });
     },
     closeMediaDialog: function closeMediaDialog() {
       this.mediaDialog = false;
-      this.$emit("close", false);
+      this.$emit("responded", false);
     },
     getUserFiles: function getUserFiles() {
-      var _this = this;
+      var _this2 = this;
 
-      if (this.files.length == 0) {
-        axios.get("/user/files/" + this.userId).then(function (response) {
-          console.log("requested");
-          _this.files = Object.assign({}, response.data.data);
-        })["catch"](function (error) {
-          console.log("Error Fetching Files");
-          console.log(error);
-        });
-      }
+      // if (this.files.length == 0) {
+      axios.get("/user/files/" + this.userId).then(function (response) {
+        console.log("requested");
+        _this2.files = Object.assign({}, response.data.data);
+      })["catch"](function (error) {
+        console.log("Error Fetching Files");
+        console.log(error);
+      }); // }
     }
   },
   mounted: function mounted() {// console.log(this.mediaOptions);
@@ -3967,7 +4018,8 @@ __webpack_require__.r(__webpack_exports__);
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
-        user: this.authUser
+        user: this.authUser,
+        data: null
       },
       dialogLoading: false,
       dialogItem: null,
@@ -3997,22 +4049,25 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    closeMedia: function closeMedia(v) {
-      this.mediaFilesSettings.dialogStatus = false;
+    mediaResponse: function mediaResponse(res) {
+      // console.log(res.data.data.status);
+      console.log(res.status);
+
+      if (res.status == "error") {
+        return;
+      }
+
+      this.mediaFilesSettings.dialogStatus = false; // if (res.data.data.status == "success") {
+
+      this.getImagesByProduct(); // setTimeout(() => {
+      //   this.show = true;
+      // }, 300);
+      // }
     },
     editItem: function editItem(item) {
-      // if (this.mediaDialog == true) {
-      //   this.mediaDialog;
-      // }
-      //  true
-      // this.mediaDialog = !this.mediaDialog;
-      // console.log(this.mediaFilesSettings.mediaDialog);
       // Toggle Dialog
-      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus; // console.log(this.mediaFilesSettings.dialogStatus);
-      // console.log(this.mediaDialog);
-      // this.actionDialog = true;
-      // this.dialogItem = Object.assign({}, item);
-      // console.log(this.dialogItem);
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
+      this.mediaFilesSettings.data = item;
     },
     deleteItem: function deleteItem(item) {
       this.actionDialog = true;
@@ -4026,13 +4081,8 @@ __webpack_require__.r(__webpack_exports__);
         _this.dialogLoading = false;
         _this.actionDialog = false;
 
-        _this.getImagesByProduct();
+        _this.getImagesByProduct(); // console.log(response);
 
-        _this.show = false;
-        setTimeout(function () {
-          _this.show = true;
-        }, 300);
-        console.log(response);
       })["catch"](function (error) {
         _this.dialogLoading = false;
         _this.actionDialog = false;
@@ -4046,6 +4096,7 @@ __webpack_require__.r(__webpack_exports__);
     getImagesByProduct: function getImagesByProduct() {
       var _this2 = this;
 
+      this.show = false;
       axios.get("/items/by-product/" + this.product).then(function (response) {
         // console.log(response.data.items);
         // If no items found
@@ -4053,20 +4104,30 @@ __webpack_require__.r(__webpack_exports__);
           _this2.withItems = false;
           _this2.uploader = true;
           return;
-        } // Emit Items
-
+        }
 
         _this2.withItems = true;
         _this2.uploader = false;
         _this2.items = response.data.items; // Setup 360
 
-        _this2.options.frames = response.data.items.length;
+        _this2.options.frames = response.data.items.length; // this.options.source = response.data.items.map(function (item) {
+        //   if (item.media_file == null) {
+        //     window.location.origin +
+        //       "/storage/uploads/user-" +
+        //       this.authUser.id +
+        //       "/" +
+        //       item.media_file.path;
+        //   }
+        // });
+
         _this2.options.source = response.data.items.map(function (item) {
           return window.location.origin + "/storage/uploads/user-" + _this2.authUser.id + "/" + item.media_file.path;
-        });
+        }); // console.log(this.items);
+
         setTimeout(function () {
           // $(this.$el).spritespin(this.options);
           _this2.show = true;
+          console.log("show: " + _this2.show);
         }, 1);
       })["catch"](function (error) {
         console.log("Error fetching items");
@@ -25917,32 +25978,56 @@ var render = function() {
                               _c(
                                 "v-card",
                                 {
+                                  class:
+                                    "pa-1 elevation-0 " +
+                                    (_vm.selected.includes(file.id) == true
+                                      ? "primary dark"
+                                      : "transparent"),
                                   on: {
                                     click: function($event) {
-                                      return _vm.selectedFile(file.id)
+                                      return _vm.selectFile(file.id)
                                     }
                                   }
                                 },
                                 [
-                                  _c("v-img", {
-                                    staticClass: "grey darken-4",
-                                    attrs: {
-                                      src:
-                                        _vm.baseUrl +
-                                        "/storage/uploads/user-" +
-                                        _vm.userId +
-                                        "/" +
-                                        file.path,
-                                      "max-height": "200",
-                                      contain: ""
-                                    }
-                                  })
+                                  _c(
+                                    "v-img",
+                                    {
+                                      staticClass: "grey darken-4",
+                                      attrs: {
+                                        src:
+                                          _vm.baseUrl +
+                                          "/storage/uploads/user-" +
+                                          _vm.userId +
+                                          "/" +
+                                          file.path,
+                                        "max-height": "200",
+                                        contain: ""
+                                      }
+                                    },
+                                    [
+                                      _vm.selected.includes(file.id) == true
+                                        ? _c(
+                                            "v-icon",
+                                            {
+                                              staticClass: "primary",
+                                              attrs: { dark: "", small: "" }
+                                            },
+                                            [_vm._v("mdi-check")]
+                                          )
+                                        : _vm._e()
+                                    ],
+                                    1
+                                  )
                                 ],
                                 1
                               ),
                               _vm._v(" "),
                               _c("div", { staticClass: "caption" }, [
-                                _vm._v(_vm._s(file.title))
+                                _vm._v(
+                                  _vm._s(file.title.substring(0, 20)) +
+                                    _vm._s(file.title.length > 20 ? "..." : "")
+                                )
                               ])
                             ],
                             1
@@ -25976,7 +26061,7 @@ var render = function() {
                           attrs: { color: "primary", text: "" },
                           on: {
                             click: function($event) {
-                              0
+                              return _vm.submitSelected(_vm.multiple)
                             }
                           }
                         },
@@ -27341,7 +27426,7 @@ var render = function() {
       _vm._v(" "),
       _c("media-files", {
         attrs: { mediaOptions: _vm.mediaFilesSettings },
-        on: { close: _vm.closeMedia }
+        on: { responded: _vm.mediaResponse }
       })
     ],
     1
