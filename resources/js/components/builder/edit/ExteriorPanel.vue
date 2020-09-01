@@ -2,7 +2,7 @@
   <div>
     <div>
       <div style="min-height:450px;">
-        <upload-form v-if="uploader == true" @uploaded="getImagesByProduct"></upload-form>
+        <upload-zone v-if="uploader == true" @uploaded="getImagesByProduct"></upload-zone>
         <spritespin
           v-bind:options="options"
           v-if="show && uploader == false"
@@ -77,13 +77,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <media-files :open="mediaDialog" :dialog="true" @close="closeMedia" :user="authUser"></media-files>
+    <media-files :mediaOptions="mediaFilesSettings" @close="closeMedia"></media-files>
   </div>
 </template>
 
 <script>
 import MediaFiles from "../../MediaFiles";
-import UploadForm from "./UplooadForm";
+import UploadZone from "../../UplooadZone";
 export default {
   props: {
     product: {
@@ -97,12 +97,16 @@ export default {
   },
   components: {
     MediaFiles,
-    UploadForm,
+    UploadZone,
   },
   data() {
     return {
       // MediaFiles
-      mediaDialog: false,
+      mediaFilesSettings: {
+        dialog: true,
+        dialogStatus: false,
+        user: this.authUser,
+      },
 
       dialogLoading: false,
       dialogItem: null,
@@ -135,14 +139,19 @@ export default {
   },
   methods: {
     closeMedia(v) {
-      this.mediaDialog = false;
+      this.mediaFilesSettings.dialogStatus = false;
     },
     editItem(item) {
       // if (this.mediaDialog == true) {
       //   this.mediaDialog;
       // }
       //  true
-      this.mediaDialog = !this.mediaDialog;
+      // this.mediaDialog = !this.mediaDialog;
+      // console.log(this.mediaFilesSettings.mediaDialog);
+      // Toggle Dialog
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
+        .dialogStatus;
+      // console.log(this.mediaFilesSettings.dialogStatus);
       // console.log(this.mediaDialog);
       // this.actionDialog = true;
       // this.dialogItem = Object.assign({}, item);
@@ -215,6 +224,7 @@ export default {
     },
   },
   mounted() {
+    // console.log(this.mediaFilesSettings.dialogStatus);
     this.getImagesByProduct();
   },
 };

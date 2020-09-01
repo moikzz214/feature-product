@@ -1,11 +1,22 @@
 <template>
   <div>
-    <v-dialog v-if="dialog == true" v-model="mediaDialog" scrollable persistent max-width="80%">
+    <v-dialog
+      v-if="mediaOptions.dialog == true"
+      v-model="mediaDialog"
+      scrollable
+      persistent
+      max-width="80%"
+    >
       <v-card :loading="mediaLoading" style="min-height:500px;">
         <v-card-title class="overline px-3 py-0">Media Files</v-card-title>
         <v-divider></v-divider>
         <v-card-title class="overline px-3">
-          <v-btn class="mr-3" :class="`${tabItem == 'upload' ? 'primary' : ''}`" depressed @click="uploadTab">
+          <v-btn
+            class="mr-3"
+            :class="`${tabItem == 'upload' ? 'primary' : ''}`"
+            depressed
+            @click="uploadTab"
+          >
             Upload
             <v-icon small right>mdi-cloud-upload</v-icon>
           </v-btn>
@@ -46,28 +57,28 @@
 <script>
 export default {
   props: {
-    open: {
-      type: Boolean,
-      default: false,
-    },
-    dialog: {
-      type: Boolean,
-      default: false,
-    },
-    user: {
+    mediaOptions: {
       type: Object,
       default: null,
     },
   },
   watch: {
-    open: function (val) {
-      this.mediaDialog = val;
+    mediaOptions: {
+      handler(val) {
+        this.mediaDialog = val.dialogStatus;
+        console.log(val);
+      },
+      deep: true,
     },
+    // mediaOptions: function (val) {
+    //   // this.mediaDialog = val.dialogStatus;
+    //   console.log(val);
+    // },
   },
   data() {
     return {
       tabItem: "upload",
-      userId: this.user.id,
+      userId: this.mediaOptions.user.id,
       files: [],
       baseUrl: window.location.origin,
       mediaDialog: false,
@@ -106,7 +117,7 @@ export default {
     },
   },
   mounted() {
-    // console.log(this.dialog);
+    // console.log(this.mediaOptions);
   },
 };
 </script>
