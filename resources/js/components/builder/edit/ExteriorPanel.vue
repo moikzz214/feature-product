@@ -2,7 +2,7 @@
   <div>
     <div>
       <div style="min-height:450px;">
-        <upload-zone v-if="uploader == true" :item-type="'panorama'" :add-items="false" @uploaded="getImagesByProduct"></upload-zone>
+        <upload-zone v-if="uploader == true" :add-items="true" @uploaded="getImagesByProduct"></upload-zone>
         <spritespin
           v-bind:options="options"
           v-if="show && uploader == false"
@@ -83,7 +83,7 @@
 
 <script>
 import MediaFiles from "../../MediaFiles";
-import UploadZone from "../../UplooadZone";
+import UploadZone from "../../UploadZone";
 export default {
   props: {
     product: {
@@ -106,6 +106,7 @@ export default {
         dialog: true,
         dialogStatus: false,
         user: this.authUser,
+        action: 'replace',
         data: null,
       },
 
@@ -181,7 +182,7 @@ export default {
       axios
         .get("/items/by-product/" + this.product)
         .then((response) => {
-          // console.log(response.data.items);
+          console.log(response.data.items);
           // If no items found
           if (response.data.items.length == 0) {
             this.withItems = false;

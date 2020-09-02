@@ -7,8 +7,12 @@
       persistent
       max-width="80%"
     >
-      <v-card :loading="mediaLoading" style="min-height:500px;">
-        <v-card-title class="overline px-3 py-0">Media Files</v-card-title>
+      <v-card :loading="mediaLoading" style="min-height:450px;">
+        <v-card-title class="overline px-3 py-0">
+          Media Files
+          <v-spacer></v-spacer>
+          <v-icon color="red" @click="closeMediaDialog">mdi-close</v-icon>
+        </v-card-title>
         <v-divider></v-divider>
         <v-card-title class="overline px-3">
           <v-btn
@@ -22,11 +26,11 @@
           </v-btn>
           <v-btn :class="`${tabItem == 'mediafiles' ? 'primary' : ''}`" depressed @click="mediaTab">
             Media Files
-            <v-icon small right>mdi-image-album</v-icon>
+            <v-icon small right>mdi-panorama</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
-          <p>This is upload tab</p>
+          <upload-zone :add-items="false" @uploaded="uploadZoneResponse" />
         </v-card-text>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'mediafiles'">
           <v-row class="px-2">
@@ -56,10 +60,10 @@
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions>
+        <v-card-actions v-if="tabItem == 'mediafiles'">
           <v-spacer></v-spacer>
           <v-btn color="grey" text @click="closeMediaDialog">Cancel</v-btn>
-          <v-btn color="primary" text @click="submitSelected(multiple)">Select</v-btn>
+          <v-btn color="primary" text @click="submitSelected()">Select</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -67,12 +71,16 @@
 </template>
 
 <script>
+import UploadZone from "./UploadZone";
 export default {
   props: {
     mediaOptions: {
       type: Object,
       default: null,
     },
+  },
+  components: {
+    UploadZone,
   },
   watch: {
     mediaOptions: {
@@ -92,12 +100,18 @@ export default {
       mediaLoading: false,
       tab: null,
 
+      submitAction: this.mediaOptions.action ? this.mediaOptions.action : 'save',
       // Selected File
-      multiple: false,
+      multiple: this.mediaOptions.multiple ? this.mediaOptions.multiple : false,
       selected: [],
     };
   },
   methods: {
+    uploadZoneResponse() {
+      this.selected = [];
+      this.tabItem = "mediafiles";
+      this.getUserFiles();
+    },
     mediaTab() {
       this.tabItem = "mediafiles";
       this.getUserFiles();
@@ -129,12 +143,19 @@ export default {
       }
     },
     submitSelected() {
+      // Save to Item Table
+
+
+      // Replace Item 360 Image
       let data = {
         selected: this.selected,
-        item: this.mediaOptions.data.id,
+        item: this.mediaOptions.data ? this.mediaOptions.data.id : null,
+        item_type: this.mediaOptions.itemType ? this.mediaOptions.itemType : null,
+        action: this.submitAction,
+        product: this.mediaOptions.product ? this.mediaOptions.product : null,
       };
       axios
-        .post("/item/replace/" + JSON.stringify(data))
+        .post("/item/save/" + JSON.stringify(data))
         .then((response) => {
           // console.log(response.data);
           if (response.data.status == "success") {
@@ -153,16 +174,18 @@ export default {
       this.$emit("responded", false);
     },
     getUserFiles() {
-      axios
-        .get("/user/files/" + this.userId)
-        .then((response) => {
-          console.log("requested");
-          this.files = Object.assign({}, response.data.data);
-        })
-        .catch((error) => {
-          console.log("Error Fetching Files");
-          console.log(error);
-        });
+      if (this.selected.length == 0) {
+        axios
+          .get("/user/files/" + this.userId)
+          .then((response) => {
+            console.log("requested");
+            this.files = Object.assign({}, response.data.data);
+          })
+          .catch((error) => {
+            console.log("Error Fetching Files");
+            console.log(error);
+          });
+      }
     },
   },
   mounted() {

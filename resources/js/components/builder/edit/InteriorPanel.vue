@@ -8,23 +8,17 @@
     </div>
     <div class="col-12 col-md-10">
       <v-skeleton-loader :loading="loading" type="list-item-avatar-two-line">
-        <v-sheet v-if="scenes[0]">
+        <!-- <v-sheet v-if="scenes[0]"> -->
+        <v-sheet v-if="scenes">
           <v-slide-group show-arrows>
             <v-slide-item v-for="item in scenes" :key="item.id">
-              <v-card class="my-1 mx-2" active-class="primary" @click="0">
+              <v-card class="my-1 mx-2" active-class="primary" @click="selectedScene(item)">
                 <v-list-item dense two-line>
-                  <v-list-item-avatar
-                    size="26"
-                    :color="`${item.type == 'panoramic' ? 'orange' : 'teal'}`"
-                  >
-                    <v-icon
-                      dark
-                      small
-                    >{{ item.type == "panoramic" ? 'mdi-panorama-horizontal' : 'mdi-axis-z-rotate-clockwise' }}</v-icon>
+                  <v-list-item-avatar size="26" color="orange">
+                    <v-icon dark small>mdi-panorama-horizontal</v-icon>
                   </v-list-item-avatar>
                   <v-list-item-content>
-                    <v-list-item-title v-html="item.title"></v-list-item-title>
-                    <v-list-item-subtitle v-html="item.type"></v-list-item-subtitle>
+                    <v-list-item-title v-html="item.media_file.title.substring(0, 15)"></v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-card>
@@ -43,21 +37,22 @@
         </v-sheet>
       </v-skeleton-loader>
     </div>
-    <div class="col-12">
+    <div v-if="selectedItem.length == 0" class="col-12">
       <v-sheet
         class="grey lighten-4 mr-auto pa-3 d-flex justify-center align-center"
         style="min-height:480px;"
       >
-        <p>
+        <p v-if="scenes.length == 0">
           Add your
           <a @click.stop="openMediaFiles">new scene now</a>.
         </p>
+        <p v-else>Please select a scene</p>
       </v-sheet>
     </div>
+    <div v-else class="col-12">
+      <div id="panorama" style="min-height: 450px;"></div>
+    </div>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
-    <!-- <v-dialog v-model="dialog" max-width="450">
-      <create-scene :product-id="product" @close="closeDialog" @sceneCreated="getScenes"></create-scene>
-    </v-dialog>-->
   </div>
 </template>
 
@@ -82,44 +77,106 @@ export default {
   data() {
     return {
       loading: false,
-      dialog: false,
       scenes: [],
+      selectedItem: [],
+
+      thePanorama: null,
+      baseUrl: window.location.origin,
 
       // Media Files
       mediaFilesSettings: {
         dialog: true,
         dialogStatus: false,
         user: this.authUser,
+        action: "save",
         data: null,
+        product: this.product,
+        itemType: "panorama",
       },
     };
   },
   methods: {
-    mediaResponse() {
+    loadPanorama(i) {
+      console.log(i);
+      this.thePanorama = pannellum.viewer("panorama", {
+        hotSpotDebug: true,
+        default: {
+          firstScene: "circle",
+          // author: "Matthew Petroff",
+          sceneFadeDuration: 1000,
+        },
+        scenes: {
+          circle: {
+            // title: "Mason Circle",
+            // hfov: 92.49266381856185,
+            hfov: 50,
+            pitch: -16.834687202204037,
+            yaw: -36.30724382948786,
+            type: "equirectangular",
+            panorama:
+              this.baseUrl +
+              "/storage/uploads/user-" +
+              this.authUser.id +
+              "/" +
+              i.media_file.path,
+            autoLoad: true,
+            hotSpots: [
+              {
+                pitch: -14.94618622367452,
+                yaw: -174.5048581866088,
+                type: "scene",
+                text: "Passenger Seats",
+                sceneId: "back",
+              },
+              {
+                pitch: -27.263801777525146,
+                yaw: 5.051667495791323,
+                type: "info",
+                text: "Dashboard",
+                cssClass: "custom-hotspot",
+                // createTooltipFunc: hotspot,
+                createTooltipArgs:
+                  "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
+              },
+            ],
+          }, // Circle
+        },
+      });
+    },
+    selectedScene(i) {
+      this.selectedItem = Object.assign({}, i);
+      setTimeout(() => {
+        this.loadPanorama(this.selectedItem);
+      }, 300);
+    },
+    mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = false;
-      console.log("media files responded");
+      if (v.status == "success") {
+        this.scenes = [];
+        this.getScenes();
+      }
     },
     openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
-      console.log(this.mediaFilesSettings.dialogStatus);
-    },
-    closeDialog(v) {
-      this.dialog = v;
+      // this.mediaFilesSettings.data = item;
+      // console.log(this.mediaFilesSettings.dialogStatus);
     },
     getScenes() {
-      this.loading = true;
-      axios
-        .get("/builder/scenes/product/" + this.product)
-        .then((response) => {
-          this.scenes = Object.assign({}, response.data.data);
-          this.loading = false;
-          // console.log(this.scenes[0]);
-        })
-        .catch((error) => {
-          console.log("Error: " + error);
-          console.log(this.scenes);
-        });
+      if (this.scenes.length == 0) {
+        this.loading = true;
+        axios
+          .get("/item/scenes/by-product/" + this.product)
+          .then((response) => {
+            this.scenes = Object.assign({}, response.data);
+            this.loading = false;
+            // console.log(this.scenes);
+          })
+          .catch((error) => {
+            console.log("Error: " + error);
+            console.log(this.scenes);
+          });
+      }
     },
   },
   created() {

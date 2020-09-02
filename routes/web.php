@@ -32,7 +32,7 @@ Route::get('/builder/product/upload-video', 'BuilderController@index')->name('bu
 Route::post('/video/store', 'VideoController@store')->name('upload.video');
 
 Route::get('/builder/scenes/product/{id}', 'ScenesController@scenesByProductId')->name('builder.scenes.by.product.id');
-// Route::get('/builder/scenes/all', 'ScenesController@scenesAll')->name('builder.all.scenes');
+
 Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.store.scene');
 
 
@@ -49,4 +49,8 @@ Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.us
 // Items Controller
 Route::get('/items/by-product/{id}', 'ItemsController@getItemsByProduct')->name('items.by.product');
 Route::post('/item/delete/{id}', 'ItemsController@destroy')->name('items.delete');
-Route::post('/item/replace/{data}', 'ItemsController@replace')->name('items.replace');
+// Save or replace depending on the request data
+Route::post('/item/save/{data}', 'ItemsController@saveItem')->name('items.save');
+
+// Panorama
+Route::get('/item/scenes/by-product/{id}', 'ItemsController@getScenesByProductId')->name('item.scenes');

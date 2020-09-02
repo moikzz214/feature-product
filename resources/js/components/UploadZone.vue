@@ -1,6 +1,6 @@
 <template>
   <div style="width:100%;">
-    <div style="max-height:400px;overflow-y:scroll;background-color: #f6f6f6;">
+    <div style="max-height:450px;overflow-y:scroll;background-color: #f6f6f6;">
       <vue-dropzone
         class="file-upload"
         ref="myVueDropzone"
@@ -23,8 +23,8 @@
     </div>
     <div class="pa-3 d-flex">
       <v-spacer></v-spacer>
-      <v-btn class="ml-3" text @click="removeAllFiles">clear all</v-btn>
-      <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="upload">Save</v-btn>
+      <v-btn class="ml-3" text @click="removeAllFiles">clear</v-btn>
+      <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="upload">Upload</v-btn>
     </div>
   </div>
 </template>

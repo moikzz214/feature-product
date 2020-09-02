@@ -155,7 +155,7 @@ class FilesController extends Controller
 
     public function getUserFilesByID($id)
     {
-        $files = Media_file::where(['user_id' => 1])->paginate(50);
+        $files = Media_file::where(['user_id' => 1])->orderBy('created_at', 'DESC')->paginate(200);
         return response()->json($files, 200);
     }
 }
