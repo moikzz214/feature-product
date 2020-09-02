@@ -16,7 +16,7 @@ class ItemsController extends Controller
     {
         $items = Item::where([
             'product_id' => $id,
-            'item_type' => 360
+            'item_type' => '360'
         ])->with('media_file')->get();
 
         return response()->json([
