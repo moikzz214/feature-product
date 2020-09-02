@@ -140,61 +140,66 @@ export default {
         });
     },
     loadPanorama(i) {
+
       // console.log(i.media_file.original_name);
       let sceneTitle = "";
       sceneTitle = i.media_file.original_name;
-      let itemObj = {}; 
-      
-      itemObj[sceneTitle] = {
-          // title: "Mason Circle",
-          // hfov: 92.49266381856185,
-          hfov: 50,
-          pitch: -16.834687202204037,
-          yaw: -36.30724382948786,
-          type: "equirectangular",
-          // panorama: "http://127.0.0.1:8000/product/images/panoramic/20200826_120720.jpg",
-          // panorama: "http://127.0.0.1:8000/product/images/panoramic/panoramic-4k-optimized.jpg",
-          panorama:
-            this.baseUrl +
-            "/storage/uploads/user-" +
-            this.authUser.id +
-            "/" +
-            i.media_file.path,
-          autoLoad: true,
-          // hotSpots: [
-          //   {
-          //     pitch: -14.94618622367452,
-          //     yaw: -174.5048581866088,
-          //     type: "scene",
-          //     text: "Passenger Seats",
-          //     sceneId: "back",
-          //   },
-          //   {
-          //     pitch: -27.263801777525146,
-          //     yaw: 5.051667495791323,
-          //     type: "info",
-          //     text: "Dashboard",
-          //     cssClass: "custom-hotspot",
-          //     // createTooltipFunc: hotspot,
-          //     createTooltipArgs:
-          //       "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
-          //   },
-          // ],
-        }; // Circle]
-
-      console.log(itemObj);
-      // console.log(typeof sceneTitle)
       this.thePanorama = pannellum.viewer("panorama", {
-        hotSpotDebug: true,
+        autoLoad: true,
         default: {
           firstScene: sceneTitle,
           // author: "Matthew Petroff",
           sceneFadeDuration: 1000,
         },
-        scenes: {
-          itemObj
-        },
+        scenes: {},
       });
+
+
+
+      this.thePanorama.addScene(sceneTitle, {
+        // title: "Mason Circle",
+        // hfov: 92.49266381856185,
+        hfov: 50,
+        pitch: -16.834687202204037,
+        yaw: -36.30724382948786,
+        type: "equirectangular",
+        // panorama: "http://127.0.0.1:8000/product/images/panoramic/20200826_120720.jpg",
+        // panorama: "http://127.0.0.1:8000/product/images/panoramic/panoramic-4k-optimized.jpg",
+        panorama:
+          this.baseUrl +
+          "/storage/uploads/user-" +
+          this.authUser.id +
+          "/" +
+          i.media_file.path,
+        hotSpots: [],
+      });
+      this.thePanorama.loadScene(sceneTitle);
+      this.thePanorama.addHotSpot(
+        {
+          pitch: -14.94618622367452,
+          yaw: -174.5048581866088,
+          type: "scene",
+          text: "Passenger Seats",
+        //   sceneId: sceneTitle,
+        },
+        // sceneTitle
+      );
+
+      this.thePanorama.addHotSpot(
+        {
+          pitch: -27.263801777525146,
+          yaw: 5.051667495791323,
+          type: "info",
+          text: "Dashboard",
+        //   cssClass: "custom-hotspot",
+        //   createTooltipFunc: hotspot,
+        //   createTooltipArgs:
+        //     "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
+        },
+        // sceneTitle
+      );
+
+      console.log(this.thePanorama);
     },
     selectedScene(i) {
       this.selectedItem = Object.assign({}, i);

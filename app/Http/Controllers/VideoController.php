@@ -81,6 +81,9 @@ class VideoController extends Controller
         //     'file'     => $video->t
         // ]);
 
+        // Clean Temp Folder
+        FFMpeg::cleanupTemporaryFiles();
+
         // return response
         return response()->json([
             'id' => $video->id,

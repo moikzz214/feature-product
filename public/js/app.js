@@ -4305,8 +4305,16 @@ __webpack_require__.r(__webpack_exports__);
       // console.log(i.media_file.original_name);
       var sceneTitle = "";
       sceneTitle = i.media_file.original_name;
-      var itemObj = {};
-      itemObj[sceneTitle] = {
+      this.thePanorama = pannellum.viewer("panorama", {
+        autoLoad: true,
+        "default": {
+          firstScene: sceneTitle,
+          // author: "Matthew Petroff",
+          sceneFadeDuration: 1000
+        },
+        scenes: {}
+      });
+      this.thePanorama.addScene(sceneTitle, {
         // title: "Mason Circle",
         // hfov: 92.49266381856185,
         hfov: 50,
@@ -4316,41 +4324,29 @@ __webpack_require__.r(__webpack_exports__);
         // panorama: "http://127.0.0.1:8000/product/images/panoramic/20200826_120720.jpg",
         // panorama: "http://127.0.0.1:8000/product/images/panoramic/panoramic-4k-optimized.jpg",
         panorama: this.baseUrl + "/storage/uploads/user-" + this.authUser.id + "/" + i.media_file.path,
-        autoLoad: true // hotSpots: [
-        //   {
-        //     pitch: -14.94618622367452,
-        //     yaw: -174.5048581866088,
-        //     type: "scene",
-        //     text: "Passenger Seats",
-        //     sceneId: "back",
-        //   },
-        //   {
-        //     pitch: -27.263801777525146,
-        //     yaw: 5.051667495791323,
-        //     type: "info",
-        //     text: "Dashboard",
-        //     cssClass: "custom-hotspot",
-        //     // createTooltipFunc: hotspot,
-        //     createTooltipArgs:
-        //       "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
-        //   },
-        // ],
-
-      }; // Circle]
-
-      console.log(itemObj); // console.log(typeof sceneTitle)
-
-      this.thePanorama = pannellum.viewer("panorama", {
-        hotSpotDebug: true,
-        "default": {
-          firstScene: sceneTitle,
-          // author: "Matthew Petroff",
-          sceneFadeDuration: 1000
-        },
-        scenes: {
-          itemObj: itemObj
-        }
+        hotSpots: []
       });
+      this.thePanorama.loadScene(sceneTitle);
+      this.thePanorama.addHotSpot({
+        pitch: -14.94618622367452,
+        yaw: -174.5048581866088,
+        type: "scene",
+        text: "Passenger Seats" //   sceneId: sceneTitle,
+
+      } // sceneTitle
+      );
+      this.thePanorama.addHotSpot({
+        pitch: -27.263801777525146,
+        yaw: 5.051667495791323,
+        type: "info",
+        text: "Dashboard" //   cssClass: "custom-hotspot",
+        //   createTooltipFunc: hotspot,
+        //   createTooltipArgs:
+        //     "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
+
+      } // sceneTitle
+      );
+      console.log(this.thePanorama);
     },
     selectedScene: function selectedScene(i) {
       var _this2 = this;
@@ -88123,8 +88119,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

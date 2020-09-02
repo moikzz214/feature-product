@@ -130,9 +130,6 @@ class FilesController extends Controller
         // // Save to Items table
         // Item::insert($itemsArray);
 
-        // Clean Temp Folder
-        FFMpeg::cleanupTemporaryFiles();
-
         // Return response
         return response()->json([
             'message' => 'Upload Success',
