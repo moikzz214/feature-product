@@ -14,7 +14,10 @@ class ItemsController extends Controller
 
     public function getItemsByProduct($id)
     {
-        $items = Item::where('product_id', $id)->with('media_file')->get();
+        $items = Item::where([
+            'product_id' => $id,
+            'item_type' => 360
+        ])->with('media_file')->get();
 
         return response()->json([
             'items' => $items,
