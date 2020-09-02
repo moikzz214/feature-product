@@ -24,7 +24,7 @@
         <exterior-panel :auth-user="authUser" :product="this.$route.params.id" />
       </v-col>
       <v-col v-if="activateInterior == true" cols="9">
-        <interior-panel :product="this.$route.params.id" />
+        <interior-panel :auth-user="authUser" :product="this.$route.params.id" />
       </v-col>
     </v-row>
   </div>

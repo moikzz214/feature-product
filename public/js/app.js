@@ -4138,11 +4138,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CreateScene__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CreateScene */ "./resources/js/components/builder/edit/CreateScene.vue");
-//
-//
-//
-//
+/* harmony import */ var _MediaFiles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../MediaFiles */ "./resources/js/components/MediaFiles.vue");
+/* harmony import */ var _CreateScene__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CreateScene */ "./resources/js/components/builder/edit/CreateScene.vue");
 //
 //
 //
@@ -4207,24 +4204,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     product: {
       type: String,
       "default": ""
+    },
+    authUser: {
+      type: Object,
+      "default": null
     }
   },
   components: {
-    CreateScene: _CreateScene__WEBPACK_IMPORTED_MODULE_0__["default"]
+    MediaFiles: _MediaFiles__WEBPACK_IMPORTED_MODULE_0__["default"],
+    CreateScene: _CreateScene__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
       loading: false,
       dialog: false,
-      scenes: []
+      scenes: [],
+      // Media Files
+      mediaFilesSettings: {
+        dialog: true,
+        dialogStatus: false,
+        user: this.authUser,
+        data: null
+      }
     };
   },
   methods: {
+    mediaResponse: function mediaResponse() {
+      this.mediaFilesSettings.dialogStatus = false;
+      console.log("media files responded");
+    },
+    openMediaFiles: function openMediaFiles() {
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
+      console.log(this.mediaFilesSettings.dialogStatus);
+    },
     closeDialog: function closeDialog(v) {
       this.dialog = v;
     },
@@ -4234,15 +4252,14 @@ __webpack_require__.r(__webpack_exports__);
       this.loading = true;
       axios.get("/builder/scenes/product/" + this.product).then(function (response) {
         _this.scenes = Object.assign({}, response.data.data);
-        _this.loading = false;
-        console.log(_this.scenes[0]);
+        _this.loading = false; // console.log(this.scenes[0]);
       })["catch"](function (error) {
         console.log("Error: " + error);
         console.log(_this.scenes);
       });
     }
   },
-  mounted: function mounted() {
+  created: function created() {
     this.getScenes();
   }
 });
@@ -26346,7 +26363,10 @@ var render = function() {
                 { attrs: { cols: "9" } },
                 [
                   _c("interior-panel", {
-                    attrs: { product: this.$route.params.id }
+                    attrs: {
+                      "auth-user": _vm.authUser,
+                      product: this.$route.params.id
+                    }
                   })
                 ],
                 1
@@ -27437,40 +27457,35 @@ var render = function() {
     [
       _c(
         "div",
-        { staticClass: "col-2 d-flex align-center flex-start" },
+        { staticClass: "col-12 col-md-2 d-flex align-center flex-start" },
         [
           _c(
-            "v-btn",
+            "v-card",
             {
-              staticClass: "mr-3 text--primary",
-              attrs: {
-                elevation: "2",
-                fab: "",
-                dark: "",
-                "x-small": "",
-                color: "white"
-              },
+              staticClass: "text-center pa-3",
               on: {
                 click: function($event) {
                   $event.stopPropagation()
-                  _vm.dialog = true
+                  return _vm.openMediaFiles($event)
                 }
               }
             },
-            [_c("v-icon", { attrs: { dark: "" } }, [_vm._v("mdi-plus")])],
+            [
+              _c("v-icon", [_vm._v("mdi-plus")]),
+              _vm._v(" "),
+              _c("h4", { staticClass: "font-weight-light" }, [
+                _vm._v("Add Scene")
+              ])
+            ],
             1
-          ),
-          _vm._v(" "),
-          _c("h4", { staticClass: "font-weight-light mr-3" }, [
-            _vm._v("Scenes:")
-          ])
+          )
         ],
         1
       ),
       _vm._v(" "),
       _c(
         "div",
-        { staticClass: "col-10" },
+        { staticClass: "col-12 col-md-10" },
         [
           _c(
             "v-skeleton-loader",
@@ -27481,7 +27496,6 @@ var render = function() {
               _vm.scenes[0]
                 ? _c(
                     "v-sheet",
-                    { staticClass: "w-100" },
                     [
                       _c(
                         "v-slide-group",
@@ -27571,36 +27585,31 @@ var render = function() {
                   )
                 : _c(
                     "v-sheet",
-                    { staticClass: "w-100" },
+                    {
+                      staticClass:
+                        "grey lighten-4 pa-5 caption d-flex align-center justify-center",
+                      staticStyle: { "min-height": "75px" }
+                    },
                     [
-                      _c(
-                        "v-alert",
-                        {
-                          staticClass:
-                            "my-1 pa-5 mx-2 caption d-flex align-center justify-center",
-                          attrs: { color: "grey lighten-4", dense: "" }
-                        },
-                        [
-                          _vm._v(
-                            "\n          No scene found. Add your\n          "
-                          ),
-                          _c(
-                            "a",
-                            {
-                              on: {
-                                click: function($event) {
-                                  $event.stopPropagation()
-                                  _vm.dialog = true
-                                }
+                      _c("p", { staticClass: "ma-0" }, [
+                        _vm._v(
+                          "\n          No scene found. Add your\n          "
+                        ),
+                        _c(
+                          "a",
+                          {
+                            on: {
+                              click: function($event) {
+                                $event.stopPropagation()
+                                return _vm.openMediaFiles($event)
                               }
-                            },
-                            [_vm._v("new scene now")]
-                          ),
-                          _vm._v(".\n        ")
-                        ]
-                      )
-                    ],
-                    1
+                            }
+                          },
+                          [_vm._v("new scene now")]
+                        ),
+                        _vm._v(".\n        ")
+                      ])
+                    ]
                   )
             ],
             1
@@ -27614,51 +27623,39 @@ var render = function() {
         { staticClass: "col-12" },
         [
           _c(
-            "v-card",
+            "v-sheet",
             {
-              staticClass: "mr-auto pa-3 d-flex justify-center align-center",
+              staticClass:
+                "grey lighten-4 mr-auto pa-3 d-flex justify-center align-center",
               staticStyle: { "min-height": "480px" }
             },
             [
-              _c(
-                "v-card-text",
-                { staticClass: "text-center" },
-                [
-                  _c("p", [_vm._v("Upload your Panoramic Image")]),
-                  _vm._v(" "),
-                  _c("v-btn", { attrs: { large: "", color: "" } }, [
-                    _vm._v("Upload")
-                  ])
-                ],
-                1
-              )
-            ],
-            1
+              _c("p", [
+                _vm._v("\n        Add your\n        "),
+                _c(
+                  "a",
+                  {
+                    on: {
+                      click: function($event) {
+                        $event.stopPropagation()
+                        return _vm.openMediaFiles($event)
+                      }
+                    }
+                  },
+                  [_vm._v("new scene now")]
+                ),
+                _vm._v(".\n      ")
+              ])
+            ]
           )
         ],
         1
       ),
       _vm._v(" "),
-      _c(
-        "v-dialog",
-        {
-          attrs: { "max-width": "450" },
-          model: {
-            value: _vm.dialog,
-            callback: function($$v) {
-              _vm.dialog = $$v
-            },
-            expression: "dialog"
-          }
-        },
-        [
-          _c("create-scene", {
-            attrs: { "product-id": _vm.product },
-            on: { close: _vm.closeDialog, sceneCreated: _vm.getScenes }
-          })
-        ],
-        1
-      )
+      _c("media-files", {
+        attrs: { mediaOptions: _vm.mediaFilesSettings },
+        on: { responded: _vm.mediaResponse }
+      })
     ],
     1
   )
@@ -87877,8 +87874,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
