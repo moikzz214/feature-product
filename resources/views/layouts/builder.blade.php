@@ -35,6 +35,8 @@
     {{-- <script src="https://unpkg.com/spritespin@4.0.11/release/spritespin.js"></script> --}}
     {{-- <script src="https://unpkg.com/spritespin@4.1.0/release/spritespin.js"></script> --}}
     {{-- <script src="https://unpkg.com/spritespin@x.x.x/release/spritespin.js"></script> --}}
+    
+    {{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script> --}}
     <script src="{{ asset('js/libpannellum.js') }}"></script>
     <script src="{{ asset('js/pannellum.js') }}"></script>
     <script src="{{ asset('js/sp.js') }}"></script>

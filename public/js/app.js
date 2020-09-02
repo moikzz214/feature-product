@@ -4221,6 +4221,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4240,6 +4263,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      toDelete: [],
+      deleteDialog: false,
       loading: false,
       scenes: [],
       selectedItem: [],
@@ -4258,58 +4283,88 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    deleteScene: function deleteScene(i) {
+      this.toDelete = i;
+      this.deleteDialog = true;
+    },
+    confirmDelete: function confirmDelete(item) {
+      var _this = this;
+
+      axios.post("/item/delete/" + item).then(function (response) {
+        _this.getScenes();
+
+        _this.deleteDialog = false;
+        _this.selectedItem = [];
+        console.log(response);
+      })["catch"](function (error) {
+        console.log("Error: " + error);
+        console.log(_this.scenes);
+      });
+    },
     loadPanorama: function loadPanorama(i) {
-      console.log(i);
+      // console.log(i.media_file.original_name);
+      var sceneTitle = "";
+      sceneTitle = i.media_file.original_name;
+      var itemObj = {};
+      itemObj[sceneTitle] = {
+        // title: "Mason Circle",
+        // hfov: 92.49266381856185,
+        hfov: 50,
+        pitch: -16.834687202204037,
+        yaw: -36.30724382948786,
+        type: "equirectangular",
+        // panorama: "http://127.0.0.1:8000/product/images/panoramic/20200826_120720.jpg",
+        // panorama: "http://127.0.0.1:8000/product/images/panoramic/panoramic-4k-optimized.jpg",
+        panorama: this.baseUrl + "/storage/uploads/user-" + this.authUser.id + "/" + i.media_file.path,
+        autoLoad: true // hotSpots: [
+        //   {
+        //     pitch: -14.94618622367452,
+        //     yaw: -174.5048581866088,
+        //     type: "scene",
+        //     text: "Passenger Seats",
+        //     sceneId: "back",
+        //   },
+        //   {
+        //     pitch: -27.263801777525146,
+        //     yaw: 5.051667495791323,
+        //     type: "info",
+        //     text: "Dashboard",
+        //     cssClass: "custom-hotspot",
+        //     // createTooltipFunc: hotspot,
+        //     createTooltipArgs:
+        //       "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
+        //   },
+        // ],
+
+      }; // Circle]
+
+      console.log(itemObj); // console.log(typeof sceneTitle)
+
       this.thePanorama = pannellum.viewer("panorama", {
         hotSpotDebug: true,
         "default": {
-          firstScene: "circle",
+          firstScene: sceneTitle,
           // author: "Matthew Petroff",
           sceneFadeDuration: 1000
         },
         scenes: {
-          circle: {
-            // title: "Mason Circle",
-            // hfov: 92.49266381856185,
-            hfov: 50,
-            pitch: -16.834687202204037,
-            yaw: -36.30724382948786,
-            type: "equirectangular",
-            panorama: this.baseUrl + "/storage/uploads/user-" + this.authUser.id + "/" + i.media_file.path,
-            autoLoad: true,
-            hotSpots: [{
-              pitch: -14.94618622367452,
-              yaw: -174.5048581866088,
-              type: "scene",
-              text: "Passenger Seats",
-              sceneId: "back"
-            }, {
-              pitch: -27.263801777525146,
-              yaw: 5.051667495791323,
-              type: "info",
-              text: "Dashboard",
-              cssClass: "custom-hotspot",
-              // createTooltipFunc: hotspot,
-              createTooltipArgs: "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>"
-            }]
-          } // Circle
-
+          itemObj: itemObj
         }
       });
     },
     selectedScene: function selectedScene(i) {
-      var _this = this;
+      var _this2 = this;
 
       this.selectedItem = Object.assign({}, i);
       setTimeout(function () {
-        _this.loadPanorama(_this.selectedItem);
+        _this2.loadPanorama(_this2.selectedItem);
       }, 300);
     },
     mediaResponse: function mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = false;
 
       if (v.status == "success") {
-        this.scenes = [];
+        // this.scenes = [];
         this.getScenes();
       }
     },
@@ -4318,18 +4373,17 @@ __webpack_require__.r(__webpack_exports__);
       // console.log(this.mediaFilesSettings.dialogStatus);
     },
     getScenes: function getScenes() {
-      var _this2 = this;
+      var _this3 = this;
 
-      if (this.scenes.length == 0) {
-        this.loading = true;
-        axios.get("/item/scenes/by-product/" + this.product).then(function (response) {
-          _this2.scenes = Object.assign({}, response.data);
-          _this2.loading = false; // console.log(this.scenes);
-        })["catch"](function (error) {
-          console.log("Error: " + error);
-          console.log(_this2.scenes);
-        });
-      }
+      // if (this.scenes.length == 0) {
+      this.loading = true;
+      axios.get("/item/scenes/by-product/" + this.product).then(function (response) {
+        _this3.scenes = Object.assign({}, response.data);
+        _this3.loading = false; // console.log(this.scenes);
+      })["catch"](function (error) {
+        console.log("Error: " + error);
+        console.log(_this3.scenes);
+      }); // }
     }
   },
   created: function created() {
@@ -27558,7 +27612,7 @@ var render = function() {
           _c(
             "v-card",
             {
-              staticClass: "text-center pa-3",
+              staticClass: "text-center pa-2",
               on: {
                 click: function($event) {
                   $event.stopPropagation()
@@ -27567,9 +27621,9 @@ var render = function() {
               }
             },
             [
-              _c("v-icon", [_vm._v("mdi-plus")]),
+              _c("v-icon", { attrs: { small: "" } }, [_vm._v("mdi-plus")]),
               _vm._v(" "),
-              _c("h4", { staticClass: "font-weight-light" }, [
+              _c("h5", { staticClass: "font-weight-light" }, [
                 _vm._v("Add Scene")
               ])
             ],
@@ -27597,66 +27651,112 @@ var render = function() {
                         "v-slide-group",
                         { attrs: { "show-arrows": "" } },
                         _vm._l(_vm.scenes, function(item) {
-                          return _c(
-                            "v-slide-item",
-                            { key: item.id },
-                            [
-                              _c(
-                                "v-card",
-                                {
-                                  staticClass: "my-1 mx-2",
-                                  attrs: { "active-class": "primary" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.selectedScene(item)
+                          return _c("v-slide-item", { key: item.id }, [
+                            _c(
+                              "div",
+                              {
+                                staticClass: "text-right",
+                                staticStyle: { position: "relative" }
+                              },
+                              [
+                                _c(
+                                  "v-btn",
+                                  {
+                                    staticClass: "elevation-0",
+                                    staticStyle: {
+                                      position: "absolute",
+                                      right: "0",
+                                      top: "0",
+                                      "z-index": "9",
+                                      height: "15px",
+                                      width: "15px"
+                                    },
+                                    attrs: {
+                                      fab: "",
+                                      color: "red",
+                                      "x-small": "",
+                                      dark: ""
+                                    },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.deleteScene(item.id)
+                                      }
                                     }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "v-list-item",
-                                    { attrs: { dense: "", "two-line": "" } },
-                                    [
-                                      _c(
-                                        "v-list-item-avatar",
-                                        {
-                                          attrs: { size: "26", color: "orange" }
-                                        },
-                                        [
-                                          _c(
-                                            "v-icon",
-                                            { attrs: { dark: "", small: "" } },
-                                            [_vm._v("mdi-panorama-horizontal")]
-                                          )
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-list-item-content",
-                                        [
-                                          _c("v-list-item-title", {
-                                            domProps: {
-                                              innerHTML: _vm._s(
-                                                item.media_file.title.substring(
-                                                  0,
-                                                  15
-                                                )
-                                              )
+                                  },
+                                  [
+                                    _c("v-icon", { attrs: { "x-small": "" } }, [
+                                      _vm._v("mdi-close")
+                                    ])
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-card",
+                                  {
+                                    staticClass: "my-1 mx-2",
+                                    attrs: { "active-class": "primary" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.selectedScene(item)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "v-list-item",
+                                      { attrs: { dense: "", "two-line": "" } },
+                                      [
+                                        _c(
+                                          "v-list-item-avatar",
+                                          {
+                                            attrs: {
+                                              size: "26",
+                                              color: "orange"
                                             }
-                                          })
-                                        ],
-                                        1
-                                      )
-                                    ],
-                                    1
-                                  )
-                                ],
-                                1
-                              )
-                            ],
-                            1
-                          )
+                                          },
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              {
+                                                attrs: { dark: "", small: "" }
+                                              },
+                                              [
+                                                _vm._v(
+                                                  "mdi-panorama-horizontal"
+                                                )
+                                              ]
+                                            )
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-list-item-content",
+                                          [
+                                            _c("v-list-item-title", {
+                                              domProps: {
+                                                innerHTML: _vm._s(
+                                                  item.media_file.title.substring(
+                                                    0,
+                                                    15
+                                                  )
+                                                )
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ])
                         }),
                         1
                       )
@@ -27736,7 +27836,7 @@ var render = function() {
           )
         : _c("div", { staticClass: "col-12" }, [
             _c("div", {
-              staticStyle: { "min-height": "450px" },
+              staticStyle: { height: "400px", width: "100%", margin: "0 auto" },
               attrs: { id: "panorama" }
             })
           ]),
@@ -27744,7 +27844,67 @@ var render = function() {
       _c("media-files", {
         attrs: { mediaOptions: _vm.mediaFilesSettings },
         on: { responded: _vm.mediaResponse }
-      })
+      }),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "290" },
+          model: {
+            value: _vm.deleteDialog,
+            callback: function($$v) {
+              _vm.deleteDialog = $$v
+            },
+            expression: "deleteDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "subtitle-1" }, [
+                _vm._v("Confirm Delete?")
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "grey", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.deleteDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("Cancel")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "error", text: "" },
+                      on: {
+                        click: function($event) {
+                          return _vm.confirmDelete(_vm.toDelete)
+                        }
+                      }
+                    },
+                    [_vm._v("Delete")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
     ],
     1
   )

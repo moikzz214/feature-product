@@ -1,27 +1,39 @@
 <template>
   <div class="row">
     <div class="col-12 col-md-2 d-flex align-center flex-start">
-      <v-card class="text-center pa-3" @click.stop="openMediaFiles">
-        <v-icon>mdi-plus</v-icon>
-        <h4 class="font-weight-light">Add Scene</h4>
+      <v-card class="text-center pa-2" @click.stop="openMediaFiles">
+        <v-icon small>mdi-plus</v-icon>
+        <h5 class="font-weight-light">Add Scene</h5>
       </v-card>
     </div>
     <div class="col-12 col-md-10">
       <v-skeleton-loader :loading="loading" type="list-item-avatar-two-line">
-        <!-- <v-sheet v-if="scenes[0]"> -->
         <v-sheet v-if="scenes">
           <v-slide-group show-arrows>
             <v-slide-item v-for="item in scenes" :key="item.id">
-              <v-card class="my-1 mx-2" active-class="primary" @click="selectedScene(item)">
-                <v-list-item dense two-line>
-                  <v-list-item-avatar size="26" color="orange">
-                    <v-icon dark small>mdi-panorama-horizontal</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-content>
-                    <v-list-item-title v-html="item.media_file.title.substring(0, 15)"></v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
+              <div class="text-right" style="position:relative;">
+                <v-btn
+                  fab
+                  style="position:absolute;right:0;top:0;z-index:9;height:15px;width:15px;"
+                  color="red"
+                  class="elevation-0"
+                  x-small
+                  dark
+                  @click="deleteScene(item.id)"
+                >
+                  <v-icon x-small>mdi-close</v-icon>
+                </v-btn>
+                <v-card class="my-1 mx-2" active-class="primary" @click="selectedScene(item)">
+                  <v-list-item dense two-line>
+                    <v-list-item-avatar size="26" color="orange">
+                      <v-icon dark small>mdi-panorama-horizontal</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title v-html="item.media_file.title.substring(0, 15)"></v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-card>
+              </div>
             </v-slide-item>
           </v-slide-group>
         </v-sheet>
@@ -50,9 +62,20 @@
       </v-sheet>
     </div>
     <div v-else class="col-12">
-      <div id="panorama" style="min-height: 450px;"></div>
+      <div id="panorama" style="height:400px;width:100%;margin:0 auto;"></div>
     </div>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
+
+    <v-dialog v-model="deleteDialog" max-width="290">
+      <v-card>
+        <v-card-title class="subtitle-1">Confirm Delete?</v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" text @click="deleteDialog = false">Cancel</v-btn>
+          <v-btn color="error" text @click="confirmDelete(toDelete)">Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -76,6 +99,8 @@ export default {
   },
   data() {
     return {
+      toDelete: [],
+      deleteDialog: false,
       loading: false,
       scenes: [],
       selectedItem: [],
@@ -96,50 +121,78 @@ export default {
     };
   },
   methods: {
+    deleteScene(i) {
+      this.toDelete = i;
+      this.deleteDialog = true;
+    },
+    confirmDelete(item) {
+      axios
+        .post("/item/delete/" + item)
+        .then((response) => {
+          this.getScenes();
+          this.deleteDialog = false;
+          this.selectedItem = [];
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("Error: " + error);
+          console.log(this.scenes);
+        });
+    },
     loadPanorama(i) {
-      console.log(i);
+      // console.log(i.media_file.original_name);
+      let sceneTitle = "";
+      sceneTitle = i.media_file.original_name;
+      let itemObj = {}; 
+      
+      itemObj[sceneTitle] = {
+          // title: "Mason Circle",
+          // hfov: 92.49266381856185,
+          hfov: 50,
+          pitch: -16.834687202204037,
+          yaw: -36.30724382948786,
+          type: "equirectangular",
+          // panorama: "http://127.0.0.1:8000/product/images/panoramic/20200826_120720.jpg",
+          // panorama: "http://127.0.0.1:8000/product/images/panoramic/panoramic-4k-optimized.jpg",
+          panorama:
+            this.baseUrl +
+            "/storage/uploads/user-" +
+            this.authUser.id +
+            "/" +
+            i.media_file.path,
+          autoLoad: true,
+          // hotSpots: [
+          //   {
+          //     pitch: -14.94618622367452,
+          //     yaw: -174.5048581866088,
+          //     type: "scene",
+          //     text: "Passenger Seats",
+          //     sceneId: "back",
+          //   },
+          //   {
+          //     pitch: -27.263801777525146,
+          //     yaw: 5.051667495791323,
+          //     type: "info",
+          //     text: "Dashboard",
+          //     cssClass: "custom-hotspot",
+          //     // createTooltipFunc: hotspot,
+          //     createTooltipArgs:
+          //       "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
+          //   },
+          // ],
+        }; // Circle]
+
+      console.log(itemObj);
+      // console.log(typeof sceneTitle)
       this.thePanorama = pannellum.viewer("panorama", {
         hotSpotDebug: true,
         default: {
-          firstScene: "circle",
+          firstScene: sceneTitle,
           // author: "Matthew Petroff",
           sceneFadeDuration: 1000,
         },
         scenes: {
-          circle: {
-            // title: "Mason Circle",
-            // hfov: 92.49266381856185,
-            hfov: 50,
-            pitch: -16.834687202204037,
-            yaw: -36.30724382948786,
-            type: "equirectangular",
-            panorama:
-              this.baseUrl +
-              "/storage/uploads/user-" +
-              this.authUser.id +
-              "/" +
-              i.media_file.path,
-            autoLoad: true,
-            hotSpots: [
-              {
-                pitch: -14.94618622367452,
-                yaw: -174.5048581866088,
-                type: "scene",
-                text: "Passenger Seats",
-                sceneId: "back",
-              },
-              {
-                pitch: -27.263801777525146,
-                yaw: 5.051667495791323,
-                type: "info",
-                text: "Dashboard",
-                cssClass: "custom-hotspot",
-                // createTooltipFunc: hotspot,
-                createTooltipArgs:
-                  "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
-              },
-            ],
-          }, // Circle
+          itemObj
         },
       });
     },
@@ -152,7 +205,7 @@ export default {
     mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = false;
       if (v.status == "success") {
-        this.scenes = [];
+        // this.scenes = [];
         this.getScenes();
       }
     },
@@ -163,20 +216,20 @@ export default {
       // console.log(this.mediaFilesSettings.dialogStatus);
     },
     getScenes() {
-      if (this.scenes.length == 0) {
-        this.loading = true;
-        axios
-          .get("/item/scenes/by-product/" + this.product)
-          .then((response) => {
-            this.scenes = Object.assign({}, response.data);
-            this.loading = false;
-            // console.log(this.scenes);
-          })
-          .catch((error) => {
-            console.log("Error: " + error);
-            console.log(this.scenes);
-          });
-      }
+      // if (this.scenes.length == 0) {
+      this.loading = true;
+      axios
+        .get("/item/scenes/by-product/" + this.product)
+        .then((response) => {
+          this.scenes = Object.assign({}, response.data);
+          this.loading = false;
+          // console.log(this.scenes);
+        })
+        .catch((error) => {
+          console.log("Error: " + error);
+          console.log(this.scenes);
+        });
+      // }
     },
   },
   created() {
