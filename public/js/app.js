@@ -4244,6 +4244,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4354,7 +4355,7 @@ __webpack_require__.r(__webpack_exports__);
       this.selectedItem = Object.assign({}, i);
 
       if (this.thePanorama != null) {
-        console.log('is null');
+        console.log("is null");
         this.thePanorama.destroy();
       }
 
@@ -26335,7 +26336,7 @@ var render = function() {
           "v-btn",
           {
             staticClass: "ml-3",
-            attrs: { text: "" },
+            attrs: { color: "grey", text: "" },
             on: { click: _vm.removeAllFiles }
           },
           [_vm._v("clear")]
@@ -27865,7 +27866,13 @@ var render = function() {
             "v-card",
             [
               _c("v-card-title", { staticClass: "subtitle-1" }, [
-                _vm._v("Confirm Delete?")
+                _vm._v("Are you sure you want to delete?")
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _vm._v(
+                  "Deleting this item will delete the file and hotspot information."
+                )
               ]),
               _vm._v(" "),
               _c(

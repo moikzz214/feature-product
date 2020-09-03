@@ -23,7 +23,7 @@
     </div>
     <div class="pa-3 d-flex">
       <v-spacer></v-spacer>
-      <v-btn class="ml-3" text @click="removeAllFiles">clear</v-btn>
+      <v-btn class="ml-3" color="grey" text @click="removeAllFiles">clear</v-btn>
       <v-btn class="ml-3" color="primary" :loading="btnLoading" @click="upload">Upload</v-btn>
     </div>
   </div>

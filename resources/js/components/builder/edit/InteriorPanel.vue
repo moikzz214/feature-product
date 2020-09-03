@@ -68,7 +68,8 @@
 
     <v-dialog v-model="deleteDialog" max-width="290">
       <v-card>
-        <v-card-title class="subtitle-1">Confirm Delete?</v-card-title>
+        <v-card-title class="subtitle-1">Are you sure you want to delete?</v-card-title>
+        <v-card-text>Deleting this item will delete the file and hotspot information.</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" text @click="deleteDialog = false">Cancel</v-btn>
@@ -202,7 +203,7 @@ export default {
     selectedScene(i) {
       this.selectedItem = Object.assign({}, i);
       if (this.thePanorama != null) {
-        console.log('is null')
+        console.log("is null");
         this.thePanorama.destroy();
       }
       setTimeout(() => {
