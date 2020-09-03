@@ -18,10 +18,14 @@
     <v-divider></v-divider>
     <v-row>
       <v-col cols="3">
-        <scene-settings :product="this.$route.params.id"></scene-settings>
+        <Hostspots :item="selected_item" :auth-user="authUser" :product="this.$route.params.id" />
       </v-col>
       <v-col v-if="activateExterior == true" cols="9">
-        <exterior-panel :auth-user="authUser" :product="this.$route.params.id" />
+        <exterior-panel
+          :auth-user="authUser"
+          :product="this.$route.params.id"
+          @selectedItem="theSelectedItem"
+        />
       </v-col>
       <v-col v-if="activateInterior == true" cols="9">
         <interior-panel :auth-user="authUser" :product="this.$route.params.id" />
@@ -31,7 +35,7 @@
 </template>
 
 <script>
-import SceneSettings from "./edit/SceneSettings";
+import Hostspots from "./edit/Hostspots";
 import ExteriorPanel from "./edit/ExteriorPanel";
 import InteriorPanel from "./edit/InteriorPanel";
 export default {
@@ -42,20 +46,22 @@ export default {
     },
   },
   components: {
-    SceneSettings,
+    Hostspots,
     ExteriorPanel,
     InteriorPanel,
   },
   data() {
     return {
-      activateExterior: false,
-      activateInterior: true,
+      activateExterior: true,
+      activateInterior: false,
+
+      selected_item: null,
     };
   },
   methods: {
-    // itemsHasBeenLoaded(items) {
-    // //   console.log("items: " + items);
-    // },
+    theSelectedItem(v) {
+      this.selected_item = v;
+    },
   },
   mounted() {
     // console.log(this.authUser);

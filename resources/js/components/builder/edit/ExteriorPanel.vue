@@ -27,7 +27,7 @@
                   @click="toggle"
                 >
                   <v-img
-                    @click="selected(index)"
+                    @click="selected(index, item)"
                     :aspect-ratio="16/9"
                     class="white--text align-end"
                     :src="baseUrl+'/storage/uploads/user-1/'+item.media_file.path"
@@ -106,7 +106,7 @@ export default {
         dialog: true,
         dialogStatus: false,
         user: this.authUser,
-        action: 'replace',
+        action: "replace",
         data: null,
       },
 
@@ -174,8 +174,9 @@ export default {
           console.log(error);
         });
     },
-    selected(index) {
+    selected(index, id = null) {
       this.$refs.spritespin.api.updateFrame(index);
+      this.$emit("selectedItem", id);
     },
     getImagesByProduct() {
       this.show = false;

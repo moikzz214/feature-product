@@ -16,10 +16,9 @@ class CreateHotspotsTable extends Migration
         Schema::create('hotspots', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('hotspot_type');
-            $table->integer('item_id')->unsigned()->nullable();
-            $table->text('content');
-            $table->text('hotspot_settings');
+            $table->string('hotspot_type')->default('info');
+            $table->text('content')->nullable();
+            $table->integer('product_id')->unsigned();
             $table->timestamps();
             // types
             // hotspots_meta - table
