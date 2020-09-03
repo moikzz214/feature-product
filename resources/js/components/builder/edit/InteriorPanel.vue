@@ -140,12 +140,11 @@ export default {
         });
     },
     loadPanorama(i) {
-
       // console.log(i.media_file.original_name);
       let sceneTitle = "";
       sceneTitle = i.media_file.original_name;
       this.thePanorama = pannellum.viewer("panorama", {
-        autoLoad: true,
+        autoLoad: false,
         default: {
           firstScene: sceneTitle,
           // author: "Matthew Petroff",
@@ -153,8 +152,6 @@ export default {
         },
         scenes: {},
       });
-
-
 
       this.thePanorama.addScene(sceneTitle, {
         // title: "Mason Circle",
@@ -174,14 +171,15 @@ export default {
         hotSpots: [],
       });
       this.thePanorama.loadScene(sceneTitle);
+
       this.thePanorama.addHotSpot(
         {
           pitch: -14.94618622367452,
           yaw: -174.5048581866088,
           type: "scene",
           text: "Passenger Seats",
-        //   sceneId: sceneTitle,
-        },
+          //   sceneId: sceneTitle,
+        }
         // sceneTitle
       );
 
@@ -191,11 +189,11 @@ export default {
           yaw: 5.051667495791323,
           type: "info",
           text: "Dashboard",
-        //   cssClass: "custom-hotspot",
-        //   createTooltipFunc: hotspot,
-        //   createTooltipArgs:
-        //     "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
-        },
+          //   cssClass: "custom-hotspot",
+          //   createTooltipFunc: hotspot,
+          //   createTooltipArgs:
+          //     "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
+        }
         // sceneTitle
       );
 
@@ -203,6 +201,10 @@ export default {
     },
     selectedScene(i) {
       this.selectedItem = Object.assign({}, i);
+      if (this.thePanorama != null) {
+        console.log('is null')
+        this.thePanorama.destroy();
+      }
       setTimeout(() => {
         this.loadPanorama(this.selectedItem);
       }, 300);

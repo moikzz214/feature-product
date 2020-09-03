@@ -4306,7 +4306,7 @@ __webpack_require__.r(__webpack_exports__);
       var sceneTitle = "";
       sceneTitle = i.media_file.original_name;
       this.thePanorama = pannellum.viewer("panorama", {
-        autoLoad: true,
+        autoLoad: false,
         "default": {
           firstScene: sceneTitle,
           // author: "Matthew Petroff",
@@ -4352,6 +4352,12 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.selectedItem = Object.assign({}, i);
+
+      if (this.thePanorama != null) {
+        console.log('is null');
+        this.thePanorama.destroy();
+      }
+
       setTimeout(function () {
         _this2.loadPanorama(_this2.selectedItem);
       }, 300);
@@ -88119,8 +88125,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
