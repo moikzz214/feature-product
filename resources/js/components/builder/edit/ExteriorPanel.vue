@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div id="results"></div>
     <div>
       <div style="min-height:450px;">
         <upload-zone v-if="uploader == true" :add-items="true" @uploaded="getImagesByProduct"></upload-zone>
@@ -12,7 +13,7 @@
           />
           <div v-show="hotspots.length != 0" style="width:100%;">
             <div class="hotspot-draggable-wrapper">
-              <div class="cd-single-point draggable-hotspot hotspot-1">
+              <div class="cd-single-point draggable-hotspot hotspot-default-position">
                 <a class="cd-img-replace" href="#0">More</a>
                 <div class="cd-more-info cd-right" style="width: 300px; height: auto;">
                   <a href="#0" class="cd-close-info cd-img-replace">Close</a>
@@ -293,17 +294,29 @@ export default {
     // })(document, window);
     // $(function () {
     // if ($("#draggableWrapper").length) {
+    // https://api.jquery.com/position/
+    // http://jsfiddle.net/gabrieleromanato/MxYGZ/
+    var coordinates = function (element) {
+      element = $(element);
+      var top = element.position().top;
+      var left = element.position().left;
+      $("#results").text("X: " + left + " " + "Y: " + top);
+    };
     $(".draggable-hotspot").draggable({
       containment: ".hotspot-draggable-wrapper",
       drag: function () {
+        coordinates(".draggable-hotspot");
         var offset = $(".draggable-hotspot").offset();
-        var xPos =
-          $(".hotspot-draggable-wrapper").width() -
-          (offset.left + $(".hotspot-draggable-wrapper").width());
+        // var xPos =
+        //   $(".hotspot-draggable-wrapper").width() -
+        //   (offset.left + $(".hotspot-draggable-wrapper").width());
+        var xPos = offset.left;
         var yPos = offset.top;
-        var hotspotDraggableWrapper = $(".hotspot-draggable-wrapper").width();
-        var xPercentage =
-          (hotspotDraggableWrapper - xPos) / hotspotDraggableWrapper;
+        // var hotspotDraggableWrapper = $(".hotspot-draggable-wrapper").width();
+        var hotspotDraggableWrapper = window.screen.width;
+        // var xPercentage =
+        //   (hotspotDraggableWrapper - xPos) / hotspotDraggableWrapper;
+        var xPercentage = (xPos / 450) * 450;
         console.log(xPercentage);
         // $("#posX").text("x: " + xPos);
         // $("#posY").text("y: " + yPos);
@@ -563,6 +576,8 @@ ul {
 .cd-single-point {
   position: absolute;
   border-radius: 50%;
+  width: 25px;
+  height: 25px;
 }
 
 .cd-single-point > a {
@@ -628,11 +643,16 @@ ul {
 //   -moz-animation: cd-pulse 2s infinite;
 //   animation: cd-pulse 2s infinite;
 // }
-
-.cd-single-point.hotspot-1 {
-  bottom: 54%;
-  right: 23%;
+.hotspot-default-position {
+  // left: 50%;
+  // bottom: 50%;
+  left: 0;
+  bottom: 0;
 }
+// .cd-single-point.hotspot-1 {
+//   bottom: 54%;
+//   right: 23%;
+// }
 
 .cd-single-point.hotspot-2 {
   bottom: 45%;
