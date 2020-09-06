@@ -108,8 +108,8 @@
                   rounded
                   :class="`${setButton.status == true ? 'primary' : 'error'}`"
                   @click="setHotspot(hotspot)"
-                  :disabled="toDisableHotspot.includes(hotspot.id) ? true : false"
                 >set</v-btn>
+                 <!-- :disabled="toDisableHotspot.includes(hotspot.id) ? true : false" -->
                 <p v-if="setButton.status == false" class="ma-0 red--text caption">{{setButton.msg}}</p>
               </div>
             </div>
@@ -122,6 +122,13 @@
 </template>
 
 <script>
+/**
+ * Hotspot Process
+ * 1. Select Item/Scene
+ * 2. Add Hotpots
+ *    a. Multiple Hotspots in 1 Item
+ *    b. Save on stop
+ */
 import MediaFiles from "../../MediaFiles";
 export default {
   props: {

@@ -4465,6 +4465,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+/**
+ * Hotspot Process
+ * 1. Select Item/Scene
+ * 2. Add Hotpots
+ *    a. Multiple Hotspots in 1 Item
+ *    b. Save on stop
+ */
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     product: {
@@ -28684,15 +28692,7 @@ var render = function() {
                                           (_vm.setButton.status == true
                                             ? "primary"
                                             : "error"),
-                                        attrs: {
-                                          small: "",
-                                          rounded: "",
-                                          disabled: _vm.toDisableHotspot.includes(
-                                            hotspot.id
-                                          )
-                                            ? true
-                                            : false
-                                        },
+                                        attrs: { small: "", rounded: "" },
                                         on: {
                                           click: function($event) {
                                             return _vm.setHotspot(hotspot)
