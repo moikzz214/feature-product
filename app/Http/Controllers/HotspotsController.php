@@ -56,7 +56,12 @@ class HotspotsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $hotspot = Hotspot::where('id', '=', $id)->firstOrFail();
+        $hotspot->update();
+        return response()->json([
+            'hotspot' => $hotspot,
+            'message' => 'Hotspot has been updated',
+        ], 200);
     }
 
     /**

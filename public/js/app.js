@@ -4507,6 +4507,7 @@ __webpack_require__.r(__webpack_exports__);
       ctaNewTab: "",
       image: "",
       types: ["info", "scene"],
+      hotspotContent: "",
       editing: false,
       hotspotData: null,
       newHotspotDialog: false,
@@ -4559,20 +4560,39 @@ __webpack_require__.r(__webpack_exports__);
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
     },
-    updateHotspot: function updateHotspot(h) {
-      console.log(h);
+    updateHotspot: function updateHotspot(hotspotID) {
+      axios.post("/hotspot/update/" + hotspotID, {
+        id: hotspotID,
+        title: this.title,
+        hotspot_type: "info",
+        product_id: 1,
+        content: JSON.stringify(this.hotspotContent)
+      }).then(function (response) {
+        console.log(response);
+      })["catch"](function (error) {
+        console.log("Error updating hotspot");
+        console.log(error);
+      });
     },
     editHotspot: function editHotspot(h) {
       // Toggle form
       this.editing = !this.editing;
       this.hotspotData = h.id; // Setup Form Data
 
-      this.title = "";
-      this.description = "";
-      this.ctaLabel = "";
-      this.ctaUrl = "";
-      this.ctaNewTab = "";
-      this.image = "";
+      var theContent = h.content !== null ? JSON.parse(h.content) : null;
+      this.title = h.title ? h.title : "Title is not set";
+      this.description = theContent !== null && theContent.description !== null ? theContent.description : "";
+      this.ctaLabel = theContent !== null && theContent.ctaLabel !== undefined ? theContent.ctaLabel : "";
+      this.ctaUrl = theContent !== null && theContent.ctaUrl !== undefined ? theContent.ctaUrl : "";
+      this.ctaNewTab = theContent !== null && theContent.ctaNewTab !== undefined ? theContent.ctaNewTab : "";
+      this.image = theContent !== null && theContent.image !== undefined ? theContent.image : "";
+      this.hotspotContent = {
+        description: this.description,
+        cta_label: this.ctaLabel,
+        cta_url: this.ctaUrl,
+        cta_new_tab: this.ctaNewTab,
+        image: this.image
+      };
     },
     deleteHotspot: function deleteHotspot() {
       console.log("delete");
@@ -28571,7 +28591,9 @@ var render = function() {
                                           attrs: { small: "" },
                                           on: {
                                             click: function($event) {
-                                              return _vm.updateHotspot(hotspot)
+                                              return _vm.updateHotspot(
+                                                hotspot.id
+                                              )
                                             }
                                           }
                                         },
@@ -89000,15 +89022,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!************************************************************!*\
   !*** ./resources/js/components/builder/edit/Hostspots.vue ***!
   \************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Hostspots_vue_vue_type_template_id_35ec1223_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Hostspots.vue?vue&type=template&id=35ec1223&scoped=true& */ "./resources/js/components/builder/edit/Hostspots.vue?vue&type=template&id=35ec1223&scoped=true&");
 /* harmony import */ var _Hostspots_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Hostspots.vue?vue&type=script&lang=js& */ "./resources/js/components/builder/edit/Hostspots.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Hostspots_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Hostspots_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _Hostspots_vue_vue_type_style_index_0_id_35ec1223_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Hostspots.vue?vue&type=style&index=0&id=35ec1223&lang=scss&scoped=true& */ "./resources/js/components/builder/edit/Hostspots.vue?vue&type=style&index=0&id=35ec1223&lang=scss&scoped=true&");
+/* empty/unused harmony star reexport *//* harmony import */ var _Hostspots_vue_vue_type_style_index_0_id_35ec1223_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Hostspots.vue?vue&type=style&index=0&id=35ec1223&lang=scss&scoped=true& */ "./resources/js/components/builder/edit/Hostspots.vue?vue&type=style&index=0&id=35ec1223&lang=scss&scoped=true&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -89040,7 +89061,7 @@ component.options.__file = "resources/js/components/builder/edit/Hostspots.vue"
 /*!*************************************************************************************!*\
   !*** ./resources/js/components/builder/edit/Hostspots.vue?vue&type=script&lang=js& ***!
   \*************************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -89249,8 +89270,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

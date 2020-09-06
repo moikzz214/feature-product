@@ -76,7 +76,7 @@
               </div>
               <div class="d-flex justify-end">
                 <v-btn small class="mr-1" text color="grey" @click="editing = false">cancel</v-btn>
-                <v-btn small class="primary" @click="updateHotspot(hotspot)">update</v-btn>
+                <v-btn small class="primary" @click="updateHotspot(hotspot.id)">update</v-btn>
               </div>
             </form>
             <div v-else>
@@ -109,7 +109,7 @@
                   :class="`${setButton.status == true ? 'primary' : 'error'}`"
                   @click="setHotspot(hotspot)"
                 >set</v-btn>
-                 <!-- :disabled="toDisableHotspot.includes(hotspot.id) ? true : false" -->
+                <!-- :disabled="toDisableHotspot.includes(hotspot.id) ? true : false" -->
                 <p v-if="setButton.status == false" class="ma-0 red--text caption">{{setButton.msg}}</p>
               </div>
             </div>
@@ -166,6 +166,7 @@ export default {
       ctaNewTab: "",
       image: "",
       types: ["info", "scene"],
+      hotspotContent: "",
 
       editing: false,
       hotspotData: null,
@@ -226,21 +227,57 @@ export default {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
     },
-    updateHotspot(h) {
-      console.log(h);
+    updateHotspot(hotspotID) {
+      axios
+        .post("/hotspot/update/"+ hotspotID, {
+          id: hotspotID,
+          title: this.title,
+          hotspot_type: "info",
+          product_id: 1,
+          content: JSON.stringify(this.hotspotContent),
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("Error updating hotspot");
+          console.log(error);
+        });
     },
     editHotspot(h) {
       // Toggle form
       this.editing = !this.editing;
       this.hotspotData = h.id;
-
       // Setup Form Data
-      this.title = "";
-      this.description = "";
-      this.ctaLabel = "";
-      this.ctaUrl = "";
-      this.ctaNewTab = "";
-      this.image = "";
+      let theContent = h.content !== null ? JSON.parse(h.content) : null;
+      this.title = h.title ? h.title : "Title is not set";
+      this.description =
+        theContent !== null && theContent.description !== null
+          ? theContent.description
+          : "";
+      this.ctaLabel =
+        theContent !== null && theContent.ctaLabel !== undefined
+          ? theContent.ctaLabel
+          : "";
+      this.ctaUrl =
+        theContent !== null && theContent.ctaUrl !== undefined
+          ? theContent.ctaUrl
+          : "";
+      this.ctaNewTab =
+        theContent !== null && theContent.ctaNewTab !== undefined
+          ? theContent.ctaNewTab
+          : "";
+      this.image =
+        theContent !== null && theContent.image !== undefined
+          ? theContent.image
+          : "";
+      this.hotspotContent = {
+        description: this.description,
+        cta_label: this.ctaLabel,
+        cta_url: this.ctaUrl,
+        cta_new_tab: this.ctaNewTab,
+        image: this.image,
+      };
     },
     deleteHotspot() {
       console.log("delete");
@@ -250,7 +287,7 @@ export default {
         hotspotObjectToEmit: h,
         itemIdToEmit: this.selectedItem,
       };
-      console.log(this.selectedItem)
+      console.log(this.selectedItem);
       if (this.selectedItem.length != 0) {
         this.$emit("emitHotspot", hotspotToEmit);
         this.toDisableHotspot.push(h.id);

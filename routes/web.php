@@ -55,7 +55,8 @@ Route::post('/item/save/{data}', 'ItemsController@saveItem')->name('items.save')
 // Panorama
 Route::get('/item/scenes/by-product/{id}', 'ItemsController@getScenesByProductId')->name('item.scenes');
 
-// Hotspots 
+// Hotspots
 Route::post('/hotspot/new', 'HotspotsController@store')->name('hotspot.save');
+Route::post('/hotspot/update/{id}', 'HotspotsController@update')->name('hotspot.update');
 Route::post('/hotspot/set', 'HotspotsController@setHotspot')->name('hotspot.set');
 Route::get('/hotspot/by-product/{id}', 'HotspotsController@allHostspotsByProductId')->name('hotspot.by.product.id');
