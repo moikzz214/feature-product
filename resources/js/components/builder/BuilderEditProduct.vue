@@ -18,7 +18,12 @@
     <v-divider></v-divider>
     <v-row>
       <v-col cols="3">
-        <Hostspots :item="selected_item" :auth-user="authUser" :product="this.$route.params.id" @emitHotspot="hotspotToSet"/>
+        <Hostspots
+          :item="selected_item"
+          :auth-user="authUser"
+          :product="this.$route.params.id"
+          @emitHotspot="hotspotToSet"
+        />
       </v-col>
       <v-col v-if="activateExterior == true" cols="9">
         <exterior-panel
@@ -64,9 +69,12 @@ export default {
     theSelectedItem(v) {
       this.selected_item = v;
     },
-    hotspotToSet(v){
-      this.selected_hotspot_prop = v;
-    }
+    hotspotToSet(v) {
+      // set condition
+      if (JSON.stringify(this.selected_hotspot_prop) != JSON.stringify(v)) {
+        this.selected_hotspot_prop = v;
+      }
+    },
   },
   mounted() {
     // console.log(this.authUser);

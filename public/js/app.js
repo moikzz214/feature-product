@@ -3428,6 +3428,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -3456,7 +3461,10 @@ __webpack_require__.r(__webpack_exports__);
       this.selected_item = v;
     },
     hotspotToSet: function hotspotToSet(v) {
-      this.selected_hotspot_prop = v;
+      // set condition
+      if (JSON.stringify(this.selected_hotspot_prop) != JSON.stringify(v)) {
+        this.selected_hotspot_prop = v;
+      }
     }
   },
   mounted: function mounted() {// console.log(this.authUser);
@@ -4044,6 +4052,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // import SingleHotspot from "./SingleHotspot"
 
 
@@ -4071,7 +4088,17 @@ __webpack_require__.r(__webpack_exports__);
     return {
       // Saved hotspots settings
       // Loop hotspots with asigned exterior settings
+      theHotspot: [],
       hotspots: [],
+      toSetHotspot: {
+        itemID: null,
+        hotspotID: null,
+        hotspotSettings: {
+          top: null,
+          left: null
+        }
+      },
+      tempItemID: null,
       // MediaFiles
       mediaFilesSettings: {
         dialog: true,
@@ -4108,16 +4135,46 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   watch: {
+    // tempItemID: function (val) {
+    //   this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
+    //   this.toSetHotspot.itemID = val;
+    //   // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+    //   tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+    //   console.log(tempHotspots);
+    // },
     selectedHotspotProp: {
       // To set hotspot
       handler: function handler(val) {
         this.hotspots.push(val);
-        console.log(this.hotspots);
+        this.toSetHotspot.itemID = val.itemIdToEmit;
+        this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
+        this.toSetHotspot.hotspotSettings.top = "50";
+        this.toSetHotspot.hotspotSettings.left = "50";
+        tempHotspots[val.itemIdToEmit + "" + val.hotspotObjectToEmit.id] = this.toSetHotspot; // console.log(val.itemIdToEmit);
+        // console.log(val.hotspotObjectToEmit.id);
+
+        this.draggableFunc(val.itemIdToEmit, val.hotspotObjectToEmit.id);
       },
       deep: true
     }
   },
   methods: {
+    closeHotspot: function closeHotspot() {
+      console.log("close hotspot");
+    },
+    applyHotspot: function applyHotspot() {
+      // Get the selected item_id
+      // Get the hotspot hotspot_id
+      console.log("apply hotspot"); // axios
+      //   .post("/item/delete/" + item)
+      //   .then((response) => {
+      //     console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     console.log("Error Deleting Items");
+      //     console.log(error);
+      //   });
+    },
     mediaResponse: function mediaResponse(res) {
       // console.log(res.status);
       if (res.status == "error") {
@@ -4155,7 +4212,23 @@ __webpack_require__.r(__webpack_exports__);
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       this.$refs.spritespin.api.updateFrame(index);
-      this.$emit("selectedItem", id);
+      this.$emit("selectedItem", id.id);
+      this.tempItemID = id.id; // console.log(this.tempItemID);
+      // console.log(id.id)
+      // this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
+      // this.toSetHotspot.itemID = val;
+      // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+
+      if (this.toSetHotspot.hotspotID !== null) {
+        if (this.toSetHotspot.itemID === this.tempItemID) {
+          tempHotspots[this.tempItemID + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+        } else {
+          this.toSetHotspot.itemID = this.tempItemID;
+          tempHotspots[this.tempItemID + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+        }
+      }
+
+      console.log(tempHotspots);
     },
     getImagesByProduct: function getImagesByProduct() {
       var _this2 = this;
@@ -4186,12 +4259,51 @@ __webpack_require__.r(__webpack_exports__);
         console.log("Error fetching items");
         console.log(error);
       });
+    },
+    draggableFunc: function draggableFunc() {
+      var i = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var h = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      console.log(i + " : ss");
+      var hotspotObject = this.toSetHotspot;
+      var topPercentage;
+      var leftPercentage; // this.$nextTick(function () {
+
+      $(function () {
+        $(".draggable-hotspot").draggable({
+          containment: ".hotspot-draggable-wrapper",
+          drag: function drag() {
+            // coordinates(".draggable-hotspot");
+            var widthWrapper = $(".hotspot-draggable-wrapper").width();
+            var heightWrapper = $(".hotspot-draggable-wrapper").height();
+            var left = $(this).position().left;
+            var top = $(this).position().top;
+            leftPercentage = left / widthWrapper * 100;
+            topPercentage = top / heightWrapper * 100; // console.log(topPercentage.toFixed(2));
+            // console.log(selectedItemId);
+          },
+          stop: function stop() {
+            hotspotObject.hotspotSettings.top = topPercentage.toFixed(2);
+            hotspotObject.hotspotSettings.left = leftPercentage.toFixed(2); // this.toSetHotspot.hotspotSettings.top = topPercentage.toFixed(2);
+            // this.toSetHotspot.hotspotSettings.left = leftPercentage.toFixed(2);
+            // this.toSetHotspot = hotspotObject;
+            // console.log(hotspotObject);
+            //  && ( tempHotspots.hotspotID != hotspotObject.hotspotID && tempHotspots.itemID != hotspotObject.itemID )
+
+            tempHotspots[i + "" + h] = hotspotObject;
+            console.log(tempHotspots); // if (tempHotspots.length == 0) {
+            //   tempHotspots.push(hotspotObject);
+            //   console.log(tempHotspots[0].hotspotID);
+            // }
+            //  console.log(hotspotObject.itemID);
+          }
+        }); // this.toSetHotspot = hotspotObject;
+      });
     }
   },
   created: function created() {
     // console.log(this.mediaFilesSettings.dialogStatus);
-    this.getImagesByProduct();
-    console.log(this.hotspots); // this.$nextTick(function () {
+    this.getImagesByProduct(); // console.log(this.hotspots);
+    // this.$nextTick(function () {
     //   // Code that will run only after the entire view has been rendered
     //   // $(".hotspot-wrapper").draggable();
     //   $("#dragThis").draggable({
@@ -4205,60 +4317,15 @@ __webpack_require__.r(__webpack_exports__);
     //   });
     // });
   },
-  mounted: function mounted() {
-    // ((dom, bom) => {
-    //   let container = dom.createElement("div"),
-    //     moveable = dom.createElement("div"),
-    //     x0 = 0,
-    //     y0 = 0;
-    //   container.classList.add("container", "full-x", "full-y", "fixed");
-    //   moveable.classList.add("moveable", "absolute");
-    //   container = dom.body.appendChild(container);
-    //   moveable = container.appendChild(moveable);
-    //   const move = (e) => {
-    //     moveable.style.left = `${e.pageX - x0}px`;
-    //     moveable.style.top = `${e.pageY - y0}px`;
-    //   };
-    //   moveable.addEventListener("mousedown", (e) => {
-    //     x0 = e.pageX - e.target.offsetLeft;
-    //     y0 = e.pageY - e.target.offsetTop;
-    //     bom.addEventListener("mousemove", move);
-    //   });
-    //   bom.addEventListener("mouseup", (e) => {
-    //     bom.removeEventListener("mousemove", move);
-    //   });
-    // })(document, window);
-    // $(function () {
-    // if ($("#draggableWrapper").length) {
-    // https://api.jquery.com/position/
+  mounted: function mounted() {// https://api.jquery.com/position/
     // http://jsfiddle.net/gabrieleromanato/MxYGZ/
-    var coordinates = function coordinates(element) {
-      element = $(element);
-      var top = element.position().top;
-      var left = element.position().left;
-      $("#results").text("X: " + left + " " + "Y: " + top);
-    };
-
-    $(".draggable-hotspot").draggable({
-      containment: ".hotspot-draggable-wrapper",
-      drag: function drag() {
-        coordinates(".draggable-hotspot");
-        var offset = $(".draggable-hotspot").offset(); // var xPos =
-        //   $(".hotspot-draggable-wrapper").width() -
-        //   (offset.left + $(".hotspot-draggable-wrapper").width());
-
-        var xPos = offset.left;
-        var yPos = offset.top; // var hotspotDraggableWrapper = $(".hotspot-draggable-wrapper").width();
-
-        var hotspotDraggableWrapper = window.screen.width; // var xPercentage =
-        //   (hotspotDraggableWrapper - xPos) / hotspotDraggableWrapper;
-
-        var xPercentage = xPos / 450 * 450;
-        console.log(xPercentage); // $("#posX").text("x: " + xPos);
-        // $("#posY").text("y: " + yPos);
-      }
-    }); // }
-    // });
+    // var coordinates = function (element) {
+    //   element = $(element);
+    //   var top = element.position().top;
+    //   var left = element.position().left;
+    //   $("#results").text("X: " + left + " " + "Y: " + top);
+    // };
+    // this.draggableFunc();
   }
 });
 
@@ -4396,6 +4463,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -4404,7 +4472,7 @@ __webpack_require__.r(__webpack_exports__);
       "default": ""
     },
     item: {
-      type: Object,
+      type: Number,
       "default": null
     },
     authUser: {
@@ -4417,6 +4485,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      disableSet: false,
+      toDisableHotspot: [],
       setButton: {
         status: true,
         msg: ""
@@ -4449,10 +4519,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     item: function item(val) {
-      this.selectedItem = val; // Set Button
+      this.selectedItem = val; // console.log(val)
+      // Set Button
 
-      this.setButton.status = true;
-      console.log(this.selectedItem.id);
+      this.setButton.status = true; // console.log(this.selectedItem.id);
     }
   },
   methods: {
@@ -4500,8 +4570,15 @@ __webpack_require__.r(__webpack_exports__);
       console.log("delete");
     },
     setHotspot: function setHotspot(h) {
+      var hotspotToEmit = {
+        hotspotObjectToEmit: h,
+        itemIdToEmit: this.selectedItem
+      };
+      console.log(this.selectedItem);
+
       if (this.selectedItem.length != 0) {
-        this.$emit("emitHotspot", h);
+        this.$emit("emitHotspot", hotspotToEmit);
+        this.toDisableHotspot.push(h.id);
       } else {
         this.setButton.status = false;
         this.setButton.msg = "Please select an item first";
@@ -4800,7 +4877,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "/** Draggrable */\n.hotspot-draggable-wrapper[data-v-17095d80] {\n  max-width: 800px;\n  width: 800px;\n  height: 450px;\n  max-height: 450px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: absolute;\n  top: 0;\n  left: 50%;\n  bottom: 0;\n  right: 0;\n  transform: translateX(-50%);\n}\n\n/**.hotspot */\n.spritespin-wrapper[data-v-17095d80] {\n  position: relative;\n}\n.hotspot-wrapper[data-v-17095d80] {\n  background-color: rgba(0, 0, 0, 0.25);\n  height: 100%;\n  width: 100%;\n  z-index: 9999999;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.action-wrapper[data-v-17095d80] {\n  position: absolute;\n  left: auto;\n  right: auto;\n  top: auto;\n  bottom: 34px;\n  width: 100%;\n}\n.spritespin-buttons-wrapper[data-v-17095d80] {\n  /* margin-top: 30px; */\n  display: flex;\n  justify-content: center;\n  width: 200px;\n  margin: 0 auto;\n}\n.spritespin-slider[data-v-17095d80] {\n  width: 100%;\n}\n.spritespin-buttons-wrapper .button[data-v-17095d80] {\n  font-size: 24px;\n  line-height: 24px;\n  padding: 0 10px 5px;\n  margin: 0 10px;\n  cursor: pointer;\n  color: #fff;\n  background-color: #191e47;\n}\n.content-action[data-v-17095d80] {\n  margin-top: 15px;\n  display: flex;\n  justify-content: center;\n}\n.open-exterior[data-v-17095d80],\n.open-interior[data-v-17095d80] {\n  text-transform: uppercase;\n  cursor: pointer;\n  color: #fff;\n  padding: 13px 20px;\n  background-color: #191e47;\n  font-size: 24px;\n  line-height: 24px;\n}\n.active[data-v-17095d80] {\n  background-color: #fbad18;\n}\n\n/* HotSpot */\n.cd-img-replace[data-v-17095d80] {\n  /* replace text with background images */\n  display: inline-block;\n  overflow: hidden;\n  text-indent: 100%;\n  white-space: nowrap;\n}\nul[data-v-17095d80] {\n  list-style: none;\n}\n.hotspot[data-v-17095d80] {\n  position: absolute;\n  display: block;\n}\n.hotspot--title[data-v-17095d80] {\n  display: inline-block;\n  padding-right: 10px;\n  color: #ff0000;\n  text-transform: uppercase;\n  line-height: 50px;\n  font-size: 12px;\n  letter-spacing: 1px;\n  transition: all cubic-bezier(0.8, 0, 0.2, 1) 0.4s;\n}\n.hotspot--title__right[data-v-17095d80] {\n  float: right;\n  padding-right: 0;\n  padding-left: 10px;\n}\n.hotspot--cta[data-v-17095d80] {\n  position: relative;\n  display: inline-block;\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  background: #ff0000;\n  transition: all cubic-bezier(0.8, 0, 0.2, 1) 0.4s;\n}\n.hotspot--cta[data-v-17095d80]::after {\n  content: \"\";\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  margin: auto;\n  width: 10px;\n  height: 10px;\n  border-radius: 50%;\n  background: #fff;\n  z-index: 2;\n  transition: opacity 0.6s;\n  -webkit-animation: pulse-data-v-17095d80 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0s infinite;\n          animation: pulse-data-v-17095d80 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0s infinite;\n}\n.hotspot:hover .hotspot--cta[data-v-17095d80] {\n  transform: scale(0.6);\n}\n.hotspot:hover .hotspot--cta[data-v-17095d80]:after {\n  opacity: 0;\n}\n@-webkit-keyframes pulse-data-v-17095d80 {\n0% {\n    transform: scale(0.4);\n}\n33% {\n    transform: scale(1);\n}\n66% {\n    transform: scale(0.4);\n}\n100% {\n    transform: scale(0.4);\n}\n}\n@keyframes pulse-data-v-17095d80 {\n0% {\n    transform: scale(0.4);\n}\n33% {\n    transform: scale(1);\n}\n66% {\n    transform: scale(0.4);\n}\n100% {\n    transform: scale(0.4);\n}\n}\n.hotspot--iphone[data-v-17095d80] {\n  top: 62%;\n  right: 68%;\n}\n.hotspot--macbook[data-v-17095d80] {\n  top: 22%;\n  right: 48%;\n}\n.hotspot--watch[data-v-17095d80] {\n  top: 72%;\n  left: 45%;\n}\n@media screen and (max-width: 640px) {\n.hotspot--title[data-v-17095d80] {\n    line-height: 40px;\n    font-size: 10px;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 40px;\n    height: 40px;\n}\n}\n@media screen and (max-width: 420px) {\n.hotspot--title[data-v-17095d80] {\n    line-height: 30px;\n    font-size: 9px;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 30px;\n    height: 30px;\n}\n}\n@media screen and (max-width: 320px) {\n.hotspot--title[data-v-17095d80] {\n    display: none;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 20px;\n    height: 20px;\n}\n.hotspot--cta[data-v-17095d80]::after {\n    width: 5px;\n    height: 5px;\n}\n}\n.cd-product[data-v-17095d80] {\n  text-align: center;\n}\n.cd-product-wrapper[data-v-17095d80] {\n  display: inline-block;\n  position: relative;\n  margin: 0 auto;\n  width: 90%;\n  max-width: 800px;\n}\n.cd-product-wrapper > img[data-v-17095d80] {\n  display: block;\n}\n.cd-single-point[data-v-17095d80] {\n  position: absolute;\n  border-radius: 50%;\n  width: 25px;\n  height: 25px;\n}\n.cd-single-point > a[data-v-17095d80] {\n  position: relative;\n  z-index: 2;\n  display: block;\n  width: 25px;\n  height: 25px;\n  border-radius: inherit;\n  background: #d95353;\n  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);\n  transition: background-color 0.2s;\n}\n.cd-single-point > a[data-v-17095d80]::after,\n.cd-single-point > a[data-v-17095d80]:before {\n  /* rotating plus icon */\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n}\n.cd-single-point > a[data-v-17095d80]::after {\n  height: 2px;\n  width: 12px;\n}\n.cd-single-point > a[data-v-17095d80]::before {\n  height: 12px;\n  width: 2px;\n}\n.hotspot-default-position[data-v-17095d80] {\n  left: 0;\n  bottom: 0;\n}\n.cd-single-point.hotspot-2[data-v-17095d80] {\n  bottom: 45%;\n  right: 38%;\n}\n.cd-single-point[data-v-17095d80]:nth-of-type(3) {\n  top: 47%;\n  left: 44%;\n}\n.cd-single-point[data-v-17095d80]:nth-of-type(4) {\n  top: 80%;\n  right: 25%;\n}\n.cd-single-point.is-open > a[data-v-17095d80] {\n  background-color: #191e47;\n}\n.cd-single-point.is-open > a[data-v-17095d80]::after,\n.cd-single-point.is-open > a[data-v-17095d80]::before {\n  transform: translateX(-50%) translateY(-50%) rotate(135deg);\n}\n.cd-single-point.is-open[data-v-17095d80]::after {\n  /* remove pulse effect */\n  display: none;\n}\n.cd-single-point.is-open .cd-more-info[data-v-17095d80] {\n  visibility: visible;\n  opacity: 1;\n  transform: scale(1);\n  transition: opacity 0.3s 0s, visibility 0s 0s, transform 0.3s 0s, top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;\n}\n\n/* .cd-single-point.visited > a {\n  background-color: #475f74;\n  background-color: #fff;\n}\n.cd-single-point.visited > a::after,\n.cd-single-point.visited > a::before {\n  background-color: #191e47;\n} */\n.cd-single-point.visited[data-v-17095d80]::after {\n  /* pulse effect no more active on visited elements */\n  display: none;\n}\n@media only screen and (min-width: 600px) {\n.cd-single-point.is-open .cd-more-info.cd-left[data-v-17095d80] {\n    right: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-right[data-v-17095d80] {\n    left: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-top[data-v-17095d80] {\n    bottom: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-bottom[data-v-17095d80] {\n    top: 140%;\n}\n}\n@-webkit-keyframes cd-pulse-data-v-17095d80 {\n0% {\n    -webkit-transform: scale(1);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n50% {\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n100% {\n    -webkit-transform: scale(1.6);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0);\n}\n}\n@keyframes cd-pulse-data-v-17095d80 {\n0% {\n    transform: scale(1);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n50% {\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n100% {\n    transform: scale(1.6);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0);\n}\n}\n.cd-single-point .cd-more-info[data-v-17095d80] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 3;\n  width: 100%;\n  height: 100%;\n  overflow-y: auto;\n  -webkit-overflow-scrolling: touch;\n  text-align: left;\n  line-height: 1.5;\n  background-color: rgba(255, 255, 255, 0.95);\n  padding: 2em 1em 1em;\n  visibility: hidden;\n  opacity: 0;\n  transform: scale(0.8);\n  transition: opacity 0.3s 0s, visibility 0s 0.3s, transform 0.3s 0s, top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;\n}\n.cd-single-point .cd-more-info[data-v-17095d80]::before {\n  /* triangle next to the interest point description - hidden on mobile */\n  content: \"\";\n  position: absolute;\n  height: 0;\n  width: 0;\n  display: none;\n  border: 8px solid transparent;\n}\n.cd-single-point .cd-more-info h2[data-v-17095d80] {\n  font-size: 22px;\n  font-size: 1.375rem;\n  margin-bottom: 0.6em;\n}\n.cd-single-point .cd-more-info p[data-v-17095d80] {\n  color: #758eb1;\n}\n@media only screen and (min-width: 600px) {\n.cd-single-point .cd-more-info[data-v-17095d80] {\n    position: absolute;\n    width: 430px;\n    height: 260px;\n    padding: 1em;\n    overflow-y: visible;\n    line-height: 1.4;\n    border-radius: 0.25em;\n    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);\n}\n.cd-single-point .cd-more-info[data-v-17095d80]::before {\n    display: block;\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80],\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80] {\n    top: 50%;\n    bottom: auto;\n    transform: translateY(-50%);\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80]::before,\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80]::before {\n    top: 50%;\n    bottom: auto;\n    transform: translateY(-50%);\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80] {\n    right: 160%;\n    left: auto;\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80]::before {\n    border-left-color: rgba(255, 255, 255, 0.95);\n    left: 100%;\n}\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80] {\n    left: 160%;\n}\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80]::before {\n    border-right-color: rgba(255, 255, 255, 0.95);\n    right: 100%;\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80],\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80] {\n    left: 50%;\n    right: auto;\n    transform: translateX(-50%);\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80]::before,\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80]::before {\n    left: 50%;\n    right: auto;\n    transform: translateX(-50%);\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80] {\n    bottom: 160%;\n    top: auto;\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80]::before {\n    border-top-color: rgba(255, 255, 255, 0.95);\n    top: 100%;\n}\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80] {\n    top: 160%;\n}\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80]::before {\n    border-bottom-color: rgba(255, 255, 255, 0.95);\n    bottom: 100%;\n}\n.cd-single-point .cd-more-info h2[data-v-17095d80] {\n    font-size: 20px;\n    font-size: 1.25rem;\n    margin-bottom: 0;\n}\n.cd-single-point .cd-more-info p[data-v-17095d80] {\n    font-size: 14px;\n    font-size: 0.875rem;\n}\n}\n/* close the interest point description - only on mobile */\n.cd-close-info[data-v-17095d80] {\n  position: fixed;\n  top: 0;\n  right: 0;\n  height: 44px;\n  width: 44px;\n}\n.cd-close-info[data-v-17095d80]::after,\n.cd-close-info[data-v-17095d80]:before {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%) rotate(45deg);\n  background-color: #475f74;\n  transition-property: transform;\n  transition-duration: 0.2s;\n}\n.cd-close-info[data-v-17095d80]::after {\n  height: 2px;\n  width: 16px;\n}\n.cd-close-info[data-v-17095d80]::before {\n  height: 16px;\n  width: 2px;\n}\n@media only screen and (min-width: 600px) {\n.cd-close-info[data-v-17095d80] {\n    display: none;\n}\n}\n#panorama[data-v-17095d80] {\n  width: 100%;\n  height: 400px;\n}\n.custom-hotspot[data-v-17095d80] {\n  width: 30px;\n  height: 30px;\n  border-radius: 50%;\n  background-color: #fbad18;\n}\ndiv.custom-tooltip span[data-v-17095d80] {\n  visibility: hidden;\n  position: absolute;\n  border-radius: 3px;\n  background-color: #fff;\n  color: #000;\n  text-align: center;\n  max-width: 300px;\n  min-width: 200px;\n  padding: 5px 10px;\n  margin-left: -220px;\n  cursor: default;\n  bottom: -50px;\n  border: 1px solid #eee;\n}\ndiv.custom-tooltip:hover span[data-v-17095d80] {\n  visibility: visible;\n}", ""]);
+exports.push([module.i, "/** Hotspot Action */\n.hotspot-action[data-v-17095d80] {\n  position: absolute;\n  top: 5px;\n  right: 5px;\n  left: auto;\n  bottom: auto;\n}\n\n/** Draggrable */\n.hotspot-draggable-wrapper[data-v-17095d80] {\n  background-color: rgba(0, 0, 0, 0.25);\n  max-width: 800px;\n  width: 800px;\n  height: 450px;\n  max-height: 450px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: absolute;\n  top: 0;\n  left: 50%;\n  bottom: 0;\n  right: 0;\n  transform: translateX(-50%);\n}\n\n/**.hotspot */\n.spritespin-wrapper[data-v-17095d80] {\n  position: relative;\n}\n.hotspot-wrapper[data-v-17095d80] {\n  background-color: rgba(0, 0, 0, 0.25);\n  height: 100%;\n  width: 100%;\n  z-index: 9999999;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.action-wrapper[data-v-17095d80] {\n  position: absolute;\n  left: auto;\n  right: auto;\n  top: auto;\n  bottom: 34px;\n  width: 100%;\n}\n.spritespin-buttons-wrapper[data-v-17095d80] {\n  /* margin-top: 30px; */\n  display: flex;\n  justify-content: center;\n  width: 200px;\n  margin: 0 auto;\n}\n.spritespin-slider[data-v-17095d80] {\n  width: 100%;\n}\n.spritespin-buttons-wrapper .button[data-v-17095d80] {\n  font-size: 24px;\n  line-height: 24px;\n  padding: 0 10px 5px;\n  margin: 0 10px;\n  cursor: pointer;\n  color: #fff;\n  background-color: #191e47;\n}\n.content-action[data-v-17095d80] {\n  margin-top: 15px;\n  display: flex;\n  justify-content: center;\n}\n.open-exterior[data-v-17095d80],\n.open-interior[data-v-17095d80] {\n  text-transform: uppercase;\n  cursor: pointer;\n  color: #fff;\n  padding: 13px 20px;\n  background-color: #191e47;\n  font-size: 24px;\n  line-height: 24px;\n}\n.active[data-v-17095d80] {\n  background-color: #fbad18;\n}\n\n/* HotSpot */\n.cd-img-replace[data-v-17095d80] {\n  /* replace text with background images */\n  display: inline-block;\n  overflow: hidden;\n  text-indent: 100%;\n  white-space: nowrap;\n}\nul[data-v-17095d80] {\n  list-style: none;\n}\n.hotspot[data-v-17095d80] {\n  position: absolute;\n  display: block;\n}\n.hotspot--title[data-v-17095d80] {\n  display: inline-block;\n  padding-right: 10px;\n  color: #ff0000;\n  text-transform: uppercase;\n  line-height: 50px;\n  font-size: 12px;\n  letter-spacing: 1px;\n  transition: all cubic-bezier(0.8, 0, 0.2, 1) 0.4s;\n}\n.hotspot--title__right[data-v-17095d80] {\n  float: right;\n  padding-right: 0;\n  padding-left: 10px;\n}\n.hotspot--cta[data-v-17095d80] {\n  position: relative;\n  display: inline-block;\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  background: #ff0000;\n  transition: all cubic-bezier(0.8, 0, 0.2, 1) 0.4s;\n}\n.hotspot--cta[data-v-17095d80]::after {\n  content: \"\";\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  margin: auto;\n  width: 10px;\n  height: 10px;\n  border-radius: 50%;\n  background: #fff;\n  z-index: 2;\n  transition: opacity 0.6s;\n  -webkit-animation: pulse-data-v-17095d80 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0s infinite;\n          animation: pulse-data-v-17095d80 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0s infinite;\n}\n.hotspot:hover .hotspot--cta[data-v-17095d80] {\n  transform: scale(0.6);\n}\n.hotspot:hover .hotspot--cta[data-v-17095d80]:after {\n  opacity: 0;\n}\n@-webkit-keyframes pulse-data-v-17095d80 {\n0% {\n    transform: scale(0.4);\n}\n33% {\n    transform: scale(1);\n}\n66% {\n    transform: scale(0.4);\n}\n100% {\n    transform: scale(0.4);\n}\n}\n@keyframes pulse-data-v-17095d80 {\n0% {\n    transform: scale(0.4);\n}\n33% {\n    transform: scale(1);\n}\n66% {\n    transform: scale(0.4);\n}\n100% {\n    transform: scale(0.4);\n}\n}\n.hotspot--iphone[data-v-17095d80] {\n  top: 62%;\n  right: 68%;\n}\n.hotspot--macbook[data-v-17095d80] {\n  top: 22%;\n  right: 48%;\n}\n.hotspot--watch[data-v-17095d80] {\n  top: 72%;\n  left: 45%;\n}\n@media screen and (max-width: 640px) {\n.hotspot--title[data-v-17095d80] {\n    line-height: 40px;\n    font-size: 10px;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 40px;\n    height: 40px;\n}\n}\n@media screen and (max-width: 420px) {\n.hotspot--title[data-v-17095d80] {\n    line-height: 30px;\n    font-size: 9px;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 30px;\n    height: 30px;\n}\n}\n@media screen and (max-width: 320px) {\n.hotspot--title[data-v-17095d80] {\n    display: none;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 20px;\n    height: 20px;\n}\n.hotspot--cta[data-v-17095d80]::after {\n    width: 5px;\n    height: 5px;\n}\n}\n.cd-product[data-v-17095d80] {\n  text-align: center;\n}\n.cd-product-wrapper[data-v-17095d80] {\n  display: inline-block;\n  position: relative;\n  margin: 0 auto;\n  width: 90%;\n  max-width: 800px;\n}\n.cd-product-wrapper > img[data-v-17095d80] {\n  display: block;\n}\n.cd-single-point[data-v-17095d80] {\n  position: absolute;\n  border-radius: 50%;\n  width: 25px;\n  height: 25px;\n}\n.cd-single-point > a[data-v-17095d80] {\n  cursor: move;\n  position: relative;\n  z-index: 2;\n  display: block;\n  width: 25px;\n  height: 25px;\n  border-radius: inherit;\n  background: #d95353;\n  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);\n  transition: background-color 0.2s;\n}\n.cd-single-point > a[data-v-17095d80]::after,\n.cd-single-point > a[data-v-17095d80]:before {\n  /* rotating plus icon */\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n}\n.cd-single-point > a[data-v-17095d80]::after {\n  height: 2px;\n  width: 12px;\n}\n.cd-single-point > a[data-v-17095d80]::before {\n  height: 12px;\n  width: 2px;\n}\n.hotspot-default-position[data-v-17095d80] {\n  left: 50%;\n  bottom: 50%;\n}\n.cd-single-point.is-open > a[data-v-17095d80] {\n  background-color: #191e47;\n}\n.cd-single-point.is-open > a[data-v-17095d80]::after,\n.cd-single-point.is-open > a[data-v-17095d80]::before {\n  transform: translateX(-50%) translateY(-50%) rotate(135deg);\n}\n.cd-single-point.is-open[data-v-17095d80]::after {\n  /* remove pulse effect */\n  display: none;\n}\n.cd-single-point.is-open .cd-more-info[data-v-17095d80] {\n  visibility: visible;\n  opacity: 1;\n  transform: scale(1);\n  transition: opacity 0.3s 0s, visibility 0s 0s, transform 0.3s 0s, top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;\n}\n\n/* .cd-single-point.visited > a {\n  background-color: #475f74;\n  background-color: #fff;\n}\n.cd-single-point.visited > a::after,\n.cd-single-point.visited > a::before {\n  background-color: #191e47;\n} */\n.cd-single-point.visited[data-v-17095d80]::after {\n  /* pulse effect no more active on visited elements */\n  display: none;\n}\n@media only screen and (min-width: 600px) {\n.cd-single-point.is-open .cd-more-info.cd-left[data-v-17095d80] {\n    right: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-right[data-v-17095d80] {\n    left: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-top[data-v-17095d80] {\n    bottom: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-bottom[data-v-17095d80] {\n    top: 140%;\n}\n}\n@-webkit-keyframes cd-pulse-data-v-17095d80 {\n0% {\n    -webkit-transform: scale(1);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n50% {\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n100% {\n    -webkit-transform: scale(1.6);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0);\n}\n}\n@keyframes cd-pulse-data-v-17095d80 {\n0% {\n    transform: scale(1);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n50% {\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n100% {\n    transform: scale(1.6);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0);\n}\n}\n.cd-single-point .cd-more-info[data-v-17095d80] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 3;\n  width: 100%;\n  height: 100%;\n  overflow-y: auto;\n  -webkit-overflow-scrolling: touch;\n  text-align: left;\n  line-height: 1.5;\n  background-color: rgba(255, 255, 255, 0.95);\n  padding: 2em 1em 1em;\n  visibility: hidden;\n  opacity: 0;\n  transform: scale(0.8);\n  transition: opacity 0.3s 0s, visibility 0s 0.3s, transform 0.3s 0s, top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;\n}\n.cd-single-point .cd-more-info[data-v-17095d80]::before {\n  /* triangle next to the interest point description - hidden on mobile */\n  content: \"\";\n  position: absolute;\n  height: 0;\n  width: 0;\n  display: none;\n  border: 8px solid transparent;\n}\n.cd-single-point .cd-more-info h2[data-v-17095d80] {\n  font-size: 22px;\n  font-size: 1.375rem;\n  margin-bottom: 0.6em;\n}\n.cd-single-point .cd-more-info p[data-v-17095d80] {\n  color: #758eb1;\n}\n@media only screen and (min-width: 600px) {\n.cd-single-point .cd-more-info[data-v-17095d80] {\n    position: absolute;\n    width: 430px;\n    height: 260px;\n    padding: 1em;\n    overflow-y: visible;\n    line-height: 1.4;\n    border-radius: 0.25em;\n    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);\n}\n.cd-single-point .cd-more-info[data-v-17095d80]::before {\n    display: block;\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80],\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80] {\n    top: 50%;\n    bottom: auto;\n    transform: translateY(-50%);\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80]::before,\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80]::before {\n    top: 50%;\n    bottom: auto;\n    transform: translateY(-50%);\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80] {\n    right: 160%;\n    left: auto;\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80]::before {\n    border-left-color: rgba(255, 255, 255, 0.95);\n    left: 100%;\n}\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80] {\n    left: 160%;\n}\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80]::before {\n    border-right-color: rgba(255, 255, 255, 0.95);\n    right: 100%;\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80],\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80] {\n    left: 50%;\n    right: auto;\n    transform: translateX(-50%);\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80]::before,\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80]::before {\n    left: 50%;\n    right: auto;\n    transform: translateX(-50%);\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80] {\n    bottom: 160%;\n    top: auto;\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80]::before {\n    border-top-color: rgba(255, 255, 255, 0.95);\n    top: 100%;\n}\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80] {\n    top: 160%;\n}\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80]::before {\n    border-bottom-color: rgba(255, 255, 255, 0.95);\n    bottom: 100%;\n}\n.cd-single-point .cd-more-info h2[data-v-17095d80] {\n    font-size: 20px;\n    font-size: 1.25rem;\n    margin-bottom: 0;\n}\n.cd-single-point .cd-more-info p[data-v-17095d80] {\n    font-size: 14px;\n    font-size: 0.875rem;\n}\n}\n/* close the interest point description - only on mobile */\n.cd-close-info[data-v-17095d80] {\n  position: fixed;\n  top: 0;\n  right: 0;\n  height: 44px;\n  width: 44px;\n}\n.cd-close-info[data-v-17095d80]::after,\n.cd-close-info[data-v-17095d80]:before {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%) rotate(45deg);\n  background-color: #475f74;\n  transition-property: transform;\n  transition-duration: 0.2s;\n}\n.cd-close-info[data-v-17095d80]::after {\n  height: 2px;\n  width: 16px;\n}\n.cd-close-info[data-v-17095d80]::before {\n  height: 16px;\n  width: 2px;\n}\n@media only screen and (min-width: 600px) {\n.cd-close-info[data-v-17095d80] {\n    display: none;\n}\n}\n#panorama[data-v-17095d80] {\n  width: 100%;\n  height: 400px;\n}\n.custom-hotspot[data-v-17095d80] {\n  width: 30px;\n  height: 30px;\n  border-radius: 50%;\n  background-color: #fbad18;\n}\ndiv.custom-tooltip span[data-v-17095d80] {\n  visibility: hidden;\n  position: absolute;\n  border-radius: 3px;\n  background-color: #fff;\n  color: #000;\n  text-align: center;\n  max-width: 300px;\n  min-width: 200px;\n  padding: 5px 10px;\n  margin-left: -220px;\n  cursor: default;\n  bottom: -50px;\n  border: 1px solid #eee;\n}\ndiv.custom-tooltip:hover span[data-v-17095d80] {\n  visibility: visible;\n}", ""]);
 
 // exports
 
@@ -27718,7 +27795,62 @@ var render = function() {
                     ],
                     staticStyle: { width: "100%" }
                   },
-                  [_vm._m(0)]
+                  [
+                    _c(
+                      "div",
+                      { staticClass: "hotspot-draggable-wrapper" },
+                      [
+                        _c(
+                          "div",
+                          { staticClass: "hotspot-action" },
+                          [
+                            _c(
+                              "v-btn",
+                              {
+                                attrs: { small: "" },
+                                on: { click: _vm.closeHotspot }
+                              },
+                              [_vm._v("Cancel")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-btn",
+                              {
+                                attrs: { color: "primary", small: "" },
+                                on: { click: _vm.applyHotspot }
+                              },
+                              [_vm._v("Apply")]
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _vm._l(_vm.hotspots, function(spot) {
+                          return _c(
+                            "div",
+                            {
+                              key: spot.id,
+                              staticClass:
+                                "cd-single-point draggable-hotspot hotspot-default-position"
+                            },
+                            [
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "cd-img-replace",
+                                  attrs: { href: "#0" }
+                                },
+                                [_vm._v("More")]
+                              ),
+                              _vm._v(" "),
+                              _vm._m(0, true)
+                            ]
+                          )
+                        })
+                      ],
+                      2
+                    )
+                  ]
                 )
               ],
               1
@@ -28026,38 +28158,23 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "hotspot-draggable-wrapper" }, [
-      _c(
-        "div",
-        {
-          staticClass:
-            "cd-single-point draggable-hotspot hotspot-default-position"
-        },
-        [
-          _c("a", { staticClass: "cd-img-replace", attrs: { href: "#0" } }, [
-            _vm._v("More")
-          ]),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "cd-more-info cd-right",
-              staticStyle: { width: "300px", height: "auto" }
-            },
-            [
-              _c(
-                "a",
-                {
-                  staticClass: "cd-close-info cd-img-replace",
-                  attrs: { href: "#0" }
-                },
-                [_vm._v("Close")]
-              )
-            ]
-          )
-        ]
-      )
-    ])
+    return _c(
+      "div",
+      {
+        staticClass: "cd-more-info cd-right",
+        staticStyle: { width: "300px", height: "auto" }
+      },
+      [
+        _c(
+          "a",
+          {
+            staticClass: "cd-close-info cd-img-replace",
+            attrs: { href: "#0" }
+          },
+          [_vm._v("Close")]
+        )
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -28567,7 +28684,15 @@ var render = function() {
                                           (_vm.setButton.status == true
                                             ? "primary"
                                             : "error"),
-                                        attrs: { small: "", rounded: "" },
+                                        attrs: {
+                                          small: "",
+                                          rounded: "",
+                                          disabled: _vm.toDisableHotspot.includes(
+                                            hotspot.id
+                                          )
+                                            ? true
+                                            : false
+                                        },
                                         on: {
                                           click: function($event) {
                                             return _vm.setHotspot(hotspot)
@@ -88128,6 +88253,7 @@ window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 window.slugify = __webpack_require__(/*! @sindresorhus/slugify */ "./node_modules/@sindresorhus/slugify/index.js");
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.tempHotspots = [];
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -88874,14 +89000,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!************************************************************!*\
   !*** ./resources/js/components/builder/edit/Hostspots.vue ***!
   \************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Hostspots_vue_vue_type_template_id_35ec1223_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Hostspots.vue?vue&type=template&id=35ec1223&scoped=true& */ "./resources/js/components/builder/edit/Hostspots.vue?vue&type=template&id=35ec1223&scoped=true&");
 /* harmony import */ var _Hostspots_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Hostspots.vue?vue&type=script&lang=js& */ "./resources/js/components/builder/edit/Hostspots.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _Hostspots_vue_vue_type_style_index_0_id_35ec1223_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Hostspots.vue?vue&type=style&index=0&id=35ec1223&lang=scss&scoped=true& */ "./resources/js/components/builder/edit/Hostspots.vue?vue&type=style&index=0&id=35ec1223&lang=scss&scoped=true&");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Hostspots_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Hostspots_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _Hostspots_vue_vue_type_style_index_0_id_35ec1223_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Hostspots.vue?vue&type=style&index=0&id=35ec1223&lang=scss&scoped=true& */ "./resources/js/components/builder/edit/Hostspots.vue?vue&type=style&index=0&id=35ec1223&lang=scss&scoped=true&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -88913,7 +89040,7 @@ component.options.__file = "resources/js/components/builder/edit/Hostspots.vue"
 /*!*************************************************************************************!*\
   !*** ./resources/js/components/builder/edit/Hostspots.vue?vue&type=script&lang=js& ***!
   \*************************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -89122,8 +89249,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

@@ -108,6 +108,7 @@
                   rounded
                   :class="`${setButton.status == true ? 'primary' : 'error'}`"
                   @click="setHotspot(hotspot)"
+                  :disabled="toDisableHotspot.includes(hotspot.id) ? true : false"
                 >set</v-btn>
                 <p v-if="setButton.status == false" class="ma-0 red--text caption">{{setButton.msg}}</p>
               </div>
@@ -129,7 +130,7 @@ export default {
       default: "",
     },
     item: {
-      type: Object,
+      type: Number,
       default: null,
     },
     authUser: {
@@ -142,6 +143,9 @@ export default {
   },
   data() {
     return {
+      disableSet: false,
+      toDisableHotspot: [],
+
       setButton: {
         status: true,
         msg: "",
@@ -180,10 +184,11 @@ export default {
   watch: {
     item: function (val) {
       this.selectedItem = val;
+      // console.log(val)
 
       // Set Button
       this.setButton.status = true;
-      console.log(this.selectedItem.id);
+      // console.log(this.selectedItem.id);
     },
   },
   methods: {
@@ -234,8 +239,14 @@ export default {
       console.log("delete");
     },
     setHotspot(h) {
+      let hotspotToEmit = {
+        hotspotObjectToEmit: h,
+        itemIdToEmit: this.selectedItem,
+      };
+      console.log(this.selectedItem)
       if (this.selectedItem.length != 0) {
-        this.$emit("emitHotspot", h);
+        this.$emit("emitHotspot", hotspotToEmit);
+        this.toDisableHotspot.push(h.id);
       } else {
         this.setButton.status = false;
         this.setButton.msg = "Please select an item first";

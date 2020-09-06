@@ -57,4 +57,5 @@ Route::get('/item/scenes/by-product/{id}', 'ItemsController@getScenesByProductId
 
 // Hotspots 
 Route::post('/hotspot/new', 'HotspotsController@store')->name('hotspot.save');
+Route::post('/hotspot/set', 'HotspotsController@setHotspot')->name('hotspot.set');
 Route::get('/hotspot/by-product/{id}', 'HotspotsController@allHostspotsByProductId')->name('hotspot.by.product.id');

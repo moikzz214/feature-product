@@ -13,7 +13,15 @@
           />
           <div v-show="hotspots.length != 0" style="width:100%;">
             <div class="hotspot-draggable-wrapper">
-              <div class="cd-single-point draggable-hotspot hotspot-default-position">
+              <div class="hotspot-action">
+                <v-btn small @click="closeHotspot">Cancel</v-btn>
+                <v-btn color="primary" small @click="applyHotspot">Apply</v-btn>
+              </div>
+              <div
+                v-for="spot in hotspots"
+                :key="spot.id"
+                class="cd-single-point draggable-hotspot hotspot-default-position"
+              >
                 <a class="cd-img-replace" href="#0">More</a>
                 <div class="cd-more-info cd-right" style="width: 300px; height: auto;">
                   <a href="#0" class="cd-close-info cd-img-replace">Close</a>
@@ -39,6 +47,7 @@
                   width="100"
                   @click="toggle"
                 >
+                  <!-- to disabled -->
                   <v-img
                     @click="selected(index, item)"
                     :aspect-ratio="16/9"
@@ -122,7 +131,17 @@ export default {
     return {
       // Saved hotspots settings
       // Loop hotspots with asigned exterior settings
+      theHotspot: [],
       hotspots: [],
+      toSetHotspot: {
+        itemID: null,
+        hotspotID: null,
+        hotspotSettings: {
+          top: null,
+          left: null,
+        },
+      },
+      tempItemID: null,
 
       // MediaFiles
       mediaFilesSettings: {
@@ -163,16 +182,49 @@ export default {
     };
   },
   watch: {
+    // tempItemID: function (val) {
+    //   this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
+    //   this.toSetHotspot.itemID = val;
+    //   // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+    //   tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+    //   console.log(tempHotspots);
+    // },
     selectedHotspotProp: {
       // To set hotspot
       handler(val) {
         this.hotspots.push(val);
-        console.log(this.hotspots);
+        this.toSetHotspot.itemID = val.itemIdToEmit;
+        this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
+        this.toSetHotspot.hotspotSettings.top = "50";
+        this.toSetHotspot.hotspotSettings.left = "50";
+        tempHotspots[
+          val.itemIdToEmit + "" + val.hotspotObjectToEmit.id
+        ] = this.toSetHotspot;
+        // console.log(val.itemIdToEmit);
+        // console.log(val.hotspotObjectToEmit.id);
+        this.draggableFunc(val.itemIdToEmit, val.hotspotObjectToEmit.id);
       },
       deep: true,
     },
   },
   methods: {
+    closeHotspot() {
+      console.log("close hotspot");
+    },
+    applyHotspot() {
+      // Get the selected item_id
+      // Get the hotspot hotspot_id
+      console.log("apply hotspot");
+      // axios
+      //   .post("/item/delete/" + item)
+      //   .then((response) => {
+      //     console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     console.log("Error Deleting Items");
+      //     console.log(error);
+      //   });
+    },
     mediaResponse(res) {
       // console.log(res.status);
       if (res.status == "error") {
@@ -209,8 +261,24 @@ export default {
     },
     selected(index, id = null) {
       this.$refs.spritespin.api.updateFrame(index);
-      this.$emit("selectedItem", id);
-    },
+      this.$emit("selectedItem", id.id);
+      this.tempItemID = id.id;
+      // console.log(this.tempItemID);
+      // console.log(id.id)
+
+      // this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
+      // this.toSetHotspot.itemID = val;
+      // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+      if(this.toSetHotspot.hotspotID !== null){
+      if(this.toSetHotspot.itemID === this.tempItemID){
+        tempHotspots[this.tempItemID + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+      }else{
+        this.toSetHotspot.itemID = this.tempItemID;
+        tempHotspots[this.tempItemID + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
+      }
+      }
+    console.log(tempHotspots)
+   },
     getImagesByProduct() {
       this.show = false;
       axios
@@ -250,11 +318,51 @@ export default {
           console.log(error);
         });
     },
+    draggableFunc(i = null, h = null) {
+      console.log(i + " : ss");
+      var hotspotObject = this.toSetHotspot;
+      var topPercentage;
+      var leftPercentage;
+      // this.$nextTick(function () {
+      $(function () {
+        $(".draggable-hotspot").draggable({
+          containment: ".hotspot-draggable-wrapper",
+          drag: function () {
+            // coordinates(".draggable-hotspot");
+            var widthWrapper = $(".hotspot-draggable-wrapper").width();
+            var heightWrapper = $(".hotspot-draggable-wrapper").height();
+            var left = $(this).position().left;
+            var top = $(this).position().top;
+            leftPercentage = (left / widthWrapper) * 100;
+            topPercentage = (top / heightWrapper) * 100;
+            // console.log(topPercentage.toFixed(2));
+            // console.log(selectedItemId);
+          },
+          stop: function () {
+            hotspotObject.hotspotSettings.top = topPercentage.toFixed(2);
+            hotspotObject.hotspotSettings.left = leftPercentage.toFixed(2);
+            // this.toSetHotspot.hotspotSettings.top = topPercentage.toFixed(2);
+            // this.toSetHotspot.hotspotSettings.left = leftPercentage.toFixed(2);
+            // this.toSetHotspot = hotspotObject;
+            // console.log(hotspotObject);
+            //  && ( tempHotspots.hotspotID != hotspotObject.hotspotID && tempHotspots.itemID != hotspotObject.itemID )
+            tempHotspots[i + "" + h] = hotspotObject;
+            console.log(tempHotspots);
+            // if (tempHotspots.length == 0) {
+            //   tempHotspots.push(hotspotObject);
+            //   console.log(tempHotspots[0].hotspotID);
+            // }
+            //  console.log(hotspotObject.itemID);
+          },
+        });
+        // this.toSetHotspot = hotspotObject;
+      });
+    },
   },
   created() {
     // console.log(this.mediaFilesSettings.dialogStatus);
     this.getImagesByProduct();
-    console.log(this.hotspots);
+    // console.log(this.hotspots);
     // this.$nextTick(function () {
     //   // Code that will run only after the entire view has been rendered
     //   // $(".hotspot-wrapper").draggable();
@@ -270,67 +378,32 @@ export default {
     // });
   },
   mounted() {
-    // ((dom, bom) => {
-    //   let container = dom.createElement("div"),
-    //     moveable = dom.createElement("div"),
-    //     x0 = 0,
-    //     y0 = 0;
-    //   container.classList.add("container", "full-x", "full-y", "fixed");
-    //   moveable.classList.add("moveable", "absolute");
-    //   container = dom.body.appendChild(container);
-    //   moveable = container.appendChild(moveable);
-    //   const move = (e) => {
-    //     moveable.style.left = `${e.pageX - x0}px`;
-    //     moveable.style.top = `${e.pageY - y0}px`;
-    //   };
-    //   moveable.addEventListener("mousedown", (e) => {
-    //     x0 = e.pageX - e.target.offsetLeft;
-    //     y0 = e.pageY - e.target.offsetTop;
-    //     bom.addEventListener("mousemove", move);
-    //   });
-    //   bom.addEventListener("mouseup", (e) => {
-    //     bom.removeEventListener("mousemove", move);
-    //   });
-    // })(document, window);
-    // $(function () {
-    // if ($("#draggableWrapper").length) {
     // https://api.jquery.com/position/
     // http://jsfiddle.net/gabrieleromanato/MxYGZ/
-    var coordinates = function (element) {
-      element = $(element);
-      var top = element.position().top;
-      var left = element.position().left;
-      $("#results").text("X: " + left + " " + "Y: " + top);
-    };
-    $(".draggable-hotspot").draggable({
-      containment: ".hotspot-draggable-wrapper",
-      drag: function () {
-        coordinates(".draggable-hotspot");
-        var offset = $(".draggable-hotspot").offset();
-        // var xPos =
-        //   $(".hotspot-draggable-wrapper").width() -
-        //   (offset.left + $(".hotspot-draggable-wrapper").width());
-        var xPos = offset.left;
-        var yPos = offset.top;
-        // var hotspotDraggableWrapper = $(".hotspot-draggable-wrapper").width();
-        var hotspotDraggableWrapper = window.screen.width;
-        // var xPercentage =
-        //   (hotspotDraggableWrapper - xPos) / hotspotDraggableWrapper;
-        var xPercentage = (xPos / 450) * 450;
-        console.log(xPercentage);
-        // $("#posX").text("x: " + xPos);
-        // $("#posY").text("y: " + yPos);
-      },
-    });
-    // }
-    // });
+    // var coordinates = function (element) {
+    //   element = $(element);
+    //   var top = element.position().top;
+    //   var left = element.position().left;
+    //   $("#results").text("X: " + left + " " + "Y: " + top);
+    // };
+    // this.draggableFunc();
   },
 };
 </script>
 
 <style lang="scss" scoped>
+/** Hotspot Action */
+.hotspot-action {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  left: auto;
+  bottom: auto;
+}
+
 /** Draggrable */
 .hotspot-draggable-wrapper {
+  background-color: rgba(0, 0, 0, 0.25);
   max-width: 800px;
   width: 800px;
   height: 450px;
@@ -340,7 +413,6 @@ export default {
   position: absolute;
   top: 0;
   left: 50%;
-  // left: 0;
   bottom: 0;
   right: 0;
   transform: translateX(-50%);
@@ -581,6 +653,7 @@ ul {
 }
 
 .cd-single-point > a {
+  cursor: move;
   position: relative;
   z-index: 2;
   display: block;
@@ -646,28 +719,28 @@ ul {
 .hotspot-default-position {
   // left: 50%;
   // bottom: 50%;
-  left: 0;
-  bottom: 0;
+  left: 50%;
+  bottom: 50%;
 }
 // .cd-single-point.hotspot-1 {
 //   bottom: 54%;
 //   right: 23%;
 // }
 
-.cd-single-point.hotspot-2 {
-  bottom: 45%;
-  right: 38%;
-}
+// .cd-single-point.hotspot-2 {
+//   bottom: 45%;
+//   right: 38%;
+// }
 
-.cd-single-point:nth-of-type(3) {
-  top: 47%;
-  left: 44%;
-}
+// .cd-single-point:nth-of-type(3) {
+//   top: 47%;
+//   left: 44%;
+// }
 
-.cd-single-point:nth-of-type(4) {
-  top: 80%;
-  right: 25%;
-}
+// .cd-single-point:nth-of-type(4) {
+//   top: 80%;
+//   right: 25%;
+// }
 
 .cd-single-point.is-open > a {
   background-color: #191e47;

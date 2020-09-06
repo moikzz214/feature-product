@@ -39,6 +39,14 @@ class HotspotsController extends Controller
         ]);
     }
 
+    public function setHotspot(Request $request)
+    {
+        $hotspot = Hotspot::create([
+            'title' => $request['title'],
+            'product_id' => $request['product_id'],
+        ]);
+    }
+
     /**
      * Update the specified resource in storage.
      *
