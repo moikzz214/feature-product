@@ -108,8 +108,8 @@
                   rounded
                   :class="`${setButton.status == true ? 'primary' : 'error'}`"
                   @click="setHotspot(hotspot)"
+                :disabled="toDisableHotspot.includes(hotspot.id) ? true : false"
                 >set</v-btn>
-                <!-- :disabled="toDisableHotspot.includes(hotspot.id) ? true : false" -->
                 <p v-if="setButton.status == false" class="ma-0 red--text caption">{{setButton.msg}}</p>
               </div>
             </div>

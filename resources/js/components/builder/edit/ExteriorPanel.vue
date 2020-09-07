@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div id="results"></div>
+    <input type="hidden" id="cur-frame" />
+    <!-- <div id="results"></div> -->
     <div>
       <div style="min-height:450px;">
         <upload-zone v-if="uploader == true" :add-items="true" @uploaded="getImagesByProduct"></upload-zone>
@@ -20,6 +21,7 @@
               <div
                 v-for="spot in hotspots"
                 :key="spot.id"
+                :data-hps="`${spot.hotspotObjectToEmit.id}`"
                 class="cd-single-point draggable-hotspot hotspot-default-position"
               >
                 <a class="cd-img-replace" href="#0">More</a>
@@ -197,12 +199,12 @@ export default {
         this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
         this.toSetHotspot.hotspotSettings.top = "50";
         this.toSetHotspot.hotspotSettings.left = "50";
-        tempHotspots[
-          val.itemIdToEmit + "" + val.hotspotObjectToEmit.id
-        ] = this.toSetHotspot;
+        // tempHotspots[
+        //   val.itemIdToEmit + "" + val.hotspotObjectToEmit.id
+        // ] = this.toSetHotspot;
         // console.log(val.itemIdToEmit);
         // console.log(val.hotspotObjectToEmit.id);
-        this.draggableFunc(val.itemIdToEmit, val.hotspotObjectToEmit.id);
+        this.draggableFunc();
       },
       deep: true,
     },
@@ -214,16 +216,18 @@ export default {
     applyHotspot() {
       // Get the selected item_id
       // Get the hotspot hotspot_id
-      console.log("apply hotspot");
-      // axios
-      //   .post("/item/delete/" + item)
-      //   .then((response) => {
-      //     console.log(response);
-      //   })
-      //   .catch((error) => {
-      //     console.log("Error Deleting Items");
-      //     console.log(error);
-      //   });
+      
+      let data = tempHotspots;
+      // console.log(typeof data);
+      axios
+        .post("/hotspot/apply", data)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("Error Applying Hotspots");
+          console.log(error);
+        });
     },
     mediaResponse(res) {
       // console.log(res.status);
@@ -260,25 +264,35 @@ export default {
         });
     },
     selected(index, id = null) {
+      // this.$refs.spritespin.api.updateFrame(index);
+      // this.$emit("selectedItem", id.id);
+      // this.tempItemID = id.id;
+
+      $("#cur-frame").val(id.id);
       this.$refs.spritespin.api.updateFrame(index);
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
+
       // console.log(this.tempItemID);
       // console.log(id.id)
 
       // this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
       // this.toSetHotspot.itemID = val;
       // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-      if(this.toSetHotspot.hotspotID !== null){
-      if(this.toSetHotspot.itemID === this.tempItemID){
-        tempHotspots[this.tempItemID + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-      }else{
-        this.toSetHotspot.itemID = this.tempItemID;
-        tempHotspots[this.tempItemID + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-      }
-      }
-    console.log(tempHotspots)
-   },
+      // if (this.toSetHotspot.hotspotID !== null) {
+      //   if (this.toSetHotspot.itemID === this.tempItemID) {
+      //     tempHotspots[
+      //       this.tempItemID + "" + this.toSetHotspot.hotspotID
+      //     ] = this.toSetHotspot;
+      //   } else {
+      //     this.toSetHotspot.itemID = this.tempItemID;
+      //     tempHotspots[
+      //       this.tempItemID + "" + this.toSetHotspot.hotspotID
+      //     ] = this.toSetHotspot;
+      //   }
+      // }
+      // console.log(tempHotspots);
+    },
     getImagesByProduct() {
       this.show = false;
       axios
@@ -318,11 +332,12 @@ export default {
           console.log(error);
         });
     },
-    draggableFunc(i = null, h = null) {
-      console.log(i + " : ss");
+    draggableFunc() {
+      // console.log(i + " : ss");
       var hotspotObject = this.toSetHotspot;
       var topPercentage;
       var leftPercentage;
+      var temp_hotspots = [];
       // this.$nextTick(function () {
       $(function () {
         $(".draggable-hotspot").draggable({
@@ -339,20 +354,27 @@ export default {
             // console.log(selectedItemId);
           },
           stop: function () {
-            hotspotObject.hotspotSettings.top = topPercentage.toFixed(2);
-            hotspotObject.hotspotSettings.left = leftPercentage.toFixed(2);
-            // this.toSetHotspot.hotspotSettings.top = topPercentage.toFixed(2);
-            // this.toSetHotspot.hotspotSettings.left = leftPercentage.toFixed(2);
-            // this.toSetHotspot = hotspotObject;
-            // console.log(hotspotObject);
-            //  && ( tempHotspots.hotspotID != hotspotObject.hotspotID && tempHotspots.itemID != hotspotObject.itemID )
-            tempHotspots[i + "" + h] = hotspotObject;
-            console.log(tempHotspots);
-            // if (tempHotspots.length == 0) {
-            //   tempHotspots.push(hotspotObject);
-            //   console.log(tempHotspots[0].hotspotID);
-            // }
-            //  console.log(hotspotObject.itemID);
+            var hpSettings = {
+              top: null,
+              left: null,
+            };
+            hpSettings.top = topPercentage.toFixed(2);
+            hpSettings.left = leftPercentage.toFixed(2);
+            var ieID = $("#cur-frame").val();
+            var hpsId = $(this).attr("data-hps");
+            temp_hotspots[ieID + hpsId] = {
+              hotspotsID: hpsId,
+              itemID: ieID,
+              hotspotSettings: hpSettings,
+            };
+
+            var filtered = temp_hotspots.filter(function (el) {
+              return el != null;
+            });
+
+            tempHotspots = JSON.stringify(filtered);
+             
+            console.log(tempHotspots)
           },
         });
         // this.toSetHotspot = hotspotObject;

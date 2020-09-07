@@ -60,3 +60,4 @@ Route::post('/hotspot/new', 'HotspotsController@store')->name('hotspot.save');
 Route::post('/hotspot/update/{id}', 'HotspotsController@update')->name('hotspot.update');
 Route::post('/hotspot/set', 'HotspotsController@setHotspot')->name('hotspot.set');
 Route::get('/hotspot/by-product/{id}', 'HotspotsController@allHostspotsByProductId')->name('hotspot.by.product.id');
+Route::post('/hotspot/apply', 'HotspotsController@applyHotspot')->name('hotspot.apply');

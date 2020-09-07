@@ -4061,6 +4061,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 // import SingleHotspot from "./SingleHotspot"
 
 
@@ -4149,11 +4151,13 @@ __webpack_require__.r(__webpack_exports__);
         this.toSetHotspot.itemID = val.itemIdToEmit;
         this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
         this.toSetHotspot.hotspotSettings.top = "50";
-        this.toSetHotspot.hotspotSettings.left = "50";
-        tempHotspots[val.itemIdToEmit + "" + val.hotspotObjectToEmit.id] = this.toSetHotspot; // console.log(val.itemIdToEmit);
+        this.toSetHotspot.hotspotSettings.left = "50"; // tempHotspots[
+        //   val.itemIdToEmit + "" + val.hotspotObjectToEmit.id
+        // ] = this.toSetHotspot;
+        // console.log(val.itemIdToEmit);
         // console.log(val.hotspotObjectToEmit.id);
 
-        this.draggableFunc(val.itemIdToEmit, val.hotspotObjectToEmit.id);
+        this.draggableFunc();
       },
       deep: true
     }
@@ -4165,15 +4169,14 @@ __webpack_require__.r(__webpack_exports__);
     applyHotspot: function applyHotspot() {
       // Get the selected item_id
       // Get the hotspot hotspot_id
-      console.log("apply hotspot"); // axios
-      //   .post("/item/delete/" + item)
-      //   .then((response) => {
-      //     console.log(response);
-      //   })
-      //   .catch((error) => {
-      //     console.log("Error Deleting Items");
-      //     console.log(error);
-      //   });
+      var data = tempHotspots; // console.log(typeof data);
+
+      axios.post("/hotspot/apply", data).then(function (response) {
+        console.log(response);
+      })["catch"](function (error) {
+        console.log("Error Applying Hotspots");
+        console.log(error);
+      });
     },
     mediaResponse: function mediaResponse(res) {
       // console.log(res.status);
@@ -4211,6 +4214,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      // this.$refs.spritespin.api.updateFrame(index);
+      // this.$emit("selectedItem", id.id);
+      // this.tempItemID = id.id;
+      $("#cur-frame").val(id.id);
       this.$refs.spritespin.api.updateFrame(index);
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id; // console.log(this.tempItemID);
@@ -4218,17 +4225,19 @@ __webpack_require__.r(__webpack_exports__);
       // this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
       // this.toSetHotspot.itemID = val;
       // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-
-      if (this.toSetHotspot.hotspotID !== null) {
-        if (this.toSetHotspot.itemID === this.tempItemID) {
-          tempHotspots[this.tempItemID + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-        } else {
-          this.toSetHotspot.itemID = this.tempItemID;
-          tempHotspots[this.tempItemID + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-        }
-      }
-
-      console.log(tempHotspots);
+      // if (this.toSetHotspot.hotspotID !== null) {
+      //   if (this.toSetHotspot.itemID === this.tempItemID) {
+      //     tempHotspots[
+      //       this.tempItemID + "" + this.toSetHotspot.hotspotID
+      //     ] = this.toSetHotspot;
+      //   } else {
+      //     this.toSetHotspot.itemID = this.tempItemID;
+      //     tempHotspots[
+      //       this.tempItemID + "" + this.toSetHotspot.hotspotID
+      //     ] = this.toSetHotspot;
+      //   }
+      // }
+      // console.log(tempHotspots);
     },
     getImagesByProduct: function getImagesByProduct() {
       var _this2 = this;
@@ -4261,12 +4270,11 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     draggableFunc: function draggableFunc() {
-      var i = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      var h = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      console.log(i + " : ss");
+      // console.log(i + " : ss");
       var hotspotObject = this.toSetHotspot;
       var topPercentage;
-      var leftPercentage; // this.$nextTick(function () {
+      var leftPercentage;
+      var temp_hotspots = []; // this.$nextTick(function () {
 
       $(function () {
         $(".draggable-hotspot").draggable({
@@ -4282,19 +4290,24 @@ __webpack_require__.r(__webpack_exports__);
             // console.log(selectedItemId);
           },
           stop: function stop() {
-            hotspotObject.hotspotSettings.top = topPercentage.toFixed(2);
-            hotspotObject.hotspotSettings.left = leftPercentage.toFixed(2); // this.toSetHotspot.hotspotSettings.top = topPercentage.toFixed(2);
-            // this.toSetHotspot.hotspotSettings.left = leftPercentage.toFixed(2);
-            // this.toSetHotspot = hotspotObject;
-            // console.log(hotspotObject);
-            //  && ( tempHotspots.hotspotID != hotspotObject.hotspotID && tempHotspots.itemID != hotspotObject.itemID )
-
-            tempHotspots[i + "" + h] = hotspotObject;
-            console.log(tempHotspots); // if (tempHotspots.length == 0) {
-            //   tempHotspots.push(hotspotObject);
-            //   console.log(tempHotspots[0].hotspotID);
-            // }
-            //  console.log(hotspotObject.itemID);
+            var hpSettings = {
+              top: null,
+              left: null
+            };
+            hpSettings.top = topPercentage.toFixed(2);
+            hpSettings.left = leftPercentage.toFixed(2);
+            var ieID = $("#cur-frame").val();
+            var hpsId = $(this).attr("data-hps");
+            temp_hotspots[ieID + hpsId] = {
+              hotspotsID: hpsId,
+              itemID: ieID,
+              hotspotSettings: hpSettings
+            };
+            var filtered = temp_hotspots.filter(function (el) {
+              return el != null;
+            });
+            tempHotspots = JSON.stringify(filtered);
+            console.log(tempHotspots);
           }
         }); // this.toSetHotspot = hotspotObject;
       });
@@ -27784,7 +27797,7 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("div", { attrs: { id: "results" } }),
+      _c("input", { attrs: { type: "hidden", id: "cur-frame" } }),
       _vm._v(" "),
       _c("div", [
         _c(
@@ -27859,7 +27872,10 @@ var render = function() {
                             {
                               key: spot.id,
                               staticClass:
-                                "cd-single-point draggable-hotspot hotspot-default-position"
+                                "cd-single-point draggable-hotspot hotspot-default-position",
+                              attrs: {
+                                "data-hps": "" + spot.hotspotObjectToEmit.id
+                              }
                             },
                             [
                               _c(
@@ -28714,7 +28730,15 @@ var render = function() {
                                           (_vm.setButton.status == true
                                             ? "primary"
                                             : "error"),
-                                        attrs: { small: "", rounded: "" },
+                                        attrs: {
+                                          small: "",
+                                          rounded: "",
+                                          disabled: _vm.toDisableHotspot.includes(
+                                            hotspot.id
+                                          )
+                                            ? true
+                                            : false
+                                        },
                                         on: {
                                           click: function($event) {
                                             return _vm.setHotspot(hotspot)
@@ -89270,8 +89294,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

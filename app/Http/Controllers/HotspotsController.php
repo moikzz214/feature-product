@@ -47,6 +47,28 @@ class HotspotsController extends Controller
         ]);
     }
 
+    public function applyHotspot(Request $request)
+    {
+        // header('Content-type: application/json; charset=utf-8');
+
+        // $try = '{"description":"1-ykRZ6Q3HPmZSvpul","image":"https://aboudcar.com"}';
+        $settingsToSet = json_decode( $request);
+        $type = gettype($settingsToSet);
+        dd('test');
+        // $hotspotsettings = Hotspot_item::where([
+        //     "item_id" => 
+        // ])->firstOrFail();
+        // $hotspot = Hotspot::create([
+        //     'title' => $request['title'],
+        //     'product_id' => $request['product_id'],
+        // ]);
+        // dd( $request);
+        // return response()->json([
+        //     'thesettings' => $request,
+        //     'message' => 'Hotspot has been updated',
+        // ], 200);
+    }
+
     /**
      * Update the specified resource in storage.
      *
