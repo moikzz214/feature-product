@@ -21,6 +21,27 @@
               <div
                 v-for="spot in hotspots"
                 :key="spot.id"
+                class="cd-single-point draggable-hotspot hotspot-default-position"
+                :data-hps="`${spot.id }`"
+                :style="`top:${JSON.parse(spot.hotspot_settings).top}px;left:${JSON.parse(spot.hotspot_settings).left}px;`"
+              >
+                <!-- :data-hps="`${spot.hotspotObjectToEmit.id}`" -->
+                <a class="cd-img-replace" href="#0">More</a>
+                <div class="cd-more-info cd-right" style="width: 300px; height: auto;">
+                  <a href="#0" class="cd-close-info cd-img-replace">Close</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div v-show="hotspots.length != 0" style="width:100%;">
+            <div class="hotspot-draggable-wrapper">
+              <div class="hotspot-action">
+                <v-btn small @click="closeHotspot">Cancel</v-btn>
+                <v-btn color="primary" small @click="applyHotspot">Apply</v-btn>
+              </div>
+              <div
+                v-for="spot in hotspots"
+                :key="spot.id"
                 :data-hps="`${spot.hotspotObjectToEmit.id}`"
                 class="cd-single-point draggable-hotspot hotspot-default-position"
               >
@@ -30,7 +51,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div>-->
         </div>
       </div>
       <div class="d-flex" v-if="withItems == true">
@@ -131,6 +152,9 @@ export default {
   },
   data() {
     return {
+      // Fetched Hotspot Settings
+      fetchedHotspotSettings: null,
+
       // Saved hotspots settings
       // Loop hotspots with asigned exterior settings
       theHotspot: [],
@@ -216,11 +240,10 @@ export default {
     applyHotspot() {
       // Get the selected item_id
       // Get the hotspot hotspot_id
-
       let data = {
-        hotspot_settings: tempHotspots
+        hotspot_settings: tempHotspots,
       };
-      console.log(data);
+      // console.log(data);
       axios
         .post("/hotspot/apply", data)
         .then((response) => {
@@ -228,19 +251,20 @@ export default {
           tempHotspots = [];
           this.draggableFunc();
           // console.log(response);
-          this.getHotspotSettings();
+          // this.getHotspotSettings();
         })
         .catch((error) => {
           console.log("Error Applying Hotspots");
           console.log(error);
         });
     },
-    getHotspotSettings(){
-       axios
-        .get("/hotspot/settings")
+    getHotspotSettings() {
+      axios
+        .get("/hotspot/settings/" + this.product)
         .then((response) => {
-          // console.log(JSON.parse(response.data.settings[0].hotspot_settings));
-          // console.log(JSON.parse(response.data.settings[1].hotspot_settings));
+          this.hotspots = response.data.settings;
+          this.draggableFunc();
+          console.log(this.hotspots);
         })
         .catch((error) => {
           console.log("Error Fetching Hotspots");
@@ -408,34 +432,10 @@ export default {
     },
   },
   created() {
-    // console.log(this.mediaFilesSettings.dialogStatus);
     this.getImagesByProduct();
-    // console.log(this.hotspots);
-    // this.$nextTick(function () {
-    //   // Code that will run only after the entire view has been rendered
-    //   // $(".hotspot-wrapper").draggable();
-    //   $("#dragThis").draggable({
-    //     drag: function () {
-    //       var offset = $(this).offset();
-    //       var xPos = offset.left;
-    //       var yPos = offset.top;
-    //       $("#posX").text("x: " + xPos);
-    //       $("#posY").text("y: " + yPos);
-    //     },
-    //   });
-    // });
+    this.getHotspotSettings();
   },
-  mounted() {
-    // https://api.jquery.com/position/
-    // http://jsfiddle.net/gabrieleromanato/MxYGZ/
-    // var coordinates = function (element) {
-    //   element = $(element);
-    //   var top = element.position().top;
-    //   var left = element.position().left;
-    //   $("#results").text("X: " + left + " " + "Y: " + top);
-    // };
-    // this.draggableFunc();
-  },
+  mounted() {},
 };
 </script>
 

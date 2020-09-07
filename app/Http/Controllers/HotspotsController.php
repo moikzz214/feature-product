@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Item;
 use App\Hotspot;
 use App\Hotspot_setting;
 use Illuminate\Http\Request;
@@ -114,9 +115,16 @@ class HotspotsController extends Controller
         ], 200);
     }
 
-    public function fetchSettings()
+    public function fetchSettings($id)
     {
-        $hotspot_settings = Hotspot_setting::all();
+        // Get Items first
+        $items = Item::where('product_id', '=', $id)->get();
+        $itemIds = array();
+        foreach ($items as $value) {
+            array_push($itemIds, $value->id);
+        }
+        // Get Hotspot Settings
+        $hotspot_settings = Hotspot_setting::whereIn('item_id', $itemIds)->get();
         return response()->json([
             'settings' => $hotspot_settings,
             'message' => 'Hotspot has been fetched',

@@ -4063,6 +4063,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // import SingleHotspot from "./SingleHotspot"
 
 
@@ -4088,6 +4109,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      // Fetched Hotspot Settings
+      fetchedHotspotSettings: null,
       // Saved hotspots settings
       // Loop hotspots with asigned exterior settings
       theHotspot: [],
@@ -4173,24 +4196,29 @@ __webpack_require__.r(__webpack_exports__);
       // Get the hotspot hotspot_id
       var data = {
         hotspot_settings: tempHotspots
-      };
-      console.log(data);
+      }; // console.log(data);
+
       axios.post("/hotspot/apply", data).then(function (response) {
         // console.log(response);
         tempHotspots = [];
 
         _this.draggableFunc(); // console.log(response);
+        // this.getHotspotSettings();
 
-
-        _this.getHotspotSettings();
       })["catch"](function (error) {
         console.log("Error Applying Hotspots");
         console.log(error);
       });
     },
     getHotspotSettings: function getHotspotSettings() {
-      axios.get("/hotspot/settings").then(function (response) {// console.log(JSON.parse(response.data.settings[0].hotspot_settings));
-        // console.log(JSON.parse(response.data.settings[1].hotspot_settings));
+      var _this2 = this;
+
+      axios.get("/hotspot/settings/" + this.product).then(function (response) {
+        _this2.hotspots = response.data.settings;
+
+        _this2.draggableFunc();
+
+        console.log(_this2.hotspots);
       })["catch"](function (error) {
         console.log("Error Fetching Hotspots");
         console.log(error);
@@ -4215,17 +4243,17 @@ __webpack_require__.r(__webpack_exports__);
       this.dialogItem = Object.assign({}, item);
     },
     confirmDelete: function confirmDelete(item) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.dialogLoading = true;
       axios.post("/item/delete/" + item).then(function (response) {
-        _this2.dialogLoading = false;
-        _this2.actionDialog = false;
+        _this3.dialogLoading = false;
+        _this3.actionDialog = false;
 
-        _this2.getImagesByProduct();
+        _this3.getImagesByProduct();
       })["catch"](function (error) {
-        _this2.dialogLoading = false;
-        _this2.actionDialog = false;
+        _this3.dialogLoading = false;
+        _this3.actionDialog = false;
         console.log("Error Deleting Items");
         console.log(error);
       });
@@ -4258,29 +4286,29 @@ __webpack_require__.r(__webpack_exports__);
       // console.log(tempHotspots);
     },
     getImagesByProduct: function getImagesByProduct() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.show = false;
       axios.get("/items/by-product/" + this.product).then(function (response) {
         // console.log(response.data.items);
         // If no items found
         if (response.data.items.length == 0) {
-          _this3.withItems = false;
-          _this3.uploader = true;
+          _this4.withItems = false;
+          _this4.uploader = true;
           return;
         }
 
-        _this3.withItems = true;
-        _this3.uploader = false;
-        _this3.items = response.data.items; // Setup 360
+        _this4.withItems = true;
+        _this4.uploader = false;
+        _this4.items = response.data.items; // Setup 360
 
-        _this3.options.frames = response.data.items.length;
-        _this3.options.source = response.data.items.map(function (item) {
-          return window.location.origin + "/storage/uploads/user-" + _this3.authUser.id + "/" + item.media_file.path;
+        _this4.options.frames = response.data.items.length;
+        _this4.options.source = response.data.items.map(function (item) {
+          return window.location.origin + "/storage/uploads/user-" + _this4.authUser.id + "/" + item.media_file.path;
         }); // console.log(this.items);
 
         setTimeout(function () {
-          _this3.show = true; // console.log("show: " + this.show);
+          _this4.show = true; // console.log("show: " + this.show);
         }, 1);
       })["catch"](function (error) {
         console.log("Error fetching items");
@@ -4340,32 +4368,10 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    // console.log(this.mediaFilesSettings.dialogStatus);
-    this.getImagesByProduct(); // console.log(this.hotspots);
-    // this.$nextTick(function () {
-    //   // Code that will run only after the entire view has been rendered
-    //   // $(".hotspot-wrapper").draggable();
-    //   $("#dragThis").draggable({
-    //     drag: function () {
-    //       var offset = $(this).offset();
-    //       var xPos = offset.left;
-    //       var yPos = offset.top;
-    //       $("#posX").text("x: " + xPos);
-    //       $("#posY").text("y: " + yPos);
-    //     },
-    //   });
-    // });
+    this.getImagesByProduct();
+    this.getHotspotSettings();
   },
-  mounted: function mounted() {// https://api.jquery.com/position/
-    // http://jsfiddle.net/gabrieleromanato/MxYGZ/
-    // var coordinates = function (element) {
-    //   element = $(element);
-    //   var top = element.position().top;
-    //   var left = element.position().left;
-    //   $("#results").text("X: " + left + " " + "Y: " + top);
-    // };
-    // this.draggableFunc();
-  }
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -27899,9 +27905,13 @@ var render = function() {
                               key: spot.id,
                               staticClass:
                                 "cd-single-point draggable-hotspot hotspot-default-position",
-                              attrs: {
-                                "data-hps": "" + spot.hotspotObjectToEmit.id
-                              }
+                              style:
+                                "top:" +
+                                JSON.parse(spot.hotspot_settings).top +
+                                "px;left:" +
+                                JSON.parse(spot.hotspot_settings).left +
+                                "px;",
+                              attrs: { "data-hps": "" + spot.id }
                             },
                             [
                               _c(
