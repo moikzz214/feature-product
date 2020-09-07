@@ -19,6 +19,7 @@
     <!-- Styles -->
     {{-- <link href="{{ asset('css/pannellum.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script> var tempHotspots = [];</script>
 </head>
 
 <body>

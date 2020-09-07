@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Hotspot;
+use App\Hotspot_setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class HotspotsController extends Controller
 {
@@ -49,24 +52,75 @@ class HotspotsController extends Controller
 
     public function applyHotspot(Request $request)
     {
-        // header('Content-type: application/json; charset=utf-8');
+        // Decode Settings
+        $settingsToSet = json_decode($request->hotspot_settings);
 
-        // $try = '{"description":"1-ykRZ6Q3HPmZSvpul","image":"https://aboudcar.com"}';
-        $settingsToSet = json_decode( $request);
-        $type = gettype($settingsToSet);
-        dd('test');
-        // $hotspotsettings = Hotspot_item::where([
-        //     "item_id" => 
-        // ])->firstOrFail();
-        // $hotspot = Hotspot::create([
-        //     'title' => $request['title'],
-        //     'product_id' => $request['product_id'],
-        // ]);
-        // dd( $request);
-        // return response()->json([
-        //     'thesettings' => $request,
-        //     'message' => 'Hotspot has been updated',
-        // ], 200);
+        // Prepare Settings
+        $toUpdateSettings = array();
+        $toInsertSettings = [];
+        $settingIds = [];
+
+        $updatedMsg = 'No settings were updated';
+        foreach ($settingsToSet as $key => $value) {
+            // Check each setting if already exist
+            $check = Hotspot_setting::where([
+                'item_id' => $value->itemID,
+                'hotspot_id' => $value->hotspotsID,
+            ])->first();
+
+            // To update array - If already exist
+            if ($check) {
+                // Update
+                array_push($toUpdateSettings, array(
+                    'item_id' => $check->item_id,
+                    'hotspot_id' => $check->hotspot_id,
+                    'hotspot_settings' => json_encode($value->hotspotSettings),
+                    'created_at' => Carbon::now(),
+                ));
+
+            } else {
+                // To insert - If new record
+                array_push($toInsertSettings, array(
+                    'item_id' => $value->itemID,
+                    'hotspot_id' => $value->hotspotsID,
+                    'hotspot_settings' => json_encode($value->hotspotSettings),
+                    'created_at' => Carbon::now(),
+                ));
+            }
+        }
+
+        // Uses Transactions
+        DB::beginTransaction();
+            // do all your updates here
+            foreach ($toUpdateSettings as $toUpdate) {
+                DB::table('hotspot_settings')->where([
+                    'item_id' => $toUpdate['item_id'],
+                    'hotspot_id' => $toUpdate['hotspot_id'],
+                ])
+                    ->update(['hotspot_settings' => $toUpdate['hotspot_settings']]);
+            }
+            // when done commit
+        DB::commit();
+
+        // Insert to DB
+        $hotspot_settings = Hotspot_setting::insert($toInsertSettings);
+
+        // Return response
+        return response()->json([
+            'toupdate' => $toUpdateSettings,
+            'updated' => $updatedMsg,
+            'settings' => $hotspot_settings,
+            // 'message' => 'Hotspot has been updated',
+        ], 200);
+    }
+
+    public function fetchSettings()
+    {
+        $hotspot_settings = Hotspot_setting::all();
+        return response()->json([
+            'settings' => $hotspot_settings,
+            'message' => 'Hotspot has been fetched',
+        ], 200);
     }
 
     /**

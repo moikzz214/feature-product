@@ -4167,14 +4167,32 @@ __webpack_require__.r(__webpack_exports__);
       console.log("close hotspot");
     },
     applyHotspot: function applyHotspot() {
+      var _this = this;
+
       // Get the selected item_id
       // Get the hotspot hotspot_id
-      var data = tempHotspots; // console.log(typeof data);
-
+      var data = {
+        hotspot_settings: tempHotspots
+      };
+      console.log(data);
       axios.post("/hotspot/apply", data).then(function (response) {
-        console.log(response);
+        // console.log(response);
+        tempHotspots = [];
+
+        _this.draggableFunc(); // console.log(response);
+
+
+        _this.getHotspotSettings();
       })["catch"](function (error) {
         console.log("Error Applying Hotspots");
+        console.log(error);
+      });
+    },
+    getHotspotSettings: function getHotspotSettings() {
+      axios.get("/hotspot/settings").then(function (response) {// console.log(JSON.parse(response.data.settings[0].hotspot_settings));
+        // console.log(JSON.parse(response.data.settings[1].hotspot_settings));
+      })["catch"](function (error) {
+        console.log("Error Fetching Hotspots");
         console.log(error);
       });
     },
@@ -4197,17 +4215,17 @@ __webpack_require__.r(__webpack_exports__);
       this.dialogItem = Object.assign({}, item);
     },
     confirmDelete: function confirmDelete(item) {
-      var _this = this;
+      var _this2 = this;
 
       this.dialogLoading = true;
       axios.post("/item/delete/" + item).then(function (response) {
-        _this.dialogLoading = false;
-        _this.actionDialog = false;
+        _this2.dialogLoading = false;
+        _this2.actionDialog = false;
 
-        _this.getImagesByProduct();
+        _this2.getImagesByProduct();
       })["catch"](function (error) {
-        _this.dialogLoading = false;
-        _this.actionDialog = false;
+        _this2.dialogLoading = false;
+        _this2.actionDialog = false;
         console.log("Error Deleting Items");
         console.log(error);
       });
@@ -4240,29 +4258,29 @@ __webpack_require__.r(__webpack_exports__);
       // console.log(tempHotspots);
     },
     getImagesByProduct: function getImagesByProduct() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.show = false;
       axios.get("/items/by-product/" + this.product).then(function (response) {
         // console.log(response.data.items);
         // If no items found
         if (response.data.items.length == 0) {
-          _this2.withItems = false;
-          _this2.uploader = true;
+          _this3.withItems = false;
+          _this3.uploader = true;
           return;
         }
 
-        _this2.withItems = true;
-        _this2.uploader = false;
-        _this2.items = response.data.items; // Setup 360
+        _this3.withItems = true;
+        _this3.uploader = false;
+        _this3.items = response.data.items; // Setup 360
 
-        _this2.options.frames = response.data.items.length;
-        _this2.options.source = response.data.items.map(function (item) {
-          return window.location.origin + "/storage/uploads/user-" + _this2.authUser.id + "/" + item.media_file.path;
+        _this3.options.frames = response.data.items.length;
+        _this3.options.source = response.data.items.map(function (item) {
+          return window.location.origin + "/storage/uploads/user-" + _this3.authUser.id + "/" + item.media_file.path;
         }); // console.log(this.items);
 
         setTimeout(function () {
-          _this2.show = true; // console.log("show: " + this.show);
+          _this3.show = true; // console.log("show: " + this.show);
         }, 1);
       })["catch"](function (error) {
         console.log("Error fetching items");
@@ -4302,7 +4320,15 @@ __webpack_require__.r(__webpack_exports__);
               hotspotsID: hpsId,
               itemID: ieID,
               hotspotSettings: hpSettings
-            };
+            }; // var theProperty = ieID + hpsId;
+            // temp_hotspots = {
+            //   theProperty: {
+            //     hotspotsID: hpsId,
+            //     itemID: ieID,
+            //     hotspotSettings: hpSettings,
+            //   },
+            // };
+
             var filtered = temp_hotspots.filter(function (el) {
               return el != null;
             });
@@ -88298,8 +88324,8 @@ window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
 window.slugify = __webpack_require__(/*! @sindresorhus/slugify */ "./node_modules/@sindresorhus/slugify/index.js");
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.tempHotspots = [];
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; // window.tempHotspots = [];
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

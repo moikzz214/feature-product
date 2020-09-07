@@ -216,16 +216,34 @@ export default {
     applyHotspot() {
       // Get the selected item_id
       // Get the hotspot hotspot_id
-      
-      let data = tempHotspots;
-      // console.log(typeof data);
+
+      let data = {
+        hotspot_settings: tempHotspots
+      };
+      console.log(data);
       axios
         .post("/hotspot/apply", data)
         .then((response) => {
-          console.log(response);
+          // console.log(response);
+          tempHotspots = [];
+          this.draggableFunc();
+          // console.log(response);
+          this.getHotspotSettings();
         })
         .catch((error) => {
           console.log("Error Applying Hotspots");
+          console.log(error);
+        });
+    },
+    getHotspotSettings(){
+       axios
+        .get("/hotspot/settings")
+        .then((response) => {
+          // console.log(JSON.parse(response.data.settings[0].hotspot_settings));
+          // console.log(JSON.parse(response.data.settings[1].hotspot_settings));
+        })
+        .catch((error) => {
+          console.log("Error Fetching Hotspots");
           console.log(error);
         });
     },
@@ -367,14 +385,22 @@ export default {
               itemID: ieID,
               hotspotSettings: hpSettings,
             };
+            // var theProperty = ieID + hpsId;
+            // temp_hotspots = {
+            //   theProperty: {
+            //     hotspotsID: hpsId,
+            //     itemID: ieID,
+            //     hotspotSettings: hpSettings,
+            //   },
+            // };
 
             var filtered = temp_hotspots.filter(function (el) {
               return el != null;
             });
 
             tempHotspots = JSON.stringify(filtered);
-             
-            console.log(tempHotspots)
+
+            console.log(tempHotspots);
           },
         });
         // this.toSetHotspot = hotspotObject;
