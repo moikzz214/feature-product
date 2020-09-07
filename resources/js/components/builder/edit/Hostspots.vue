@@ -128,6 +128,8 @@
  * 2. Add Hotpots
  *    a. Multiple Hotspots in 1 Item
  *    b. Save on stop
+ * 3. Save Hotspot Settings in current Item
+ * repeat
  */
 import MediaFiles from "../../MediaFiles";
 export default {

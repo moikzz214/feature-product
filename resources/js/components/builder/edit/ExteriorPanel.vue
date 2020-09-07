@@ -12,7 +12,7 @@
             ref="spritespin"
             style="margin:0 auto;"
           />
-          <div v-show="hotspots.length != 0" style="width:100%;">
+          <!-- <div v-show="hotspots.length != 0" style="width:100%;">
             <div class="hotspot-draggable-wrapper">
               <div class="hotspot-action">
                 <v-btn small @click="closeHotspot">Cancel</v-btn>
@@ -25,15 +25,15 @@
                 :data-hps="`${spot.id }`"
                 :style="`top:${JSON.parse(spot.hotspot_settings).top}px;left:${JSON.parse(spot.hotspot_settings).left}px;`"
               >
-                <!-- :data-hps="`${spot.hotspotObjectToEmit.id}`" -->
                 <a class="cd-img-replace" href="#0">More</a>
                 <div class="cd-more-info cd-right" style="width: 300px; height: auto;">
                   <a href="#0" class="cd-close-info cd-img-replace">Close</a>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- <div v-show="hotspots.length != 0" style="width:100%;">
+          </div>-->
+          <!-- :data-hps="`${spot.hotspotObjectToEmit.id}`" -->
+          <div v-show="hotspots.length != 0" style="width:100%;">
             <div class="hotspot-draggable-wrapper">
               <div class="hotspot-action">
                 <v-btn small @click="closeHotspot">Cancel</v-btn>
@@ -46,12 +46,13 @@
                 class="cd-single-point draggable-hotspot hotspot-default-position"
               >
                 <a class="cd-img-replace" href="#0">More</a>
-                <div class="cd-more-info cd-right" style="width: 300px; height: auto;">
+                <div class="cd-label" :title="spot.hotspotObjectToEmit.title">
+                  <span class="ma-0">{{spot.hotspotObjectToEmit.title.substring(0, 15)}}..</span>
                   <a href="#0" class="cd-close-info cd-img-replace">Close</a>
                 </div>
               </div>
             </div>
-          </div>-->
+          </div>
         </div>
       </div>
       <div class="d-flex" v-if="withItems == true">
@@ -433,7 +434,7 @@ export default {
   },
   created() {
     this.getImagesByProduct();
-    this.getHotspotSettings();
+    // this.getHotspotSettings();
   },
   mounted() {},
 };
@@ -447,6 +448,35 @@ export default {
   right: 5px;
   left: auto;
   bottom: auto;
+}
+.cd-label {
+  cursor: move;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  padding: 0 5px;
+  background-color: #fff;
+  border-radius: 5px;
+  margin-left: 5px;
+  bottom: auto;
+  right: auto;
+  max-width: 120px;
+  width: 120px;
+  &::after {
+    content: "";
+    width: 0px;
+    height: 0px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid #fff;
+    position: absolute;
+    right: 98%;
+    top: 0;
+    bottom: auto;
+    left: auto;
+    z-index: 2;
+    margin-top: 2px;
+  }
 }
 
 /** Draggrable */

@@ -51,6 +51,8 @@ class HotspotsController extends Controller
         ]);
     }
 
+    // Pivot table of Hotspot and Item
+    // https://laraveldaily.com/pivot-tables-and-many-to-many-relationships/
     public function applyHotspot(Request $request)
     {
         // Decode Settings
@@ -114,6 +116,71 @@ class HotspotsController extends Controller
             // 'message' => 'Hotspot has been updated',
         ], 200);
     }
+
+    /// Hotspot_settings
+    // public function applyHotspot(Request $request)
+    // {
+    //     // Decode Settings
+    //     $settingsToSet = json_decode($request->hotspot_settings);
+
+    //     // Prepare Settings
+    //     $toUpdateSettings = array();
+    //     $toInsertSettings = [];
+    //     $settingIds = [];
+
+    //     $updatedMsg = 'No settings were updated';
+    //     foreach ($settingsToSet as $key => $value) {
+    //         // Check each setting if already exist
+    //         $check = Hotspot_setting::where([
+    //             'item_id' => $value->itemID,
+    //             'hotspot_id' => $value->hotspotsID,
+    //         ])->first();
+
+    //         // To update array - If already exist
+    //         if ($check) {
+    //             // Update
+    //             array_push($toUpdateSettings, array(
+    //                 'item_id' => $check->item_id,
+    //                 'hotspot_id' => $check->hotspot_id,
+    //                 'hotspot_settings' => json_encode($value->hotspotSettings),
+    //                 'created_at' => Carbon::now(),
+    //             ));
+
+    //         } else {
+    //             // To insert - If new record
+    //             array_push($toInsertSettings, array(
+    //                 'item_id' => $value->itemID,
+    //                 'hotspot_id' => $value->hotspotsID,
+    //                 'hotspot_settings' => json_encode($value->hotspotSettings),
+    //                 'created_at' => Carbon::now(),
+    //             ));
+    //         }
+    //     }
+
+    //     // Uses Transactions
+    //     DB::beginTransaction();
+    //         // do all your updates here
+    //         foreach ($toUpdateSettings as $toUpdate) {
+    //             DB::table('hotspot_settings')->where([
+    //                 'item_id' => $toUpdate['item_id'],
+    //                 'hotspot_id' => $toUpdate['hotspot_id'],
+    //             ])
+    //                 ->update(['hotspot_settings' => $toUpdate['hotspot_settings']]);
+    //         }
+    //         // when done commit
+    //     DB::commit();
+
+    //     // Insert to DB
+    //     $hotspot_settings = Hotspot_setting::insert($toInsertSettings);
+
+    //     // Return response
+    //     return response()->json([
+    //         'toupdate' => $toUpdateSettings,
+    //         'updated' => $updatedMsg,
+    //         'settings' => $hotspot_settings,
+    //         // 'message' => 'Hotspot has been updated',
+    //     ], 200);
+    // }
 
     public function fetchSettings($id)
     {
