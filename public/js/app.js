@@ -4090,6 +4090,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 // import SingleHotspot from "./SingleHotspot"
 
 
@@ -4115,6 +4121,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      settingsInCurrentScene: [],
       // Spot locations
       currentLeft: "",
       currentTop: "",
@@ -4196,6 +4203,20 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    removeHotspotSettings: function removeHotspotSettings(spotId) {
+      var refId = spotId;
+      var data = {
+        item_id: this.tempItemID,
+        hotspot_id: spotId
+      };
+      axios.post("/hotspot/setting/delete", data).then(function (response) {
+        console.log(response); // remove the hotspot from 360
+        //   this.getHotspotSettings();
+      })["catch"](function (error) {
+        console.log("Error Deleting Hotspot Setting");
+        console.log(error);
+      });
+    },
     closeHotspot: function closeHotspot() {
       console.log("close hotspot");
     },
@@ -4223,10 +4244,11 @@ __webpack_require__.r(__webpack_exports__);
     getHotspotSettings: function getHotspotSettings() {
       var _this2 = this;
 
-      axios.get("/hotspot/product/" + this.product).then(function (response) {
+      axios // .get("/hotspot/settings/" + this.product)
+      .get("/hotspot/product/" + this.product).then(function (response) {
         _this2.hotspots = response.data.settings;
 
-        _this2.draggableFunc(); // console.log(response.data);
+        _this2.draggableFunc(); //   console.log(this.hotspots);
 
       })["catch"](function (error) {
         console.log("Error Fetching Hotspots");
@@ -4290,35 +4312,28 @@ __webpack_require__.r(__webpack_exports__);
       this.$refs.spritespin.api.updateFrame(index);
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
-      var dItemId = id.id;
-      var theCurrentLeft = "";
-      var theCurrentTop = "";
-      console.log(this.hotspots); // Set the hotspot settings when clicked
-      // Object.keys(this.hotspots).map(function(k, i) {
+      var dItemId = id.id; // Current Item ID
 
+      this.settingsInCurrentScene = []; // Settings Variable
+
+      var tempSettings = [];
       this.hotspots.map(function (k, i) {
         k.hotspot_settings.map(function (inner, index) {
-          // console.log(dItemId)
           if (inner.item_id == dItemId) {
-            theCurrentLeft = JSON.parse(inner.hotspot_settings).left;
-            theCurrentTop = JSON.parse(inner.hotspot_settings).top;
+            // Insert all the settings on the selected Item ID
+            tempSettings.push(inner);
           }
-        }); // let h1Display = "none";
-        // console.log(hotspot1Settings[i].item);
-        // if (hotspot1Settings[i].item) {
-        //   h1Display = "block";
-        // if (hotspot1Settings[i].item == data.frame) {
-        //   $hotspot1.css({
-        //     bottom: hotspot1Settings[i].bottom,
-        //     right: hotspot1Settings[i].right,
-        //     display: hotspot1Settings[i].display,
-        //   });
-        // }
-        // }
+        });
       });
-      this.currentLeft = theCurrentLeft;
-      this.currentTop = theCurrentTop;
-      console.log(this.currentTop);
+      tempSettings.map(function (s, index) {
+        // Apply hotspot style from the settings variable
+        $(".draggable-hotspot.hotspot-id-" + s.hotspot_id).css({
+          left: JSON.parse(s.hotspot_settings).left + "%",
+          top: JSON.parse(s.hotspot_settings).top + "%",
+          display: "block"
+        });
+      });
+      this.settingsInCurrentScene = tempSettings; //   console.log(this.settingsInCurrentScene);
     },
     getImagesByProduct: function getImagesByProduct() {
       var _this4 = this;
@@ -27987,18 +28002,15 @@ var render = function() {
                           1
                         ),
                         _vm._v(" "),
-                        _vm._l(_vm.hotspots, function(spot) {
+                        _vm._l(_vm.hotspots, function(spot, index) {
                           return _c(
                             "div",
                             {
-                              key: spot.id,
-                              staticClass:
-                                "cd-single-point draggable-hotspot hotspot-default-position",
-                              style: {
-                                top: _vm.currentTop + "%",
-                                left: _vm.currentLeft + "%"
-                              },
-                              attrs: { id: spot.id, "data-hps": "" + spot.id }
+                              key: index,
+                              class:
+                                "cd-single-point draggable-hotspot hotspot-default-position hotspot-id-" +
+                                spot.id,
+                              attrs: { "data-hps": "" + spot.id }
                             },
                             [
                               _c(
@@ -28012,32 +28024,60 @@ var render = function() {
                               _vm._v(" "),
                               _c(
                                 "div",
-                                {
-                                  staticClass: "cd-label",
-                                  attrs: { title: spot.title }
-                                },
+                                { staticClass: "cd-label d-flex align-center" },
                                 [
-                                  _c("span", { staticClass: "ma-0" }, [
-                                    _vm._v(
-                                      _vm._s(
-                                        spot.title != null &&
-                                          spot.title.length > 15
-                                          ? spot.title.substring(0, 15) + ".."
-                                          : spot.title
+                                  _c(
+                                    "span",
+                                    {
+                                      staticClass: "px-1",
+                                      attrs: { title: spot.title }
+                                    },
+                                    [
+                                      _vm._v(
+                                        _vm._s(
+                                          spot.title != null &&
+                                            spot.title.length > 15
+                                            ? spot.title.substring(0, 15) + ".."
+                                            : spot.title
+                                        )
                                       )
-                                    )
-                                  ]),
+                                    ]
+                                  ),
                                   _vm._v(" "),
                                   _c(
-                                    "a",
+                                    "v-btn",
                                     {
-                                      staticClass:
-                                        "cd-close-info cd-img-replace",
-                                      attrs: { href: "#0" }
+                                      staticClass: "ml-auto",
+                                      attrs: {
+                                        icon: "",
+                                        "x-small": "",
+                                        title:
+                                          "Delete " + spot.title + " hotspot"
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.removeHotspotSettings(
+                                            spot.id
+                                          )
+                                        }
+                                      }
                                     },
-                                    [_vm._v("Close")]
+                                    [
+                                      _c(
+                                        "v-icon",
+                                        {
+                                          attrs: {
+                                            "x-small": "",
+                                            color: "black"
+                                          }
+                                        },
+                                        [_vm._v("mdi-close")]
+                                      )
+                                    ],
+                                    1
                                   )
-                                ]
+                                ],
+                                1
                               )
                             ]
                           )
@@ -89378,8 +89418,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

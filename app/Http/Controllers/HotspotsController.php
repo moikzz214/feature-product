@@ -57,7 +57,7 @@ class HotspotsController extends Controller
     {
         // Decode Settings
         $settingsToSet = json_decode($request->hotspot_settings);
-
+        // dd($settingsToSet);
         // Prepare Settings
         $toUpdateSettings = array();
         $toInsertSettings = [];
@@ -208,6 +208,18 @@ class HotspotsController extends Controller
         ], 200);
     }
 
+
+    public function deleteSetting(Request $request)
+    {
+        $hotspot_settings = Hotspot_setting::where([
+            'item_id' => $request->item_id,
+            'hotspot_id' => $request->hotspot_id
+        ])->firstOrFail()->delete();
+        return response()->json([
+            'settings' => $hotspot_settings,
+            'message' => 'Hotspot Setting has been deleted',
+        ], 200);
+    }
 
     /**
      * Update the specified resource in storage.

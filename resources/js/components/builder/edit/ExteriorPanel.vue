@@ -40,20 +40,26 @@
                 <v-btn color="primary" small @click="applyHotspot">Apply</v-btn>
               </div>
               <div
-                v-for="(spot) in hotspots"
-                :key="spot.id"
-                :id="spot.id"
+                v-for="(spot, index) in hotspots"
+                :key="index"
                 :data-hps="`${spot.id}`"
-                class="cd-single-point draggable-hotspot hotspot-default-position"
-                v-bind:style="{top:currentTop+'%',left:currentLeft+'%'}"
+                :class="`cd-single-point draggable-hotspot hotspot-default-position hotspot-id-${spot.id}`"
               >
-                <!-- style="top:0%;left:0%;" -->
                 <a class="cd-img-replace" href="#0">More</a>
-                <div class="cd-label" :title="spot.title">
+                <div class="cd-label d-flex align-center">
                   <span
-                    class="ma-0"
+                    :title="spot.title"
+                    class="px-1"
                   >{{spot.title != null && spot.title.length > 15 ? spot.title.substring(0, 15)+'..' : spot.title}}</span>
-                  <a href="#0" class="cd-close-info cd-img-replace">Close</a>
+                  <v-btn
+                    icon
+                    x-small
+                    :title="'Delete '+spot.title+' hotspot'"
+                    class="ml-auto"
+                    @click="removeHotspotSettings(spot.id)"
+                  >
+                    <v-icon x-small color="black">mdi-close</v-icon>
+                  </v-btn>
                 </div>
               </div>
             </div>
@@ -158,6 +164,8 @@ export default {
   },
   data() {
     return {
+      settingsInCurrentScene: [],
+
       // Spot locations
       currentLeft: "",
       currentTop: "",
@@ -245,6 +253,24 @@ export default {
     },
   },
   methods: {
+    removeHotspotSettings(spotId) {
+      let refId = spotId;
+      let data = {
+        item_id: this.tempItemID,
+        hotspot_id: spotId,
+      };
+      axios
+        .post("/hotspot/setting/delete", data)
+        .then((response) => {
+          console.log(response);
+          // remove the hotspot from 360
+          //   this.getHotspotSettings();
+        })
+        .catch((error) => {
+          console.log("Error Deleting Hotspot Setting");
+          console.log(error);
+        });
+    },
     closeHotspot() {
       console.log("close hotspot");
     },
@@ -271,11 +297,12 @@ export default {
     },
     getHotspotSettings() {
       axios
+        // .get("/hotspot/settings/" + this.product)
         .get("/hotspot/product/" + this.product)
         .then((response) => {
           this.hotspots = response.data.settings;
           this.draggableFunc();
-          // console.log(response.data);
+          //   console.log(this.hotspots);
         })
         .catch((error) => {
           console.log("Error Fetching Hotspots");
@@ -336,38 +363,28 @@ export default {
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
 
-      let dItemId = id.id;
-      let theCurrentLeft = "";
-      let theCurrentTop = "";
-      console.log(this.hotspots);
-      // Set the hotspot settings when clicked
-      // Object.keys(this.hotspots).map(function(k, i) {
-      this.hotspots.map(function(k, i) {
+      let dItemId = id.id; // Current Item ID
+      this.settingsInCurrentScene = []; // Settings Variable
+      let tempSettings = [];
+
+      this.hotspots.map(function (k, i) {
         k.hotspot_settings.map(function (inner, index) {
-          // console.log(dItemId)
           if (inner.item_id == dItemId) {
-            theCurrentLeft = JSON.parse(inner.hotspot_settings).left;
-            theCurrentTop = JSON.parse(inner.hotspot_settings).top;
+            // Insert all the settings on the selected Item ID
+            tempSettings.push(inner);
           }
         });
-
-        // let h1Display = "none";
-        // console.log(hotspot1Settings[i].item);
-        // if (hotspot1Settings[i].item) {
-        //   h1Display = "block";
-
-        // if (hotspot1Settings[i].item == data.frame) {
-        //   $hotspot1.css({
-        //     bottom: hotspot1Settings[i].bottom,
-        //     right: hotspot1Settings[i].right,
-        //     display: hotspot1Settings[i].display,
-        //   });
-        // }
-        // }
       });
-      this.currentLeft = theCurrentLeft;
-      this.currentTop = theCurrentTop;
-      console.log(this.currentTop);
+      tempSettings.map(function (s, index) {
+        // Apply hotspot style from the settings variable
+        $(".draggable-hotspot.hotspot-id-" + s.hotspot_id).css({
+          left: JSON.parse(s.hotspot_settings).left + "%",
+          top: JSON.parse(s.hotspot_settings).top + "%",
+          display: "block",
+        });
+      });
+      this.settingsInCurrentScene = tempSettings;
+      //   console.log(this.settingsInCurrentScene);
     },
     getImagesByProduct() {
       this.show = false;
