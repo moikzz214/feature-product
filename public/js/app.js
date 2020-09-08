@@ -4661,20 +4661,13 @@ __webpack_require__.r(__webpack_exports__);
 
       var theContent = i.content !== null ? JSON.parse(i.content) : null;
       this.dialogHotspotId = i.id;
-      this.title = i.title ? i.title : "Title is not set"; // this.description = i.content !== null ? JSON.parse(i.content).description;
-
+      this.title = i.title ? i.title : "Title is not set";
+      this.type = i.hotspot_type ? i.hotspot_type : "select";
       this.description = theContent !== null && theContent.description !== null ? theContent.description : "";
-      this.ctaLabel = theContent !== null && theContent.ctaLabel !== undefined ? theContent.ctaLabel : "";
-      this.ctaUrl = theContent !== null && theContent.ctaUrl !== undefined ? theContent.ctaUrl : "";
-      this.ctaNewTab = theContent !== null && theContent.ctaNewTab !== undefined ? theContent.ctaNewTab : "";
+      this.ctaLabel = theContent !== null && theContent.cta_label !== undefined ? theContent.cta_label : "";
+      this.ctaUrl = theContent !== null && theContent.cta_url !== undefined ? theContent.cta_url : "";
+      this.ctaNewTab = theContent !== null && theContent.cta_new_tab !== undefined ? theContent.cta_new_tab : "";
       this.image = theContent !== null && theContent.image !== undefined ? theContent.image : "";
-      this.hotspotContent = {
-        description: this.description,
-        cta_label: this.ctaLabel,
-        cta_url: this.ctaUrl,
-        cta_new_tab: this.ctaNewTab,
-        image: this.image
-      };
     },
     createHotspot: function createHotspot() {
       this.newHotspotDialog = true;
@@ -4704,18 +4697,25 @@ __webpack_require__.r(__webpack_exports__);
     updateHotspot: function updateHotspot() {
       var _this2 = this;
 
+      var c = {
+        description: this.description,
+        cta_label: this.ctaLabel,
+        cta_url: this.ctaUrl,
+        cta_new_tab: this.ctaNewTab,
+        image: this.image
+      };
       axios.post("/hotspot/update/" + this.dialogHotspotId, {
         title: this.title,
         hotspot_type: this.type,
         product_id: this.product,
-        content: JSON.stringify(this.hotspotContent)
+        content: JSON.stringify(c)
       }).then(function (response) {
         _this2.getAllHotspots();
 
         console.log(response);
         _this2.editDialog = false;
       })["catch"](function (error) {
-        _this2.editDialog = false;
+        // this.editDialog = false;
         console.log("Error updating hotspot");
         console.log(error);
       });
