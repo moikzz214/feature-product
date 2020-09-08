@@ -30,6 +30,9 @@
         disable-pagination
         hide-default-footer
       >
+        <template v-slot:[`item.title`]="{ item }">
+           <span>{{item.title.length > 20 ? item.title.substring(0, 20)+'..' : item.title}}</span>
+        </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon small title="Set Hotspot" color="primary" class="mr-2" @click="setHotspot(item)">mdi-plus-thick</v-icon>
           <v-icon small title="Edit Hotspot" @click="editItem(item)">mdi-pencil</v-icon>

@@ -47,7 +47,7 @@
               >
                 <a class="cd-img-replace" href="#0">More</a>
                 <div class="cd-label" :title="spot.hotspotObjectToEmit.title">
-                  <span class="ma-0">{{spot.hotspotObjectToEmit.title.substring(0, 15)}}..</span>
+                  <span class="ma-0">{{spot.hotspotObjectToEmit.title.length > 15 ? spot.hotspotObjectToEmit.title.substring(0, 15)+'..' : spot.hotspotObjectToEmit.title}}</span>
                   <a href="#0" class="cd-close-info cd-img-replace">Close</a>
                 </div>
               </div>

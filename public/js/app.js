@@ -4585,6 +4585,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /**
  * Hotspot Process
@@ -28070,11 +28073,14 @@ var render = function() {
                                   _c("span", { staticClass: "ma-0" }, [
                                     _vm._v(
                                       _vm._s(
-                                        spot.hotspotObjectToEmit.title.substring(
-                                          0,
+                                        spot.hotspotObjectToEmit.title.length >
                                           15
-                                        )
-                                      ) + ".."
+                                          ? spot.hotspotObjectToEmit.title.substring(
+                                              0,
+                                              15
+                                            ) + ".."
+                                          : spot.hotspotObjectToEmit.title
+                                      )
                                     )
                                   ]),
                                   _vm._v(" "),
@@ -28565,6 +28571,23 @@ var render = function() {
                 },
                 scopedSlots: _vm._u(
                   [
+                    {
+                      key: "item.title",
+                      fn: function(ref) {
+                        var item = ref.item
+                        return [
+                          _c("span", [
+                            _vm._v(
+                              _vm._s(
+                                item.title.length > 20
+                                  ? item.title.substring(0, 20) + ".."
+                                  : item.title
+                              )
+                            )
+                          ])
+                        ]
+                      }
+                    },
                     {
                       key: "item.actions",
                       fn: function(ref) {
