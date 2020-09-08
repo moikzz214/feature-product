@@ -40,100 +40,6 @@
       </v-data-table>
       <!-- <template v-slot:[`item.actions`]="{ item }"> -->
       <!-- && hotspotForm == hotspot.id" -->
-      <!-- <v-expansion-panels accordion flat>
-        <v-expansion-panel v-for="(hotspot, index) in itemHotspots" :key="index">
-          <v-expansion-panel-header class="pa-3" style="min-height:30px;">{{hotspot.title}}</v-expansion-panel-header>
-          <v-expansion-panel-content color="grey lighten-5">
-            <div class="d-flex justify-end py-2">
-              <v-btn small icon color="info" @click="editHotspot(hotspot)">
-                <v-icon small>mdi-pencil</v-icon>
-              </v-btn>
-              <v-btn small icon color="error" @click="deleteHotspot(hotspot)">
-                <v-icon small>mdi-trash-can</v-icon>
-              </v-btn>
-            </div>
-            <form v-if="editing == true && hotspotData == hotspot.id">
-              <v-text-field v-model="title" outlined label="Title" required class="py-0" dense></v-text-field>
-              <v-select :items="types" label="Type" outlined required class="py-0" dense></v-select>
-              <v-textarea
-                v-model="description"
-                outlined
-                dense
-                label="Description"
-                class="py-0"
-                value
-              ></v-textarea>
-              <v-text-field
-                v-model="ctaLabel"
-                outlined
-                dense
-                label="CTA Label"
-                required
-                class="py-0"
-              ></v-text-field>
-              <v-text-field v-model="ctaUrl" outlined dense label="CTA URL" required class="py-0"></v-text-field>
-              <v-checkbox
-                v-model="ctaNewTab"
-                outlined
-                dense
-                label="Open in new tab?"
-                class="py-0 ma-0"
-              ></v-checkbox>
-              <div class="d-flex">
-                <v-text-field
-                  v-model="image"
-                  outlined
-                  dense
-                  label="Image URL"
-                  required
-                  class="py-0 mr-1"
-                ></v-text-field>
-                <v-btn class="mt-2" small icon @click="openMediaFiles">
-                  <v-icon small>mdi-folder-image</v-icon>
-                </v-btn>
-              </div>
-              <div class="d-flex justify-end">
-                <v-btn small class="mr-1" text color="grey" @click="editing = false">cancel</v-btn>
-                <v-btn small class="primary" @click="updateHotspot(hotspot.id)">update</v-btn>
-              </div>
-            </form>
-            <div v-else>
-              <small>Title</small>
-              <p class="body-2 grey lighten-3 py-1 px-3">{{hotspot.title}}</p>
-              <small>Type</small>
-              <p class="body-2 grey lighten-3 py-1 px-3">{{hotspot.hotspot_type}}</p>
-              <small>Description</small>
-              <p
-                class="body-2 grey lighten-3 py-1 px-3"
-              >{{JSON.parse(hotspot.content) && JSON.parse(hotspot.content).description ? JSON.parse(hotspot.content).description : 'No description is set'}}</p>
-              <small>Image</small>
-              <p
-                class="body-2 grey lighten-3 py-1 px-3"
-              >{{JSON.parse(hotspot.content) && JSON.parse(hotspot.content).image ? JSON.parse(hotspot.content).image : 'No image is set'}}</p>
-              <small>CTA</small>
-              <p class="body-2 grey lighten-3 py-1 px-3">
-                <a
-                  v-if="JSON.parse(hotspot.content) && JSON.parse(hotspot.content).ctaUrl"
-                  :href="JSON.parse(hotspot.content).ctaUrl"
-                  target="_blank"
-                >{{JSON.parse(hotspot.content).ctaTitle}}</a>
-                <span v-else>No CTA is set</span>
-              </p>
-              <div>
-                <v-btn
-                  v-model="setButton.status"
-                  small
-                  rounded
-                  :class="`${setButton.status == true ? 'primary' : 'error'}`"
-                  @click="setHotspot(hotspot)"
-                  :disabled="toDisableHotspot.includes(hotspot.id) ? true : false"
-                >set</v-btn>
-                <p v-if="setButton.status == false" class="ma-0 red--text caption">{{setButton.msg}}</p>
-              </div>
-            </div>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>-->
     </v-card>
     <v-dialog v-model="editDialog" width="600px">
       <v-card>
@@ -439,8 +345,14 @@ export default {
     },
     setHotspot(h) {
       let hotspotToEmit = {
-        hotspotObjectToEmit: h,
-        itemIdToEmit: this.selectedItem,
+        hotspot_id: h.id,
+        item_id: this.selectedItem,
+        hotspot_settings: {
+          top: '50%',
+          left: '50%'
+        },
+        title: h.title
+        // hotspotObjectToEmit: h,
       };
       console.log(this.selectedItem);
       if (this.selectedItem.length != 0) {

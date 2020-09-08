@@ -63,3 +63,4 @@ Route::post('/hotspot/delete/{id}', 'HotspotsController@destroy')->name('hotspot
 Route::get('/hotspot/by-product/{id}', 'HotspotsController@allHostspotsByProductId')->name('hotspot.by.product.id');
 Route::post('/hotspot/apply', 'HotspotsController@applyHotspot')->name('hotspot.apply');
 Route::get('/hotspot/settings/{id}', 'HotspotsController@fetchSettings')->name('hotspot.settings');
+Route::get('/hotspot/product/{id}', 'HotspotsController@getProductHotspots')->name('hotspot.product');

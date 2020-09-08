@@ -198,6 +198,17 @@ class HotspotsController extends Controller
         ], 200);
     }
 
+    public function getProductHotspots($id)
+    {
+        // Get Hotspots with Settings
+        $productHotspots = Hotspot::where('product_id', '=', $id)->with('hotspot_settings')->get();
+        return response()->json([
+            'settings' => $productHotspots,
+            'message' => 'Product Hotspots have been fetched',
+        ], 200);
+    }
+
+
     /**
      * Update the specified resource in storage.
      *

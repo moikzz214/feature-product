@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Item;
+use App\Hotspot_setting;
 use Illuminate\Database\Eloquent\Model;
 
 class Hotspot extends Model
@@ -12,5 +13,10 @@ class Hotspot extends Model
     public function items()
     {
         return $this->belongsToMany(Item::class);
+    }
+
+    public function hotspot_settings()
+    {
+        return $this->hasMany(Hotspot_setting::class);
     }
 }

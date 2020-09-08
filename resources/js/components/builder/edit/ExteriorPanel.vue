@@ -40,14 +40,19 @@
                 <v-btn color="primary" small @click="applyHotspot">Apply</v-btn>
               </div>
               <div
-                v-for="spot in hotspots"
+                v-for="(spot) in hotspots"
                 :key="spot.id"
-                :data-hps="`${spot.hotspotObjectToEmit.id}`"
+                :id="spot.id"
+                :data-hps="`${spot.id}`"
                 class="cd-single-point draggable-hotspot hotspot-default-position"
+                v-bind:style="{top:currentTop+'%',left:currentLeft+'%'}"
               >
+                <!-- style="top:0%;left:0%;" -->
                 <a class="cd-img-replace" href="#0">More</a>
-                <div class="cd-label" :title="spot.hotspotObjectToEmit.title">
-                  <span class="ma-0">{{spot.hotspotObjectToEmit.title.length > 15 ? spot.hotspotObjectToEmit.title.substring(0, 15)+'..' : spot.hotspotObjectToEmit.title}}</span>
+                <div class="cd-label" :title="spot.title">
+                  <span
+                    class="ma-0"
+                  >{{spot.title != null && spot.title.length > 15 ? spot.title.substring(0, 15)+'..' : spot.title}}</span>
                   <a href="#0" class="cd-close-info cd-img-replace">Close</a>
                 </div>
               </div>
@@ -153,6 +158,10 @@ export default {
   },
   data() {
     return {
+      // Spot locations
+      currentLeft: "",
+      currentTop: "",
+
       // Fetched Hotspot Settings
       fetchedHotspotSettings: null,
 
@@ -220,10 +229,11 @@ export default {
       // To set hotspot
       handler(val) {
         this.hotspots.push(val);
-        this.toSetHotspot.itemID = val.itemIdToEmit;
-        this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
-        this.toSetHotspot.hotspotSettings.top = "50";
-        this.toSetHotspot.hotspotSettings.left = "50";
+        // console.log(this.hotspots)
+        // this.toSetHotspot.itemID = val.itemIdToEmit;
+        // this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
+        // this.toSetHotspot.hotspotSettings.top = "50";
+        // this.toSetHotspot.hotspotSettings.left = "50";
         // tempHotspots[
         //   val.itemIdToEmit + "" + val.hotspotObjectToEmit.id
         // ] = this.toSetHotspot;
@@ -261,11 +271,11 @@ export default {
     },
     getHotspotSettings() {
       axios
-        .get("/hotspot/settings/" + this.product)
+        .get("/hotspot/product/" + this.product)
         .then((response) => {
           this.hotspots = response.data.settings;
           this.draggableFunc();
-          console.log(this.hotspots);
+          // console.log(response.data);
         })
         .catch((error) => {
           console.log("Error Fetching Hotspots");
@@ -307,34 +317,57 @@ export default {
         });
     },
     selected(index, id = null) {
-      // this.$refs.spritespin.api.updateFrame(index);
-      // this.$emit("selectedItem", id.id);
-      // this.tempItemID = id.id;
-
+      var hpItems = [];
+      if (tempHotspots.length > 0) {
+        hpItems = JSON.parse(tempHotspots);
+      }
+      if (hpItems.length > 0) {
+        $.each(hpItems, function (i, o) {
+          if (o.itemID == id.id) {
+            $("#" + o.hotspotsID).css({
+              left: o.hotspotSettings.left + "%",
+              top: o.hotspotSettings.top + "%",
+            });
+          }
+        });
+      }
       $("#cur-frame").val(id.id);
       this.$refs.spritespin.api.updateFrame(index);
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
 
-      // console.log(this.tempItemID);
-      // console.log(id.id)
+      let dItemId = id.id;
+      let theCurrentLeft = "";
+      let theCurrentTop = "";
+      console.log(this.hotspots);
+      // Set the hotspot settings when clicked
+      // Object.keys(this.hotspots).map(function(k, i) {
+      this.hotspots.map(function(k, i) {
+        k.hotspot_settings.map(function (inner, index) {
+          // console.log(dItemId)
+          if (inner.item_id == dItemId) {
+            theCurrentLeft = JSON.parse(inner.hotspot_settings).left;
+            theCurrentTop = JSON.parse(inner.hotspot_settings).top;
+          }
+        });
 
-      // this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
-      // this.toSetHotspot.itemID = val;
-      // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-      // if (this.toSetHotspot.hotspotID !== null) {
-      //   if (this.toSetHotspot.itemID === this.tempItemID) {
-      //     tempHotspots[
-      //       this.tempItemID + "" + this.toSetHotspot.hotspotID
-      //     ] = this.toSetHotspot;
-      //   } else {
-      //     this.toSetHotspot.itemID = this.tempItemID;
-      //     tempHotspots[
-      //       this.tempItemID + "" + this.toSetHotspot.hotspotID
-      //     ] = this.toSetHotspot;
-      //   }
-      // }
-      // console.log(tempHotspots);
+        // let h1Display = "none";
+        // console.log(hotspot1Settings[i].item);
+        // if (hotspot1Settings[i].item) {
+        //   h1Display = "block";
+
+        // if (hotspot1Settings[i].item == data.frame) {
+        //   $hotspot1.css({
+        //     bottom: hotspot1Settings[i].bottom,
+        //     right: hotspot1Settings[i].right,
+        //     display: hotspot1Settings[i].display,
+        //   });
+        // }
+        // }
+      });
+      this.currentLeft = theCurrentLeft;
+      this.currentTop = theCurrentTop;
+      console.log(this.currentTop);
     },
     getImagesByProduct() {
       this.show = false;
@@ -434,7 +467,7 @@ export default {
   },
   created() {
     this.getImagesByProduct();
-    // this.getHotspotSettings();
+    this.getHotspotSettings();
   },
   mounted() {},
 };

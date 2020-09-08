@@ -4085,6 +4085,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 // import SingleHotspot from "./SingleHotspot"
 
 
@@ -4110,6 +4115,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      // Spot locations
+      currentLeft: "",
+      currentTop: "",
       // Fetched Hotspot Settings
       fetchedHotspotSettings: null,
       // Saved hotspots settings
@@ -4171,11 +4179,12 @@ __webpack_require__.r(__webpack_exports__);
     selectedHotspotProp: {
       // To set hotspot
       handler: function handler(val) {
-        this.hotspots.push(val);
-        this.toSetHotspot.itemID = val.itemIdToEmit;
-        this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
-        this.toSetHotspot.hotspotSettings.top = "50";
-        this.toSetHotspot.hotspotSettings.left = "50"; // tempHotspots[
+        this.hotspots.push(val); // console.log(this.hotspots)
+        // this.toSetHotspot.itemID = val.itemIdToEmit;
+        // this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
+        // this.toSetHotspot.hotspotSettings.top = "50";
+        // this.toSetHotspot.hotspotSettings.left = "50";
+        // tempHotspots[
         //   val.itemIdToEmit + "" + val.hotspotObjectToEmit.id
         // ] = this.toSetHotspot;
         // console.log(val.itemIdToEmit);
@@ -4214,12 +4223,11 @@ __webpack_require__.r(__webpack_exports__);
     getHotspotSettings: function getHotspotSettings() {
       var _this2 = this;
 
-      axios.get("/hotspot/settings/" + this.product).then(function (response) {
+      axios.get("/hotspot/product/" + this.product).then(function (response) {
         _this2.hotspots = response.data.settings;
 
-        _this2.draggableFunc();
+        _this2.draggableFunc(); // console.log(response.data);
 
-        console.log(_this2.hotspots);
       })["catch"](function (error) {
         console.log("Error Fetching Hotspots");
         console.log(error);
@@ -4261,30 +4269,56 @@ __webpack_require__.r(__webpack_exports__);
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      // this.$refs.spritespin.api.updateFrame(index);
-      // this.$emit("selectedItem", id.id);
-      // this.tempItemID = id.id;
+      var hpItems = [];
+
+      if (tempHotspots.length > 0) {
+        hpItems = JSON.parse(tempHotspots);
+      }
+
+      if (hpItems.length > 0) {
+        $.each(hpItems, function (i, o) {
+          if (o.itemID == id.id) {
+            $("#" + o.hotspotsID).css({
+              left: o.hotspotSettings.left + "%",
+              top: o.hotspotSettings.top + "%"
+            });
+          }
+        });
+      }
+
       $("#cur-frame").val(id.id);
       this.$refs.spritespin.api.updateFrame(index);
       this.$emit("selectedItem", id.id);
-      this.tempItemID = id.id; // console.log(this.tempItemID);
-      // console.log(id.id)
-      // this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
-      // this.toSetHotspot.itemID = val;
-      // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-      // if (this.toSetHotspot.hotspotID !== null) {
-      //   if (this.toSetHotspot.itemID === this.tempItemID) {
-      //     tempHotspots[
-      //       this.tempItemID + "" + this.toSetHotspot.hotspotID
-      //     ] = this.toSetHotspot;
-      //   } else {
-      //     this.toSetHotspot.itemID = this.tempItemID;
-      //     tempHotspots[
-      //       this.tempItemID + "" + this.toSetHotspot.hotspotID
-      //     ] = this.toSetHotspot;
-      //   }
-      // }
-      // console.log(tempHotspots);
+      this.tempItemID = id.id;
+      var dItemId = id.id;
+      var theCurrentLeft = "";
+      var theCurrentTop = "";
+      console.log(this.hotspots); // Set the hotspot settings when clicked
+      // Object.keys(this.hotspots).map(function(k, i) {
+
+      this.hotspots.map(function (k, i) {
+        k.hotspot_settings.map(function (inner, index) {
+          // console.log(dItemId)
+          if (inner.item_id == dItemId) {
+            theCurrentLeft = JSON.parse(inner.hotspot_settings).left;
+            theCurrentTop = JSON.parse(inner.hotspot_settings).top;
+          }
+        }); // let h1Display = "none";
+        // console.log(hotspot1Settings[i].item);
+        // if (hotspot1Settings[i].item) {
+        //   h1Display = "block";
+        // if (hotspot1Settings[i].item == data.frame) {
+        //   $hotspot1.css({
+        //     bottom: hotspot1Settings[i].bottom,
+        //     right: hotspot1Settings[i].right,
+        //     display: hotspot1Settings[i].display,
+        //   });
+        // }
+        // }
+      });
+      this.currentLeft = theCurrentLeft;
+      this.currentTop = theCurrentTop;
+      console.log(this.currentTop);
     },
     getImagesByProduct: function getImagesByProduct() {
       var _this4 = this;
@@ -4369,7 +4403,8 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.getImagesByProduct(); // this.getHotspotSettings();
+    this.getImagesByProduct();
+    this.getHotspotSettings();
   },
   mounted: function mounted() {}
 });
@@ -4386,100 +4421,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MediaFiles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../MediaFiles */ "./resources/js/components/MediaFiles.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -4786,8 +4727,14 @@ __webpack_require__.r(__webpack_exports__);
     },
     setHotspot: function setHotspot(h) {
       var hotspotToEmit = {
-        hotspotObjectToEmit: h,
-        itemIdToEmit: this.selectedItem
+        hotspot_id: h.id,
+        item_id: this.selectedItem,
+        hotspot_settings: {
+          top: '50%',
+          left: '50%'
+        },
+        title: h.title // hotspotObjectToEmit: h,
+
       };
       console.log(this.selectedItem);
 
@@ -28047,9 +27994,11 @@ var render = function() {
                               key: spot.id,
                               staticClass:
                                 "cd-single-point draggable-hotspot hotspot-default-position",
-                              attrs: {
-                                "data-hps": "" + spot.hotspotObjectToEmit.id
-                              }
+                              style: {
+                                top: _vm.currentTop + "%",
+                                left: _vm.currentLeft + "%"
+                              },
+                              attrs: { id: spot.id, "data-hps": "" + spot.id }
                             },
                             [
                               _c(
@@ -28065,21 +28014,16 @@ var render = function() {
                                 "div",
                                 {
                                   staticClass: "cd-label",
-                                  attrs: {
-                                    title: spot.hotspotObjectToEmit.title
-                                  }
+                                  attrs: { title: spot.title }
                                 },
                                 [
                                   _c("span", { staticClass: "ma-0" }, [
                                     _vm._v(
                                       _vm._s(
-                                        spot.hotspotObjectToEmit.title.length >
-                                          15
-                                          ? spot.hotspotObjectToEmit.title.substring(
-                                              0,
-                                              15
-                                            ) + ".."
-                                          : spot.hotspotObjectToEmit.title
+                                        spot.title != null &&
+                                          spot.title.length > 15
+                                          ? spot.title.substring(0, 15) + ".."
+                                          : spot.title
                                       )
                                     )
                                   ]),
