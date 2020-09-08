@@ -208,7 +208,7 @@ class HotspotsController extends Controller
     public function update(Request $request, $id)
     {
         $hotspot = Hotspot::where('id', '=', $id)->firstOrFail();
-        $hotspot->update();
+        $hotspot->update($this->validateHotspot());
         return response()->json([
             'hotspot' => $hotspot,
             'message' => 'Hotspot has been updated',
@@ -231,6 +231,16 @@ class HotspotsController extends Controller
         return request()->validate([
             'title' => ['required', 'min:1', 'max:50', 'string'],
             'product_id' => ['required'],
+        ]);
+    }
+
+    public function validateHotspot()
+    {
+        return request()->validate([
+            'title' => ['required', 'min:1', 'max:50', 'string'],
+            'hotspot_type' => ['required'],
+            'product_id' => ['required'],
+            'content' => [''],
         ]);
     }
 }

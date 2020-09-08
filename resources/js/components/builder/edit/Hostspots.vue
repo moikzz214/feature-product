@@ -21,7 +21,23 @@
     </v-dialog>
     <div v-if="itemHotspots.length == 0" class="pa-3 text-center mt-3">No Hotspot Found</div>
     <v-card v-else class="custom-scroll">
-      <v-expansion-panels accordion flat>
+      <v-data-table
+        :headers="headers"
+        :items="itemHotspots"
+        single-expand
+        :expanded.sync="expanded"
+        item-key="id"
+        disable-pagination
+        hide-default-footer
+      >
+        <template v-slot:[`item.actions`]="{ item }">
+          <v-icon small class="mr-2" @click="setHotspot(item)">mdi-plus-thick</v-icon>
+          <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
+        </template>
+      </v-data-table>
+      <!-- <template v-slot:[`item.actions`]="{ item }"> -->
+      <!-- && hotspotForm == hotspot.id" -->
+      <!-- <v-expansion-panels accordion flat>
         <v-expansion-panel v-for="(hotspot, index) in itemHotspots" :key="index">
           <v-expansion-panel-header class="pa-3" style="min-height:30px;">{{hotspot.title}}</v-expansion-panel-header>
           <v-expansion-panel-content color="grey lighten-5">
@@ -33,7 +49,6 @@
                 <v-icon small>mdi-trash-can</v-icon>
               </v-btn>
             </div>
-            <!-- && hotspotForm == hotspot.id" -->
             <form v-if="editing == true && hotspotData == hotspot.id">
               <v-text-field v-model="title" outlined label="Title" required class="py-0" dense></v-text-field>
               <v-select :items="types" label="Type" outlined required class="py-0" dense></v-select>
@@ -108,15 +123,57 @@
                   rounded
                   :class="`${setButton.status == true ? 'primary' : 'error'}`"
                   @click="setHotspot(hotspot)"
-                :disabled="toDisableHotspot.includes(hotspot.id) ? true : false"
+                  :disabled="toDisableHotspot.includes(hotspot.id) ? true : false"
                 >set</v-btn>
                 <p v-if="setButton.status == false" class="ma-0 red--text caption">{{setButton.msg}}</p>
               </div>
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
-      </v-expansion-panels>
+      </v-expansion-panels> -->
     </v-card>
+    <v-dialog v-model="editDialog" width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="subtitle-1">Edit Hotspot</span>
+        </v-card-title>
+        <v-card-text>
+          <form>
+            <v-text-field v-model="title" outlined label="Title" required class="py-0" dense></v-text-field>
+            <v-select v-model="type" :items="types" label="Type" outlined required class="py-0" dense></v-select>
+            <v-textarea v-model="description" outlined dense label="Description" class="py-0" value></v-textarea>
+            <v-text-field v-model="ctaLabel" outlined dense label="CTA Label" required class="py-0"></v-text-field>
+            <v-text-field v-model="ctaUrl" outlined dense label="CTA URL" required class="py-0"></v-text-field>
+            <v-checkbox
+              v-model="ctaNewTab"
+              outlined
+              dense
+              label="Open in new tab?"
+              class="py-0 ma-0"
+            ></v-checkbox>
+            <div class="d-flex">
+              <v-text-field
+                v-model="image"
+                outlined
+                dense
+                label="Image URL"
+                required
+                class="py-0 mr-1"
+              ></v-text-field>
+              <v-btn class="mt-2" small icon @click="openMediaFiles">
+                <v-icon small>mdi-folder-image</v-icon>
+              </v-btn>
+            </div>
+            <div class="d-flex justify-end">
+              <v-btn text color="error" @click="deleteHotspot()">Delete</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn class="mr-1" text color="grey" @click="editDialog = false">cancel</v-btn>
+              <v-btn class="primary" @click="updateHotspot()">update</v-btn>
+            </div>
+          </form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
   </div>
 </template>
@@ -152,6 +209,21 @@ export default {
   },
   data() {
     return {
+      editDialog: false,
+      dialogHotspot: [],
+
+      expanded: [],
+      singleExpand: false,
+      headers: [
+        {
+          text: "Hotspots",
+          align: "start",
+          sortable: false,
+          value: "title",
+        },
+        { text: "Actions", align: "end", value: "actions", sortable: false },
+      ],
+
       disableSet: false,
       toDisableHotspot: [],
 
@@ -161,14 +233,16 @@ export default {
       },
 
       // Form
+      dialogHotspotId: [],
       title: "",
       description: "",
       ctaLabel: "",
       ctaUrl: "",
       ctaNewTab: "",
+      type: "",
       image: "",
-      types: ["info", "scene"],
       hotspotContent: "",
+      types: ["info", "scene"],
 
       editing: false,
       hotspotData: null,
@@ -202,6 +276,42 @@ export default {
     },
   },
   methods: {
+    editItem(i) {
+      this.editDialog = true;
+      
+      // Set up dialog value
+      let theContent = i.content !== null ? JSON.parse(i.content) : null;
+      this.dialogHotspotId = i.id;
+      this.title = i.title ? i.title : "Title is not set";
+      // this.description = i.content !== null ? JSON.parse(i.content).description;
+      this.description =
+        theContent !== null && theContent.description !== null
+          ? theContent.description
+          : "";
+      this.ctaLabel =
+        theContent !== null && theContent.ctaLabel !== undefined
+          ? theContent.ctaLabel
+          : "";
+      this.ctaUrl =
+        theContent !== null && theContent.ctaUrl !== undefined
+          ? theContent.ctaUrl
+          : "";
+      this.ctaNewTab =
+        theContent !== null && theContent.ctaNewTab !== undefined
+          ? theContent.ctaNewTab
+          : "";
+      this.image =
+        theContent !== null && theContent.image !== undefined
+          ? theContent.image
+          : "";
+      this.hotspotContent = {
+        description: this.description,
+        cta_label: this.ctaLabel,
+        cta_url: this.ctaUrl,
+        cta_new_tab: this.ctaNewTab,
+        image: this.image,
+      };
+    },
     createHotspot() {
       this.newHotspotDialog = true;
     },
@@ -229,19 +339,21 @@ export default {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
     },
-    updateHotspot(hotspotID) {
+    updateHotspot() {
       axios
-        .post("/hotspot/update/"+ hotspotID, {
-          id: hotspotID,
+        .post("/hotspot/update/" + this.dialogHotspotId, {
           title: this.title,
-          hotspot_type: "info",
-          product_id: 1,
+          hotspot_type: this.type,
+          product_id: this.product,
           content: JSON.stringify(this.hotspotContent),
         })
         .then((response) => {
+          this.getAllHotspots();
           console.log(response);
+          this.editDialog = false;
         })
         .catch((error) => {
+          this.editDialog = false;
           console.log("Error updating hotspot");
           console.log(error);
         });

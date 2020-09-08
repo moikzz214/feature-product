@@ -4509,6 +4509,63 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /**
  * Hotspot Process
@@ -4540,6 +4597,21 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      editDialog: false,
+      dialogHotspot: [],
+      expanded: [],
+      singleExpand: false,
+      headers: [{
+        text: "Hotspots",
+        align: "start",
+        sortable: false,
+        value: "title"
+      }, {
+        text: "Actions",
+        align: "end",
+        value: "actions",
+        sortable: false
+      }],
       disableSet: false,
       toDisableHotspot: [],
       setButton: {
@@ -4547,14 +4619,16 @@ __webpack_require__.r(__webpack_exports__);
         msg: ""
       },
       // Form
+      dialogHotspotId: [],
       title: "",
       description: "",
       ctaLabel: "",
       ctaUrl: "",
       ctaNewTab: "",
+      type: "",
       image: "",
-      types: ["info", "scene"],
       hotspotContent: "",
+      types: ["info", "scene"],
       editing: false,
       hotspotData: null,
       newHotspotDialog: false,
@@ -4582,6 +4656,26 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    editItem: function editItem(i) {
+      this.editDialog = true; // Set up dialog value
+
+      var theContent = i.content !== null ? JSON.parse(i.content) : null;
+      this.dialogHotspotId = i.id;
+      this.title = i.title ? i.title : "Title is not set"; // this.description = i.content !== null ? JSON.parse(i.content).description;
+
+      this.description = theContent !== null && theContent.description !== null ? theContent.description : "";
+      this.ctaLabel = theContent !== null && theContent.ctaLabel !== undefined ? theContent.ctaLabel : "";
+      this.ctaUrl = theContent !== null && theContent.ctaUrl !== undefined ? theContent.ctaUrl : "";
+      this.ctaNewTab = theContent !== null && theContent.ctaNewTab !== undefined ? theContent.ctaNewTab : "";
+      this.image = theContent !== null && theContent.image !== undefined ? theContent.image : "";
+      this.hotspotContent = {
+        description: this.description,
+        cta_label: this.ctaLabel,
+        cta_url: this.ctaUrl,
+        cta_new_tab: this.ctaNewTab,
+        image: this.image
+      };
+    },
     createHotspot: function createHotspot() {
       this.newHotspotDialog = true;
     },
@@ -4607,16 +4701,21 @@ __webpack_require__.r(__webpack_exports__);
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
     },
-    updateHotspot: function updateHotspot(hotspotID) {
-      axios.post("/hotspot/update/" + hotspotID, {
-        id: hotspotID,
+    updateHotspot: function updateHotspot() {
+      var _this2 = this;
+
+      axios.post("/hotspot/update/" + this.dialogHotspotId, {
         title: this.title,
-        hotspot_type: "info",
-        product_id: 1,
+        hotspot_type: this.type,
+        product_id: this.product,
         content: JSON.stringify(this.hotspotContent)
       }).then(function (response) {
+        _this2.getAllHotspots();
+
         console.log(response);
+        _this2.editDialog = false;
       })["catch"](function (error) {
+        _this2.editDialog = false;
         console.log("Error updating hotspot");
         console.log(error);
       });
@@ -4660,10 +4759,10 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     getAllHotspots: function getAllHotspots() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.get("/hotspot/by-product/" + this.product).then(function (response) {
-        _this2.itemHotspots = response.data;
+        _this3.itemHotspots = response.data;
       })["catch"](function (error) {
         console.log("Error fetching items");
         console.log(error);
@@ -28411,420 +28510,291 @@ var render = function() {
             "v-card",
             { staticClass: "custom-scroll" },
             [
-              _c(
-                "v-expansion-panels",
-                { attrs: { accordion: "", flat: "" } },
-                _vm._l(_vm.itemHotspots, function(hotspot, index) {
-                  return _c(
-                    "v-expansion-panel",
-                    { key: index },
-                    [
-                      _c(
-                        "v-expansion-panel-header",
-                        {
-                          staticClass: "pa-3",
-                          staticStyle: { "min-height": "30px" }
-                        },
-                        [_vm._v(_vm._s(hotspot.title))]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-expansion-panel-content",
-                        { attrs: { color: "grey lighten-5" } },
-                        [
+              _c("v-data-table", {
+                attrs: {
+                  headers: _vm.headers,
+                  items: _vm.itemHotspots,
+                  "single-expand": "",
+                  expanded: _vm.expanded,
+                  "item-key": "id",
+                  "disable-pagination": "",
+                  "hide-default-footer": ""
+                },
+                on: {
+                  "update:expanded": function($event) {
+                    _vm.expanded = $event
+                  }
+                },
+                scopedSlots: _vm._u(
+                  [
+                    {
+                      key: "item.actions",
+                      fn: function(ref) {
+                        var item = ref.item
+                        return [
                           _c(
-                            "div",
-                            { staticClass: "d-flex justify-end py-2" },
-                            [
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: { small: "", icon: "", color: "info" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.editHotspot(hotspot)
-                                    }
-                                  }
-                                },
-                                [
-                                  _c("v-icon", { attrs: { small: "" } }, [
-                                    _vm._v("mdi-pencil")
-                                  ])
-                                ],
-                                1
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: {
-                                    small: "",
-                                    icon: "",
-                                    color: "error"
-                                  },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.deleteHotspot(hotspot)
-                                    }
-                                  }
-                                },
-                                [
-                                  _c("v-icon", { attrs: { small: "" } }, [
-                                    _vm._v("mdi-trash-can")
-                                  ])
-                                ],
-                                1
-                              )
-                            ],
-                            1
+                            "v-icon",
+                            {
+                              staticClass: "mr-2",
+                              attrs: { small: "" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.setHotspot(item)
+                                }
+                              }
+                            },
+                            [_vm._v("mdi-plus-thick")]
                           ),
                           _vm._v(" "),
-                          _vm.editing == true && _vm.hotspotData == hotspot.id
-                            ? _c(
-                                "form",
-                                [
-                                  _c("v-text-field", {
-                                    staticClass: "py-0",
-                                    attrs: {
-                                      outlined: "",
-                                      label: "Title",
-                                      required: "",
-                                      dense: ""
-                                    },
-                                    model: {
-                                      value: _vm.title,
-                                      callback: function($$v) {
-                                        _vm.title = $$v
-                                      },
-                                      expression: "title"
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c("v-select", {
-                                    staticClass: "py-0",
-                                    attrs: {
-                                      items: _vm.types,
-                                      label: "Type",
-                                      outlined: "",
-                                      required: "",
-                                      dense: ""
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c("v-textarea", {
-                                    staticClass: "py-0",
-                                    attrs: {
-                                      outlined: "",
-                                      dense: "",
-                                      label: "Description",
-                                      value: ""
-                                    },
-                                    model: {
-                                      value: _vm.description,
-                                      callback: function($$v) {
-                                        _vm.description = $$v
-                                      },
-                                      expression: "description"
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c("v-text-field", {
-                                    staticClass: "py-0",
-                                    attrs: {
-                                      outlined: "",
-                                      dense: "",
-                                      label: "CTA Label",
-                                      required: ""
-                                    },
-                                    model: {
-                                      value: _vm.ctaLabel,
-                                      callback: function($$v) {
-                                        _vm.ctaLabel = $$v
-                                      },
-                                      expression: "ctaLabel"
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c("v-text-field", {
-                                    staticClass: "py-0",
-                                    attrs: {
-                                      outlined: "",
-                                      dense: "",
-                                      label: "CTA URL",
-                                      required: ""
-                                    },
-                                    model: {
-                                      value: _vm.ctaUrl,
-                                      callback: function($$v) {
-                                        _vm.ctaUrl = $$v
-                                      },
-                                      expression: "ctaUrl"
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c("v-checkbox", {
-                                    staticClass: "py-0 ma-0",
-                                    attrs: {
-                                      outlined: "",
-                                      dense: "",
-                                      label: "Open in new tab?"
-                                    },
-                                    model: {
-                                      value: _vm.ctaNewTab,
-                                      callback: function($$v) {
-                                        _vm.ctaNewTab = $$v
-                                      },
-                                      expression: "ctaNewTab"
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    { staticClass: "d-flex" },
-                                    [
-                                      _c("v-text-field", {
-                                        staticClass: "py-0 mr-1",
-                                        attrs: {
-                                          outlined: "",
-                                          dense: "",
-                                          label: "Image URL",
-                                          required: ""
-                                        },
-                                        model: {
-                                          value: _vm.image,
-                                          callback: function($$v) {
-                                            _vm.image = $$v
-                                          },
-                                          expression: "image"
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          staticClass: "mt-2",
-                                          attrs: { small: "", icon: "" },
-                                          on: { click: _vm.openMediaFiles }
-                                        },
-                                        [
-                                          _c(
-                                            "v-icon",
-                                            { attrs: { small: "" } },
-                                            [_vm._v("mdi-folder-image")]
-                                          )
-                                        ],
-                                        1
-                                      )
-                                    ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    { staticClass: "d-flex justify-end" },
-                                    [
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          staticClass: "mr-1",
-                                          attrs: {
-                                            small: "",
-                                            text: "",
-                                            color: "grey"
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              _vm.editing = false
-                                            }
-                                          }
-                                        },
-                                        [_vm._v("cancel")]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          staticClass: "primary",
-                                          attrs: { small: "" },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.updateHotspot(
-                                                hotspot.id
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [_vm._v("update")]
-                                      )
-                                    ],
-                                    1
-                                  )
-                                ],
-                                1
-                              )
-                            : _c("div", [
-                                _c("small", [_vm._v("Title")]),
-                                _vm._v(" "),
-                                _c(
-                                  "p",
-                                  {
-                                    staticClass:
-                                      "body-2 grey lighten-3 py-1 px-3"
-                                  },
-                                  [_vm._v(_vm._s(hotspot.title))]
-                                ),
-                                _vm._v(" "),
-                                _c("small", [_vm._v("Type")]),
-                                _vm._v(" "),
-                                _c(
-                                  "p",
-                                  {
-                                    staticClass:
-                                      "body-2 grey lighten-3 py-1 px-3"
-                                  },
-                                  [_vm._v(_vm._s(hotspot.hotspot_type))]
-                                ),
-                                _vm._v(" "),
-                                _c("small", [_vm._v("Description")]),
-                                _vm._v(" "),
-                                _c(
-                                  "p",
-                                  {
-                                    staticClass:
-                                      "body-2 grey lighten-3 py-1 px-3"
-                                  },
-                                  [
-                                    _vm._v(
-                                      _vm._s(
-                                        JSON.parse(hotspot.content) &&
-                                          JSON.parse(hotspot.content)
-                                            .description
-                                          ? JSON.parse(hotspot.content)
-                                              .description
-                                          : "No description is set"
-                                      )
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c("small", [_vm._v("Image")]),
-                                _vm._v(" "),
-                                _c(
-                                  "p",
-                                  {
-                                    staticClass:
-                                      "body-2 grey lighten-3 py-1 px-3"
-                                  },
-                                  [
-                                    _vm._v(
-                                      _vm._s(
-                                        JSON.parse(hotspot.content) &&
-                                          JSON.parse(hotspot.content).image
-                                          ? JSON.parse(hotspot.content).image
-                                          : "No image is set"
-                                      )
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c("small", [_vm._v("CTA")]),
-                                _vm._v(" "),
-                                _c(
-                                  "p",
-                                  {
-                                    staticClass:
-                                      "body-2 grey lighten-3 py-1 px-3"
-                                  },
-                                  [
-                                    JSON.parse(hotspot.content) &&
-                                    JSON.parse(hotspot.content).ctaUrl
-                                      ? _c(
-                                          "a",
-                                          {
-                                            attrs: {
-                                              href: JSON.parse(hotspot.content)
-                                                .ctaUrl,
-                                              target: "_blank"
-                                            }
-                                          },
-                                          [
-                                            _vm._v(
-                                              _vm._s(
-                                                JSON.parse(hotspot.content)
-                                                  .ctaTitle
-                                              )
-                                            )
-                                          ]
-                                        )
-                                      : _c("span", [_vm._v("No CTA is set")])
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  [
-                                    _c(
-                                      "v-btn",
-                                      {
-                                        class:
-                                          "" +
-                                          (_vm.setButton.status == true
-                                            ? "primary"
-                                            : "error"),
-                                        attrs: {
-                                          small: "",
-                                          rounded: "",
-                                          disabled: _vm.toDisableHotspot.includes(
-                                            hotspot.id
-                                          )
-                                            ? true
-                                            : false
-                                        },
-                                        on: {
-                                          click: function($event) {
-                                            return _vm.setHotspot(hotspot)
-                                          }
-                                        },
-                                        model: {
-                                          value: _vm.setButton.status,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.setButton,
-                                              "status",
-                                              $$v
-                                            )
-                                          },
-                                          expression: "setButton.status"
-                                        }
-                                      },
-                                      [_vm._v("set")]
-                                    ),
-                                    _vm._v(" "),
-                                    _vm.setButton.status == false
-                                      ? _c(
-                                          "p",
-                                          {
-                                            staticClass:
-                                              "ma-0 red--text caption"
-                                          },
-                                          [_vm._v(_vm._s(_vm.setButton.msg))]
-                                        )
-                                      : _vm._e()
-                                  ],
-                                  1
-                                )
-                              ])
+                          _c(
+                            "v-icon",
+                            {
+                              attrs: { small: "" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.editItem(item)
+                                }
+                              }
+                            },
+                            [_vm._v("mdi-pencil")]
+                          )
                         ]
-                      )
-                    ],
-                    1
-                  )
-                }),
-                1
-              )
+                      }
+                    }
+                  ],
+                  null,
+                  true
+                )
+              })
             ],
             1
           ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { width: "600px" },
+          model: {
+            value: _vm.editDialog,
+            callback: function($$v) {
+              _vm.editDialog = $$v
+            },
+            expression: "editDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", [
+                _c("span", { staticClass: "subtitle-1" }, [
+                  _vm._v("Edit Hotspot")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _c(
+                  "form",
+                  [
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Title",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.title,
+                        callback: function($$v) {
+                          _vm.title = $$v
+                        },
+                        expression: "title"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-select", {
+                      staticClass: "py-0",
+                      attrs: {
+                        items: _vm.types,
+                        label: "Type",
+                        outlined: "",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.type,
+                        callback: function($$v) {
+                          _vm.type = $$v
+                        },
+                        expression: "type"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-textarea", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        dense: "",
+                        label: "Description",
+                        value: ""
+                      },
+                      model: {
+                        value: _vm.description,
+                        callback: function($$v) {
+                          _vm.description = $$v
+                        },
+                        expression: "description"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        dense: "",
+                        label: "CTA Label",
+                        required: ""
+                      },
+                      model: {
+                        value: _vm.ctaLabel,
+                        callback: function($$v) {
+                          _vm.ctaLabel = $$v
+                        },
+                        expression: "ctaLabel"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        dense: "",
+                        label: "CTA URL",
+                        required: ""
+                      },
+                      model: {
+                        value: _vm.ctaUrl,
+                        callback: function($$v) {
+                          _vm.ctaUrl = $$v
+                        },
+                        expression: "ctaUrl"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-checkbox", {
+                      staticClass: "py-0 ma-0",
+                      attrs: {
+                        outlined: "",
+                        dense: "",
+                        label: "Open in new tab?"
+                      },
+                      model: {
+                        value: _vm.ctaNewTab,
+                        callback: function($$v) {
+                          _vm.ctaNewTab = $$v
+                        },
+                        expression: "ctaNewTab"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex" },
+                      [
+                        _c("v-text-field", {
+                          staticClass: "py-0 mr-1",
+                          attrs: {
+                            outlined: "",
+                            dense: "",
+                            label: "Image URL",
+                            required: ""
+                          },
+                          model: {
+                            value: _vm.image,
+                            callback: function($$v) {
+                              _vm.image = $$v
+                            },
+                            expression: "image"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "mt-2",
+                            attrs: { small: "", icon: "" },
+                            on: { click: _vm.openMediaFiles }
+                          },
+                          [
+                            _c("v-icon", { attrs: { small: "" } }, [
+                              _vm._v("mdi-folder-image")
+                            ])
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex justify-end" },
+                      [
+                        _c(
+                          "v-btn",
+                          {
+                            attrs: { text: "", color: "error" },
+                            on: {
+                              click: function($event) {
+                                return _vm.deleteHotspot()
+                              }
+                            }
+                          },
+                          [_vm._v("Delete")]
+                        ),
+                        _vm._v(" "),
+                        _c("v-spacer"),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "mr-1",
+                            attrs: { text: "", color: "grey" },
+                            on: {
+                              click: function($event) {
+                                _vm.editDialog = false
+                              }
+                            }
+                          },
+                          [_vm._v("cancel")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "primary",
+                            on: {
+                              click: function($event) {
+                                return _vm.updateHotspot()
+                              }
+                            }
+                          },
+                          [_vm._v("update")]
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ])
+            ],
+            1
+          )
+        ],
+        1
+      ),
       _vm._v(" "),
       _c("media-files", {
         attrs: { mediaOptions: _vm.mediaFilesSettings },
@@ -89335,8 +89305,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
