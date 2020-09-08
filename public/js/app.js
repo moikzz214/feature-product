@@ -4566,6 +4566,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /**
  * Hotspot Process
@@ -4597,6 +4616,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      deleteDialog: false,
       editDialog: false,
       dialogHotspot: [],
       expanded: [],
@@ -4656,6 +4676,27 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    deleteHotspot: function deleteHotspot() {
+      this.deleteDialog = true;
+    },
+    confirmDelete: function confirmDelete() {
+      var _this = this;
+
+      // Delete hotspot
+      // Delete relationship to item?
+      axios.post("/hotspot/delete/" + this.dialogHotspotId).then(function (response) {
+        console.log(response);
+        _this.deleteDialog = false;
+        setTimeout(function () {
+          _this.editDialog = false;
+        }, 100);
+
+        _this.getAllHotspots();
+      })["catch"](function (error) {
+        console.log("Error fetching items");
+        console.log(error);
+      });
+    },
     editItem: function editItem(i) {
       this.editDialog = true; // Set up dialog value
 
@@ -4673,7 +4714,7 @@ __webpack_require__.r(__webpack_exports__);
       this.newHotspotDialog = true;
     },
     submitNewHotspot: function submitNewHotspot() {
-      var _this = this;
+      var _this2 = this;
 
       var data = {
         title: this.hotspotTitle,
@@ -4681,9 +4722,9 @@ __webpack_require__.r(__webpack_exports__);
       };
       axios.post("/hotspot/new", data).then(function (response) {
         // console.log(response);
-        _this.newHotspotDialog = false;
+        _this2.newHotspotDialog = false;
 
-        _this.getAllHotspots();
+        _this2.getAllHotspots();
       })["catch"](function (error) {
         console.log("Error fetching items");
         console.log(error);
@@ -4695,7 +4736,7 @@ __webpack_require__.r(__webpack_exports__);
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
     },
     updateHotspot: function updateHotspot() {
-      var _this2 = this;
+      var _this3 = this;
 
       var c = {
         description: this.description,
@@ -4710,10 +4751,10 @@ __webpack_require__.r(__webpack_exports__);
         product_id: this.product,
         content: JSON.stringify(c)
       }).then(function (response) {
-        _this2.getAllHotspots();
+        _this3.getAllHotspots();
 
         console.log(response);
-        _this2.editDialog = false;
+        _this3.editDialog = false;
       })["catch"](function (error) {
         // this.editDialog = false;
         console.log("Error updating hotspot");
@@ -4740,9 +4781,6 @@ __webpack_require__.r(__webpack_exports__);
         image: this.image
       };
     },
-    deleteHotspot: function deleteHotspot() {
-      console.log("delete");
-    },
     setHotspot: function setHotspot(h) {
       var hotspotToEmit = {
         hotspotObjectToEmit: h,
@@ -4759,10 +4797,10 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     getAllHotspots: function getAllHotspots() {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.get("/hotspot/by-product/" + this.product).then(function (response) {
-        _this3.itemHotspots = response.data;
+        _this4.itemHotspots = response.data;
       })["catch"](function (error) {
         console.log("Error fetching items");
         console.log(error);
@@ -28536,7 +28574,11 @@ var render = function() {
                             "v-icon",
                             {
                               staticClass: "mr-2",
-                              attrs: { small: "" },
+                              attrs: {
+                                small: "",
+                                title: "Set Hotspot",
+                                color: "primary"
+                              },
                               on: {
                                 click: function($event) {
                                   return _vm.setHotspot(item)
@@ -28549,7 +28591,7 @@ var render = function() {
                           _c(
                             "v-icon",
                             {
-                              attrs: { small: "" },
+                              attrs: { small: "", title: "Edit Hotspot" },
                               on: {
                                 click: function($event) {
                                   return _vm.editItem(item)
@@ -28789,6 +28831,70 @@ var render = function() {
                   1
                 )
               ])
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "300" },
+          model: {
+            value: _vm.deleteDialog,
+            callback: function($$v) {
+              _vm.deleteDialog = $$v
+            },
+            expression: "deleteDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "subtitle-1" }, [
+                _vm._v("Confirm delete")
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _vm._v("Are you sure you want to delete "),
+                _c("strong", { staticClass: "black--text" }, [
+                  _vm._v(_vm._s(_vm.title ? _vm.title : "this hotspot"))
+                ]),
+                _vm._v("?")
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "grey", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.deleteDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("cancel")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: { click: _vm.confirmDelete }
+                    },
+                    [_vm._v("Confirm")]
+                  )
+                ],
+                1
+              )
             ],
             1
           )

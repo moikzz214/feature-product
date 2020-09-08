@@ -31,8 +31,8 @@
         hide-default-footer
       >
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small class="mr-2" @click="setHotspot(item)">mdi-plus-thick</v-icon>
-          <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
+          <v-icon small title="Set Hotspot" color="primary" class="mr-2" @click="setHotspot(item)">mdi-plus-thick</v-icon>
+          <v-icon small title="Edit Hotspot" @click="editItem(item)">mdi-pencil</v-icon>
         </template>
       </v-data-table>
       <!-- <template v-slot:[`item.actions`]="{ item }"> -->
@@ -130,7 +130,7 @@
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
-      </v-expansion-panels> -->
+      </v-expansion-panels>-->
     </v-card>
     <v-dialog v-model="editDialog" width="600px">
       <v-card>
@@ -140,7 +140,15 @@
         <v-card-text>
           <form>
             <v-text-field v-model="title" outlined label="Title" required class="py-0" dense></v-text-field>
-            <v-select v-model="type" :items="types" label="Type" outlined required class="py-0" dense></v-select>
+            <v-select
+              v-model="type"
+              :items="types"
+              label="Type"
+              outlined
+              required
+              class="py-0"
+              dense
+            ></v-select>
             <v-textarea v-model="description" outlined dense label="Description" class="py-0" value></v-textarea>
             <v-text-field v-model="ctaLabel" outlined dense label="CTA Label" required class="py-0"></v-text-field>
             <v-text-field v-model="ctaUrl" outlined dense label="CTA URL" required class="py-0"></v-text-field>
@@ -172,6 +180,17 @@
             </div>
           </form>
         </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="deleteDialog" max-width="300">
+      <v-card>
+        <v-card-title class="subtitle-1">Confirm delete</v-card-title>
+        <v-card-text>Are you sure you want to delete <strong class="black--text">{{title ? title : 'this hotspot'}}</strong>?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" text @click="deleteDialog = false">cancel</v-btn>
+          <v-btn color="primary" text @click="confirmDelete">Confirm</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
@@ -209,6 +228,7 @@ export default {
   },
   data() {
     return {
+      deleteDialog: false,
       editDialog: false,
       dialogHotspot: [],
 
@@ -276,9 +296,30 @@ export default {
     },
   },
   methods: {
+    deleteHotspot() {
+      this.deleteDialog = true;
+    },
+    confirmDelete() {
+      // Delete hotspot
+      // Delete relationship to item?
+       axios
+        .post("/hotspot/delete/"+this.dialogHotspotId)
+        .then((response) => {
+          console.log(response);
+          this.deleteDialog = false;
+          setTimeout(() => {
+            this.editDialog = false;
+          }, 100);
+          this.getAllHotspots();
+        })
+        .catch((error) => {
+          console.log("Error fetching items");
+          console.log(error);
+        });
+    },
     editItem(i) {
       this.editDialog = true;
-      
+
       // Set up dialog value
       let theContent = i.content !== null ? JSON.parse(i.content) : null;
       this.dialogHotspotId = i.id;
@@ -392,9 +433,6 @@ export default {
         cta_new_tab: this.ctaNewTab,
         image: this.image,
       };
-    },
-    deleteHotspot() {
-      console.log("delete");
     },
     setHotspot(h) {
       let hotspotToEmit = {
