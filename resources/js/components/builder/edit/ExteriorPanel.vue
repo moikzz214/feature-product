@@ -456,7 +456,7 @@ export default {
   left: 100%;
   padding: 0 5px;
   background-color: #fff;
-  border-radius: 5px;
+  border-radius: 10px;
   margin-left: 5px;
   bottom: auto;
   right: auto;
@@ -466,16 +466,16 @@ export default {
     content: "";
     width: 0px;
     height: 0px;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 10px solid #fff;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid #fff;
     position: absolute;
     right: 98%;
     top: 0;
     bottom: auto;
     left: auto;
-    z-index: 2;
-    margin-top: 2px;
+    // z-index: 1;
+    margin-top: 4px;
   }
 }
 
