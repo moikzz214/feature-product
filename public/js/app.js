@@ -3467,9 +3467,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      selected_panel_prop: "exterior",
-      activateExterior: true,
-      activateInterior: false,
+      selected_panel_prop: "interior",
+      activateExterior: false,
+      activateInterior: true,
       selected_item: null,
       selected_hotspot_prop: null
     };
@@ -4879,6 +4879,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4918,6 +4922,31 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    addHotspot: function addHotspot() {
+      /**
+       * Select scene
+       * Select the hotspot
+       * Change the cursor inside the panellum or not
+       * Click inside the panellum
+       * Click apply to save
+       */
+      console.log(this.thePanorama.getPitch());
+      console.log(this.thePanorama.getYaw());
+      console.log(this.thePanorama.getHfov()); // console.log(this.thePanorama);
+
+      this.thePanorama.addHotSpot({
+        pitch: -15.94618622367452,
+        yaw: -175.5048581866088,
+        type: "info",
+        text: "Added Spot" //   sceneId: sceneTitle,
+
+      } // sceneTitle
+      );
+    },
+    onDebugger: function onDebugger() {
+      this["debugger"] = !this["debugger"];
+      console.log(this["debugger"]);
+    },
     deleteScene: function deleteScene(i) {
       this.toDelete = i;
       this.deleteDialog = true;
@@ -4941,6 +4970,7 @@ __webpack_require__.r(__webpack_exports__);
       var sceneTitle = "";
       sceneTitle = i.media_file.original_name;
       this.thePanorama = pannellum.viewer("panorama", {
+        hotSpotDebug: true,
         autoLoad: false,
         "default": {
           firstScene: sceneTitle,
@@ -29179,6 +29209,21 @@ var render = function() {
               attrs: { id: "panorama" }
             })
           ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-12" },
+        [
+          _c("v-btn", { on: { click: _vm.onDebugger } }, [
+            _vm._v("Activate Debugger")
+          ]),
+          _vm._v(" "),
+          _c("v-btn", { on: { click: _vm.addHotspot } }, [
+            _vm._v("Add Hotspot")
+          ])
+        ],
+        1
+      ),
       _vm._v(" "),
       _c("media-files", {
         attrs: { mediaOptions: _vm.mediaFilesSettings },

@@ -12,15 +12,30 @@ use Illuminate\Support\Facades\DB;
 class HotspotsController extends Controller
 {
 
+    // Get all hotspots - used in Hotspots component
     public function allHostspotsByProductId($id, $panel)
     {
-        // dd($panel);
         $hotspots = Hotspot::where([
             'product_id' => $id,
             'hotspot_for' => $panel
         ])->get();
         return response()->json($hotspots, 200);
     }
+
+    // Get all hotspots with settings - used in ExteriorPanel component
+    public function getProductHotspots($id)
+    {
+        // Get Hotspots for exterior with Settings
+        $productHotspots = Hotspot::where([
+            'product_id' => $id,
+            'hotspot_for' => 'exterior'
+        ])->with('hotspot_settings')->get();
+        return response()->json([
+            'settings' => $productHotspots,
+            'message' => 'Product Hotspots have been fetched',
+        ], 200);
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -194,15 +209,6 @@ class HotspotsController extends Controller
         ], 200);
     }
 
-    public function getProductHotspots($id)
-    {
-        // Get Hotspots with Settings
-        $productHotspots = Hotspot::where('product_id', '=', $id)->with('hotspot_settings')->get();
-        return response()->json([
-            'settings' => $productHotspots,
-            'message' => 'Product Hotspots have been fetched',
-        ], 200);
-    }
 
 
     public function deleteSetting(Request $request)

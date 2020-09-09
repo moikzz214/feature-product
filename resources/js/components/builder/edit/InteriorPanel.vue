@@ -64,6 +64,10 @@
     <div v-else class="col-12">
       <div id="panorama" style="height:400px;width:100%;margin:0 auto;"></div>
     </div>
+    <div class="col-12">
+      <v-btn @click="onDebugger">Activate Debugger</v-btn>
+      <v-btn @click="addHotspot">Add Hotspot</v-btn>
+    </div>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
 
     <v-dialog v-model="deleteDialog" max-width="290">
@@ -100,6 +104,7 @@ export default {
   },
   data() {
     return {
+
       toDelete: [],
       deleteDialog: false,
       loading: false,
@@ -122,6 +127,36 @@ export default {
     };
   },
   methods: {
+    addHotspot() {
+      /**
+       * Select scene
+       * Select the hotspot
+       * Change the cursor inside the panellum or not
+       * Click inside the panellum
+       * Click apply to save
+       */
+
+      console.log(this.thePanorama.getPitch());
+      console.log(this.thePanorama.getYaw());
+      console.log(this.thePanorama.getHfov());
+
+      // console.log(this.thePanorama);
+      this.thePanorama.addHotSpot(
+        {
+          pitch: -15.94618622367452,
+          yaw: -175.5048581866088,
+          type: "info",
+          text: "Added Spot",
+          //   sceneId: sceneTitle,
+        }
+        // sceneTitle
+      );
+    },
+    onDebugger() {
+      this.debugger = !this.debugger;
+      console.log(this.debugger);
+    },
+
     deleteScene(i) {
       this.toDelete = i;
       this.deleteDialog = true;
@@ -145,6 +180,7 @@ export default {
       let sceneTitle = "";
       sceneTitle = i.media_file.original_name;
       this.thePanorama = pannellum.viewer("panorama", {
+        hotSpotDebug: true,
         autoLoad: false,
         default: {
           firstScene: sceneTitle,

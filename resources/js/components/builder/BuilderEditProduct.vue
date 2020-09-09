@@ -59,9 +59,9 @@ export default {
   },
   data() {
     return {
-      selected_panel_prop: "exterior",
-      activateExterior: true,
-      activateInterior: false,
+      selected_panel_prop: "interior",
+      activateExterior: false,
+      activateInterior: true,
 
       selected_item: null,
       selected_hotspot_prop: null,
