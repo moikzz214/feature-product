@@ -12,26 +12,6 @@
             ref="spritespin"
             style="margin:0 auto;"
           />
-          <!-- <div v-show="hotspots.length != 0" style="width:100%;">
-            <div class="hotspot-draggable-wrapper">
-              <div class="hotspot-action">
-                <v-btn small @click="closeHotspot">Cancel</v-btn>
-                <v-btn color="primary" small @click="applyHotspot">Apply</v-btn>
-              </div>
-              <div
-                v-for="spot in hotspots"
-                :key="spot.id"
-                class="cd-single-point draggable-hotspot hotspot-default-position"
-                :data-hps="`${spot.id }`"
-                :style="`top:${JSON.parse(spot.hotspot_settings).top}px;left:${JSON.parse(spot.hotspot_settings).left}px;`"
-              >
-                <a class="cd-img-replace" href="#0">More</a>
-                <div class="cd-more-info cd-right" style="width: 300px; height: auto;">
-                  <a href="#0" class="cd-close-info cd-img-replace">Close</a>
-                </div>
-              </div>
-            </div>
-          </div>-->
           <!-- :data-hps="`${spot.hotspotObjectToEmit.id}`" -->
           <div v-show="hotspots.length != 0" style="width:100%;">
             <div class="hotspot-draggable-wrapper">
@@ -43,6 +23,7 @@
                 v-for="(spot, index) in hotspots"
                 :key="index"
                 :data-hps="`${spot.id}`"
+                :id="`${spot.id}`"
                 :class="`cd-single-point draggable-hotspot hotspot-default-position hotspot-id-${spot.id}`"
               >
                 <a class="cd-img-replace" href="#0">More</a>
@@ -50,7 +31,7 @@
                   <span
                     :title="spot.title"
                     class="px-1"
-                  >{{spot.title != null && spot.title.length > 15 ? spot.title.substring(0, 15)+'..' : spot.title}}</span>
+                  >{{spot.title != null && spot.title.length > 10 ? spot.title.substring(0, 10)+'..' : spot.title}}</span>
                   <v-btn
                     icon
                     x-small
@@ -166,10 +147,6 @@ export default {
     return {
       settingsInCurrentScene: [],
 
-      // Spot locations
-      currentLeft: "",
-      currentTop: "",
-
       // Fetched Hotspot Settings
       fetchedHotspotSettings: null,
 
@@ -226,27 +203,10 @@ export default {
     };
   },
   watch: {
-    // tempItemID: function (val) {
-    //   this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
-    //   this.toSetHotspot.itemID = val;
-    //   // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-    //   tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-    //   console.log(tempHotspots);
-    // },
     selectedHotspotProp: {
       // To set hotspot
       handler(val) {
         this.hotspots.push(val);
-        // console.log(this.hotspots)
-        // this.toSetHotspot.itemID = val.itemIdToEmit;
-        // this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
-        // this.toSetHotspot.hotspotSettings.top = "50";
-        // this.toSetHotspot.hotspotSettings.left = "50";
-        // tempHotspots[
-        //   val.itemIdToEmit + "" + val.hotspotObjectToEmit.id
-        // ] = this.toSetHotspot;
-        // console.log(val.itemIdToEmit);
-        // console.log(val.hotspotObjectToEmit.id);
         this.draggableFunc();
       },
       deep: true,
@@ -280,15 +240,12 @@ export default {
       let data = {
         hotspot_settings: tempHotspots,
       };
-      // console.log(data);
       axios
         .post("/hotspot/apply", data)
         .then((response) => {
-          // console.log(response);
           tempHotspots = [];
           this.draggableFunc();
-          // console.log(response);
-          // this.getHotspotSettings();
+          this.getHotspotSettings();
         })
         .catch((error) => {
           console.log("Error Applying Hotspots");
@@ -302,7 +259,6 @@ export default {
         .then((response) => {
           this.hotspots = response.data.settings;
           this.draggableFunc();
-          //   console.log(this.hotspots);
         })
         .catch((error) => {
           console.log("Error Fetching Hotspots");
@@ -344,25 +300,6 @@ export default {
         });
     },
     selected(index, id = null) {
-      var hpItems = [];
-      if (tempHotspots.length > 0) {
-        hpItems = JSON.parse(tempHotspots);
-      }
-      if (hpItems.length > 0) {
-        $.each(hpItems, function (i, o) {
-          if (o.itemID == id.id) {
-            $("#" + o.hotspotsID).css({
-              left: o.hotspotSettings.left + "%",
-              top: o.hotspotSettings.top + "%",
-            });
-          }
-        });
-      }
-      $("#cur-frame").val(id.id);
-      this.$refs.spritespin.api.updateFrame(index);
-      this.$emit("selectedItem", id.id);
-      this.tempItemID = id.id;
-
       let dItemId = id.id; // Current Item ID
       this.settingsInCurrentScene = []; // Settings Variable
       let tempSettings = [];
@@ -385,6 +322,25 @@ export default {
       });
       this.settingsInCurrentScene = tempSettings;
       //   console.log(this.settingsInCurrentScene);
+
+      var hpItems = [];
+      if (tempHotspots.length > 0) {
+        hpItems = JSON.parse(tempHotspots);
+      }
+      if (hpItems.length > 0) {
+        $.each(hpItems, function (i, o) {
+          if (o.itemID == id.id) {
+            $("#" + o.hotspotsID).css({
+              left: o.hotspotSettings.left + "%",
+              top: o.hotspotSettings.top + "%",
+            });
+          }
+        });
+      }
+      $("#cur-frame").val(id.id);
+      this.$refs.spritespin.api.updateFrame(index);
+      this.$emit("selectedItem", id.id);
+      this.tempItemID = id.id;
     },
     getImagesByProduct() {
       this.show = false;
@@ -401,7 +357,10 @@ export default {
 
           this.withItems = true;
           this.uploader = false;
+
+          // Set Items
           this.items = response.data.items;
+          this.isItemsLoaded = true;
 
           // Setup 360
           this.options.frames = response.data.items.length;
@@ -414,11 +373,15 @@ export default {
               item.media_file.path
           );
 
-          // console.log(this.items);
           setTimeout(() => {
             this.show = true;
-            // console.log("show: " + this.show);
           }, 1);
+
+          if (this.items[0].length !== 0) {
+            setTimeout(() => {
+              this.selected(0, this.items[0]);
+            }, 2000);
+          }
         })
         .catch((error) => {
           console.log("Error fetching items");

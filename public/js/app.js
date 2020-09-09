@@ -4077,25 +4077,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 // import SingleHotspot from "./SingleHotspot"
 
 
@@ -4122,9 +4103,6 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       settingsInCurrentScene: [],
-      // Spot locations
-      currentLeft: "",
-      currentTop: "",
       // Fetched Hotspot Settings
       fetchedHotspotSettings: null,
       // Saved hotspots settings
@@ -4176,27 +4154,10 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   watch: {
-    // tempItemID: function (val) {
-    //   this.toSetHotspot.hotspotID = this.toSetHotspot.hotspotID;
-    //   this.toSetHotspot.itemID = val;
-    //   // tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-    //   tempHotspots[val + "" + this.toSetHotspot.hotspotID] = this.toSetHotspot;
-    //   console.log(tempHotspots);
-    // },
     selectedHotspotProp: {
       // To set hotspot
       handler: function handler(val) {
-        this.hotspots.push(val); // console.log(this.hotspots)
-        // this.toSetHotspot.itemID = val.itemIdToEmit;
-        // this.toSetHotspot.hotspotID = val.hotspotObjectToEmit.id;
-        // this.toSetHotspot.hotspotSettings.top = "50";
-        // this.toSetHotspot.hotspotSettings.left = "50";
-        // tempHotspots[
-        //   val.itemIdToEmit + "" + val.hotspotObjectToEmit.id
-        // ] = this.toSetHotspot;
-        // console.log(val.itemIdToEmit);
-        // console.log(val.hotspotObjectToEmit.id);
-
+        this.hotspots.push(val);
         this.draggableFunc();
       },
       deep: true
@@ -4227,15 +4188,13 @@ __webpack_require__.r(__webpack_exports__);
       // Get the hotspot hotspot_id
       var data = {
         hotspot_settings: tempHotspots
-      }; // console.log(data);
-
+      };
       axios.post("/hotspot/apply", data).then(function (response) {
-        // console.log(response);
         tempHotspots = [];
 
-        _this.draggableFunc(); // console.log(response);
-        // this.getHotspotSettings();
+        _this.draggableFunc();
 
+        _this.getHotspotSettings();
       })["catch"](function (error) {
         console.log("Error Applying Hotspots");
         console.log(error);
@@ -4248,8 +4207,7 @@ __webpack_require__.r(__webpack_exports__);
       .get("/hotspot/product/" + this.product).then(function (response) {
         _this2.hotspots = response.data.settings;
 
-        _this2.draggableFunc(); //   console.log(this.hotspots);
-
+        _this2.draggableFunc();
       })["catch"](function (error) {
         console.log("Error Fetching Hotspots");
         console.log(error);
@@ -4291,27 +4249,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      var hpItems = [];
-
-      if (tempHotspots.length > 0) {
-        hpItems = JSON.parse(tempHotspots);
-      }
-
-      if (hpItems.length > 0) {
-        $.each(hpItems, function (i, o) {
-          if (o.itemID == id.id) {
-            $("#" + o.hotspotsID).css({
-              left: o.hotspotSettings.left + "%",
-              top: o.hotspotSettings.top + "%"
-            });
-          }
-        });
-      }
-
-      $("#cur-frame").val(id.id);
-      this.$refs.spritespin.api.updateFrame(index);
-      this.$emit("selectedItem", id.id);
-      this.tempItemID = id.id;
       var dItemId = id.id; // Current Item ID
 
       this.settingsInCurrentScene = []; // Settings Variable
@@ -4334,6 +4271,28 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
       this.settingsInCurrentScene = tempSettings; //   console.log(this.settingsInCurrentScene);
+
+      var hpItems = [];
+
+      if (tempHotspots.length > 0) {
+        hpItems = JSON.parse(tempHotspots);
+      }
+
+      if (hpItems.length > 0) {
+        $.each(hpItems, function (i, o) {
+          if (o.itemID == id.id) {
+            $("#" + o.hotspotsID).css({
+              left: o.hotspotSettings.left + "%",
+              top: o.hotspotSettings.top + "%"
+            });
+          }
+        });
+      }
+
+      $("#cur-frame").val(id.id);
+      this.$refs.spritespin.api.updateFrame(index);
+      this.$emit("selectedItem", id.id);
+      this.tempItemID = id.id;
     },
     getImagesByProduct: function getImagesByProduct() {
       var _this4 = this;
@@ -4349,17 +4308,24 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         _this4.withItems = true;
-        _this4.uploader = false;
-        _this4.items = response.data.items; // Setup 360
+        _this4.uploader = false; // Set Items
+
+        _this4.items = response.data.items;
+        _this4.isItemsLoaded = true; // Setup 360
 
         _this4.options.frames = response.data.items.length;
         _this4.options.source = response.data.items.map(function (item) {
           return window.location.origin + "/storage/uploads/user-" + _this4.authUser.id + "/" + item.media_file.path;
-        }); // console.log(this.items);
-
+        });
         setTimeout(function () {
-          _this4.show = true; // console.log("show: " + this.show);
+          _this4.show = true;
         }, 1);
+
+        if (_this4.items[0].length !== 0) {
+          setTimeout(function () {
+            _this4.selected(0, _this4.items[0]);
+          }, 2000);
+        }
       })["catch"](function (error) {
         console.log("Error fetching items");
         console.log(error);
@@ -28010,7 +27976,10 @@ var render = function() {
                               class:
                                 "cd-single-point draggable-hotspot hotspot-default-position hotspot-id-" +
                                 spot.id,
-                              attrs: { "data-hps": "" + spot.id }
+                              attrs: {
+                                "data-hps": "" + spot.id,
+                                id: "" + spot.id
+                              }
                             },
                             [
                               _c(
@@ -28036,8 +28005,8 @@ var render = function() {
                                       _vm._v(
                                         _vm._s(
                                           spot.title != null &&
-                                            spot.title.length > 15
-                                            ? spot.title.substring(0, 15) + ".."
+                                            spot.title.length > 10
+                                            ? spot.title.substring(0, 10) + ".."
                                             : spot.title
                                         )
                                       )
@@ -89418,8 +89387,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
