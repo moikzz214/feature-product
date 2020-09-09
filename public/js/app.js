@@ -3133,7 +3133,8 @@ __webpack_require__.r(__webpack_exports__);
       mediaDialog: false,
       mediaLoading: false,
       tab: null,
-      submitAction: this.mediaOptions.action ? this.mediaOptions.action : 'save',
+      return_url: this.mediaOptions.returnUrl ? this.mediaOptions.returnUrl : false,
+      submitAction: this.mediaOptions.action ? this.mediaOptions.action : "save",
       // Selected File
       multiple: this.mediaOptions.multiple ? this.mediaOptions.multiple : false,
       selected: []
@@ -3152,10 +3153,18 @@ __webpack_require__.r(__webpack_exports__);
     uploadTab: function uploadTab() {
       this.tabItem = "upload";
     },
-    selectFile: function selectFile(i) {
+    selectFile: function selectFile(file) {
+      // console.log(file)
+      var i = file.id;
+
       if (this.multiple == false) {
         if (this.selected.length < 1) {
-          this.selected.push(i);
+          // If Return URL used in hotspot images
+          if (this.return_url == true) {
+            this.selected.push(file.path);
+          } else {
+            this.selected.push(i);
+          }
         } else {
           var index = this.selected.indexOf(i);
 
@@ -3181,26 +3190,33 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       // Save to Item Table
-      // Replace Item 360 Image
-      var data = {
-        selected: this.selected,
-        item: this.mediaOptions.data ? this.mediaOptions.data.id : null,
-        item_type: this.mediaOptions.itemType ? this.mediaOptions.itemType : null,
-        action: this.submitAction,
-        product: this.mediaOptions.product ? this.mediaOptions.product : null
-      };
-      axios.post("/item/save/" + JSON.stringify(data)).then(function (response) {
-        // console.log(response.data);
-        if (response.data.status == "success") {
-          _this.$emit("responded", response.data);
+      // If only needs to return the url of the selected image
+      if (this.return_url == true) {
+        var toReturlUrl = this.baseUrl + "/storage/uploads/user-" + this.userId + "/" + this.selected[0];
+        this.$emit("responded", toReturlUrl);
+        this.selected = [];
+      } else {
+        // Replace Item 360 Image
+        var data = {
+          selected: this.selected,
+          item: this.mediaOptions.data ? this.mediaOptions.data.id : null,
+          item_type: this.mediaOptions.itemType ? this.mediaOptions.itemType : null,
+          action: this.submitAction,
+          product: this.mediaOptions.product ? this.mediaOptions.product : null
+        };
+        axios.post("/item/save/" + JSON.stringify(data)).then(function (response) {
+          // console.log(response.data);
+          if (response.data.status == "success") {
+            _this.$emit("responded", response.data);
 
+            _this.selected = [];
+          }
+        })["catch"](function (error) {
           _this.selected = [];
-        }
-      })["catch"](function (error) {
-        _this.selected = [];
-        console.log("Error Fetching Files");
-        console.log(error);
-      });
+          console.log("Error Fetching Files");
+          console.log(error);
+        });
+      }
     },
     closeMediaDialog: function closeMediaDialog() {
       this.mediaDialog = false;
@@ -4588,7 +4604,8 @@ __webpack_require__.r(__webpack_exports__);
         action: "save",
         data: null,
         product: this.product,
-        itemType: "panorama"
+        itemType: "panorama",
+        returnUrl: true
       }
     };
   },
@@ -4655,7 +4672,9 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    mediaResponse: function mediaResponse(v) {// console.log(v);
+    mediaResponse: function mediaResponse(v) {
+      this.image = v;
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
     },
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
@@ -26768,12 +26787,13 @@ var render = function() {
                                 {
                                   class:
                                     "pa-1 elevation-0 " +
-                                    (_vm.selected.includes(file.id) == true
+                                    (_vm.selected.includes(file.id) == true ||
+                                    _vm.selected.includes(file.path) == true
                                       ? "primary dark"
                                       : "transparent"),
                                   on: {
                                     click: function($event) {
-                                      return _vm.selectFile(file.id)
+                                      return _vm.selectFile(file)
                                     }
                                   }
                                 },

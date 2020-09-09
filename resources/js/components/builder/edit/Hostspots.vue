@@ -191,6 +191,7 @@ export default {
         data: null,
         product: this.product,
         itemType: "panorama",
+        returnUrl: true,
       },
     };
   },
@@ -276,7 +277,9 @@ export default {
         });
     },
     mediaResponse(v) {
-      // console.log(v);
+      this.image = v;
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
+        .dialogStatus;
     },
     openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings

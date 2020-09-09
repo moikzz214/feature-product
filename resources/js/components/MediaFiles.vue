@@ -36,8 +36,8 @@
           <v-row class="px-2">
             <v-col v-for="file in files" :key="file.id" cols="2" class="pa-2">
               <v-card
-                @click="selectFile(file.id)"
-                :class="`pa-1 elevation-0 ${selected.includes(file.id) == true ? 'primary dark' : 'transparent'}`"
+                @click="selectFile(file)"
+                :class="`pa-1 elevation-0 ${selected.includes(file.id) == true || selected.includes(file.path) == true ? 'primary dark' : 'transparent'}`"
               >
                 <v-img
                   :src="baseUrl+'/storage/uploads/user-'+userId+'/'+file.path"
@@ -100,7 +100,13 @@ export default {
       mediaLoading: false,
       tab: null,
 
-      submitAction: this.mediaOptions.action ? this.mediaOptions.action : 'save',
+      return_url: this.mediaOptions.returnUrl
+        ? this.mediaOptions.returnUrl
+        : false,
+
+      submitAction: this.mediaOptions.action
+        ? this.mediaOptions.action
+        : "save",
       // Selected File
       multiple: this.mediaOptions.multiple ? this.mediaOptions.multiple : false,
       selected: [],
@@ -119,10 +125,18 @@ export default {
     uploadTab() {
       this.tabItem = "upload";
     },
-    selectFile(i) {
+    selectFile(file) {
+      // console.log(file)
+      let i = file.id;
+
       if (this.multiple == false) {
         if (this.selected.length < 1) {
-          this.selected.push(i);
+          // If Return URL used in hotspot images
+          if (this.return_url == true) {
+            this.selected.push(file.path);
+          } else {
+            this.selected.push(i);
+          }
         } else {
           let index = this.selected.indexOf(i);
           if (index > -1) {
@@ -145,29 +159,42 @@ export default {
     submitSelected() {
       // Save to Item Table
 
-
-      // Replace Item 360 Image
-      let data = {
-        selected: this.selected,
-        item: this.mediaOptions.data ? this.mediaOptions.data.id : null,
-        item_type: this.mediaOptions.itemType ? this.mediaOptions.itemType : null,
-        action: this.submitAction,
-        product: this.mediaOptions.product ? this.mediaOptions.product : null,
-      };
-      axios
-        .post("/item/save/" + JSON.stringify(data))
-        .then((response) => {
-          // console.log(response.data);
-          if (response.data.status == "success") {
-            this.$emit("responded", response.data);
+      // If only needs to return the url of the selected image
+      if (this.return_url == true) {
+        let toReturlUrl =
+          this.baseUrl +
+          "/storage/uploads/user-" +
+          this.userId +
+          "/" +
+          this.selected[0];
+        this.$emit("responded", toReturlUrl);
+        this.selected = [];
+      } else {
+        // Replace Item 360 Image
+        let data = {
+          selected: this.selected,
+          item: this.mediaOptions.data ? this.mediaOptions.data.id : null,
+          item_type: this.mediaOptions.itemType
+            ? this.mediaOptions.itemType
+            : null,
+          action: this.submitAction,
+          product: this.mediaOptions.product ? this.mediaOptions.product : null,
+        };
+        axios
+          .post("/item/save/" + JSON.stringify(data))
+          .then((response) => {
+            // console.log(response.data);
+            if (response.data.status == "success") {
+              this.$emit("responded", response.data);
+              this.selected = [];
+            }
+          })
+          .catch((error) => {
             this.selected = [];
-          }
-        })
-        .catch((error) => {
-          this.selected = [];
-          console.log("Error Fetching Files");
-          console.log(error);
-        });
+            console.log("Error Fetching Files");
+            console.log(error);
+          });
+      }
     },
     closeMediaDialog() {
       this.mediaDialog = false;
