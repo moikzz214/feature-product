@@ -5,12 +5,12 @@
         <v-btn
           large
           :color="`${activateExterior == true ? 'yellow accent-4' : 'primary' }`"
-          @click="activateExterior = true; activateInterior = false;"
+          @click="selectPanel('exterior')"
         >Exterior</v-btn>
         <v-btn
           large
           :color="`${activateInterior == true ? 'yellow accent-4' : 'primary' }`"
-          @click="activateInterior = true; activateExterior = false"
+          @click="selectPanel('interior')"
         >Interior</v-btn>
         <v-btn large color="primary" @click="0">Video</v-btn>
       </div>
@@ -18,10 +18,11 @@
     <v-divider></v-divider>
     <v-row>
       <v-col cols="3">
-        <Hostspots
+        <Hotspots
           :item="selected_item"
           :auth-user="authUser"
           :product="this.$route.params.id"
+          :current-panel="selected_panel_prop"
           @emitHotspot="hotspotToSet"
         />
       </v-col>
@@ -41,7 +42,7 @@
 </template>
 
 <script>
-import Hostspots from "./edit/Hostspots";
+import Hotspots from "./edit/Hotspots";
 import ExteriorPanel from "./edit/ExteriorPanel";
 import InteriorPanel from "./edit/InteriorPanel";
 export default {
@@ -52,17 +53,20 @@ export default {
     },
   },
   components: {
-    Hostspots,
+    Hotspots,
     ExteriorPanel,
     InteriorPanel,
   },
   data() {
     return {
+      selected_panel_prop: "exterior",
       activateExterior: true,
       activateInterior: false,
 
       selected_item: null,
       selected_hotspot_prop: null,
+
+
     };
   },
   methods: {
@@ -75,10 +79,19 @@ export default {
         this.selected_hotspot_prop = v;
       }
     },
-  },
-  mounted() {
-    // console.log(this.authUser);
-    // console.log(this.$route.params.id);
+    selectPanel(panel) {
+      // Exterior
+      if (panel == "exterior") {
+        this.activateExterior = true;
+        this.activateInterior = false;
+        this.selected_panel_prop = "exterior";
+      } else {
+        // Interior
+        this.selected_panel_prop = "interior";
+        this.activateInterior = true;
+        this.activateExterior = false;
+      }
+    }
   },
 };
 </script>

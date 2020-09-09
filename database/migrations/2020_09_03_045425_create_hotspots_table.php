@@ -17,15 +17,10 @@ class CreateHotspotsTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('hotspot_type')->default('info');
+            $table->string('hotspot_for');
             $table->text('content')->nullable();
             $table->integer('product_id')->unsigned();
             $table->timestamps();
-            // types
-            // hotspots_meta - table
-            // id
-            // media_id
-            // hotspot_id
-            // position
         });
     }
 

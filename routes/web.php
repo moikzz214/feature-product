@@ -60,7 +60,7 @@ Route::post('/hotspot/new', 'HotspotsController@store')->name('hotspot.save');
 Route::post('/hotspot/update/{id}', 'HotspotsController@update')->name('hotspot.update');
 Route::post('/hotspot/set', 'HotspotsController@setHotspot')->name('hotspot.set');
 Route::post('/hotspot/delete/{id}', 'HotspotsController@destroy')->name('hotspot.destroy');
-Route::get('/hotspot/by-product/{id}', 'HotspotsController@allHostspotsByProductId')->name('hotspot.by.product.id');
+Route::get('/hotspot/by-product/{id}/{panel}', 'HotspotsController@allHostspotsByProductId')->name('hotspot.by.product.id');
 Route::post('/hotspot/apply', 'HotspotsController@applyHotspot')->name('hotspot.apply');
 Route::get('/hotspot/settings/{id}', 'HotspotsController@fetchSettings')->name('hotspot.settings');
 Route::post('/hotspot/setting/delete', 'HotspotsController@deleteSetting')->name('hotspot.setting.delete');

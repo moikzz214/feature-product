@@ -11,19 +11,14 @@ use Illuminate\Support\Facades\DB;
 
 class HotspotsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
-    public function allHostspotsByProductId($id)
+    public function allHostspotsByProductId($id, $panel)
     {
-        $hotspots = Hotspot::where('product_id', $id)->get();
+        // dd($panel);
+        $hotspots = Hotspot::where([
+            'product_id' => $id,
+            'hotspot_for' => $panel
+        ])->get();
         return response()->json($hotspots, 200);
     }
 
@@ -40,6 +35,7 @@ class HotspotsController extends Controller
         $hotspot = Hotspot::create([
             'title' => $request['title'],
             'product_id' => $request['product_id'],
+            'hotspot_for' => $request['hotspot_for'],
         ]);
     }
 
@@ -257,6 +253,7 @@ class HotspotsController extends Controller
         return request()->validate([
             'title' => ['required', 'min:1', 'max:50', 'string'],
             'product_id' => ['required'],
+            'hotspot_for' => ['required'],
         ]);
     }
 

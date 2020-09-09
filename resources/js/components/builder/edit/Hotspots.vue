@@ -3,7 +3,7 @@
     <v-btn small class="primary mb-3" @click="createHotspot">Add Hotspot</v-btn>
     <v-dialog v-model="newHotspotDialog" color="white" width="500">
       <v-card class="mr-auto pa-3" max-width="600">
-        <v-form ref="form" @submit.prevent="submitNewHotspot" lazy-validation>
+        <v-form ref="form" lazy-validation>
           <h3 class="font-weight-light">New Hotspot</h3>
           <v-text-field
             v-model="hotspotTitle"
@@ -131,6 +131,10 @@ export default {
       type: Object,
       default: null,
     },
+    currentPanel: {
+      type: String,
+      default: ""
+    }
   },
   components: {
     MediaFiles,
@@ -196,6 +200,10 @@ export default {
     };
   },
   watch: {
+    currentPanel: function (val) {
+      this.currentPanel = val;
+      this.getAllHotspots();
+    },
     item: function (val) {
       this.selectedItem = val;
       // console.log(val)
@@ -263,6 +271,7 @@ export default {
       let data = {
         title: this.hotspotTitle,
         product_id: this.product,
+        hotspot_for: this.currentPanel && this.currentPanel 
       };
       axios
         .post("/hotspot/new", data)
@@ -367,8 +376,9 @@ export default {
       }
     },
     getAllHotspots() {
+      let panel = this.currentPanel;
       axios
-        .get("/hotspot/by-product/" + this.product)
+        .get("/hotspot/by-product/" + this.product + "/" + panel)
         .then((response) => {
           this.itemHotspots = response.data;
         })
