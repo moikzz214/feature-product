@@ -4883,6 +4883,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4918,10 +4941,14 @@ __webpack_require__.r(__webpack_exports__);
         data: null,
         product: this.product,
         itemType: "panorama"
-      }
+      },
+      hotspotText: "this is the hotspot Text"
     };
   },
   methods: {
+    removeHotspot: function removeHotspot() {
+      this.thePanorama.removeHotSpot();
+    },
     addHotspot: function addHotspot() {
       /**
        * Select scene
@@ -4930,15 +4957,16 @@ __webpack_require__.r(__webpack_exports__);
        * Click inside the panellum
        * Click apply to save
        */
-      console.log(this.thePanorama.getPitch());
-      console.log(this.thePanorama.getYaw());
-      console.log(this.thePanorama.getHfov()); // console.log(this.thePanorama);
-
+      //   console.log(this.thePanorama.getPitch());
+      //   console.log(this.thePanorama.getYaw());
+      //   console.log(this.thePanorama.getHfov());
+      // console.log(this.thePanorama);
       this.thePanorama.addHotSpot({
-        pitch: -15.94618622367452,
-        yaw: -175.5048581866088,
+        pitch: this.thePanorama.getPitch(),
+        yaw: this.thePanorama.getYaw(),
+        hfov: this.thePanorama.getHfov(),
         type: "info",
-        text: "Added Spot" //   sceneId: sceneTitle,
+        text: this.hotspotText //   sceneId: sceneTitle,
 
       } // sceneTitle
       );
@@ -28976,12 +29004,12 @@ var render = function() {
     [
       _c(
         "div",
-        { staticClass: "col-12 col-md-2 d-flex align-center flex-start" },
+        { staticClass: "col-12 col-md-12 d-flex align-center flex-start" },
         [
           _c(
             "v-card",
             {
-              staticClass: "text-center pa-2",
+              staticClass: "text-center pa-2 mr-2",
               on: {
                 click: function($event) {
                   $event.stopPropagation()
@@ -28997,15 +29025,8 @@ var render = function() {
               ])
             ],
             1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "col-12 col-md-10" },
-        [
+          ),
+          _vm._v(" "),
           _c(
             "v-skeleton-loader",
             {
@@ -29212,15 +29233,41 @@ var render = function() {
       _vm._v(" "),
       _c(
         "div",
-        { staticClass: "col-12" },
+        { staticClass: "col-12 d-flex justify-space-between align-center" },
         [
-          _c("v-btn", { on: { click: _vm.onDebugger } }, [
-            _vm._v("Activate Debugger")
-          ]),
-          _vm._v(" "),
-          _c("v-btn", { on: { click: _vm.addHotspot } }, [
-            _vm._v("Add Hotspot")
-          ])
+          _c(
+            "v-toolbar",
+            { staticClass: "elevation-0", attrs: { dense: "" } },
+            [
+              _c("v-app-bar-nav-icon"),
+              _vm._v(" "),
+              _c("v-toolbar-title", [_vm._v("Title")]),
+              _vm._v(" "),
+              _c("v-spacer"),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                { attrs: { icon: "" } },
+                [_c("v-icon", [_vm._v("mdi-magnify")])],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                { attrs: { icon: "" } },
+                [_c("v-icon", [_vm._v("mdi-heart")])],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                { attrs: { icon: "" } },
+                [_c("v-icon", [_vm._v("mdi-dots-vertical")])],
+                1
+              )
+            ],
+            1
+          )
         ],
         1
       ),
@@ -89464,8 +89511,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

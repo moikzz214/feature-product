@@ -1,12 +1,10 @@
 <template>
   <div class="row">
-    <div class="col-12 col-md-2 d-flex align-center flex-start">
-      <v-card class="text-center pa-2" @click.stop="openMediaFiles">
+    <div class="col-12 col-md-12 d-flex align-center flex-start">
+      <v-card class="text-center pa-2 mr-2" @click.stop="openMediaFiles">
         <v-icon small>mdi-plus</v-icon>
         <h5 class="font-weight-light">Add Scene</h5>
       </v-card>
-    </div>
-    <div class="col-12 col-md-10">
       <v-skeleton-loader :loading="loading" type="list-item-avatar-two-line">
         <v-sheet v-if="scenes">
           <v-slide-group show-arrows>
@@ -64,9 +62,34 @@
     <div v-else class="col-12">
       <div id="panorama" style="height:400px;width:100%;margin:0 auto;"></div>
     </div>
-    <div class="col-12">
-      <v-btn @click="onDebugger">Activate Debugger</v-btn>
-      <v-btn @click="addHotspot">Add Hotspot</v-btn>
+    <div class="col-12 d-flex justify-space-between align-center">
+      <v-toolbar dense class="elevation-0">
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+
+        <v-toolbar-title>Title</v-toolbar-title>
+
+        <v-spacer></v-spacer>
+
+        <v-btn icon>
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+
+        <v-btn icon>
+          <v-icon>mdi-heart</v-icon>
+        </v-btn>
+
+        <v-btn icon>
+          <v-icon>mdi-dots-vertical</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <!-- <div>
+        <span class="overline">Editing:</span>
+        <span class="h2">Dashboard</span>
+      </div>
+      <div>
+        <v-btn text class="red--text" @click="removeHotspot">Remove</v-btn>
+        <v-btn class="primary" @click="addHotspot">Set Hotspot</v-btn>
+      </div> -->
     </div>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
 
@@ -104,7 +127,6 @@ export default {
   },
   data() {
     return {
-
       toDelete: [],
       deleteDialog: false,
       loading: false,
@@ -124,9 +146,14 @@ export default {
         product: this.product,
         itemType: "panorama",
       },
+
+      hotspotText: "this is the hotspot Text",
     };
   },
   methods: {
+    removeHotspot() {
+      this.thePanorama.removeHotSpot();
+    },
     addHotspot() {
       /**
        * Select scene
@@ -136,17 +163,18 @@ export default {
        * Click apply to save
        */
 
-      console.log(this.thePanorama.getPitch());
-      console.log(this.thePanorama.getYaw());
-      console.log(this.thePanorama.getHfov());
+      //   console.log(this.thePanorama.getPitch());
+      //   console.log(this.thePanorama.getYaw());
+      //   console.log(this.thePanorama.getHfov());
 
       // console.log(this.thePanorama);
       this.thePanorama.addHotSpot(
         {
-          pitch: -15.94618622367452,
-          yaw: -175.5048581866088,
+          pitch: this.thePanorama.getPitch(),
+          yaw: this.thePanorama.getYaw(),
+          hfov: this.thePanorama.getHfov(),
           type: "info",
-          text: "Added Spot",
+          text: this.hotspotText,
           //   sceneId: sceneTitle,
         }
         // sceneTitle
