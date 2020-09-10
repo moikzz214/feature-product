@@ -242,6 +242,7 @@ export default {
       let data = {
         hotspot_settings: tempHotspots,
       };
+      console.log(data);
       axios
         .post("/hotspot/apply", data)
         .then((response) => {
@@ -302,7 +303,7 @@ export default {
         });
     },
     selected(index, id = null) {
-      $('.cd-single-point').hide();
+      $(".cd-single-point").hide();
       let dItemId = id.id; // Current Item ID
       this.settingsInCurrentScene = []; // Settings Variable
       let tempSettings = [];

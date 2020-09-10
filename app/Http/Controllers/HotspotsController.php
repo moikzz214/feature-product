@@ -11,6 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 class HotspotsController extends Controller
 {
+    public function getAllInteriorHotspotsByProductId($id)
+    {
+        $productHotspots = Hotspot::where([
+            'product_id' => $id,
+            'hotspot_for' => 'interior'
+        ])->with('hotspot_settings')->get();
+        return response()->json([
+            'settings' => $productHotspots,
+            'message' => 'Product Hotspots have been fetched',
+        ], 200);
+    }
 
     // Get all hotspots - used in Hotspots component
     public function allHostspotsByProductId($id, $panel)

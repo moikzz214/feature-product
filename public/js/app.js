@@ -4231,6 +4231,7 @@ __webpack_require__.r(__webpack_exports__);
       var data = {
         hotspot_settings: tempHotspots
       };
+      console.log(data);
       axios.post("/hotspot/apply", data).then(function (response) {
         tempHotspots = [];
 
@@ -4291,7 +4292,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      $('.cd-single-point').hide();
+      $(".cd-single-point").hide();
       var dItemId = id.id; // Current Item ID
 
       this.settingsInCurrentScene = []; // Settings Variable
@@ -4906,7 +4907,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 var toSaveHotspot = [];
 
 
@@ -4931,6 +4931,7 @@ var toSaveHotspot = [];
   },
   data: function data() {
     return {
+      editingTitle: "",
       toDelete: [],
       deleteDialog: false,
       loading: false,
@@ -4958,24 +4959,47 @@ var toSaveHotspot = [];
     }
   },
   methods: {
+    fetchAllInteriorHotspots: function fetchAllInteriorHotspots() {
+      axios.get("/hotspot/all/interior/" + this.product).then(function (response) {
+        // Add hotspots here
+        console.log(response.data.settings);
+      })["catch"](function (error) {
+        console.log("Error Fetching Interior Hotspots");
+        console.log(error);
+      });
+    },
+    saveHotspotSettings: function saveHotspotSettings() {
+      var filter = toSaveHotspot.filter(function (el) {
+        return el.hotspotsID != null;
+      });
+      var data = {
+        hotspot_settings: JSON.stringify(filter)
+      };
+      axios.post("/hotspot/apply", data).then(function (response) {
+        toSaveHotspot = [];
+        console.log(response); // this.draggableFunc();
+        // this.getHotspotSettings();
+      })["catch"](function (error) {
+        console.log("Error Applying Hotspots");
+        console.log(error);
+      });
+    },
     removeHotspot: function removeHotspot() {// need hotspotid
       // this.thePanorama.removeHotSpot();
     },
     addHotspot: function addHotspot(selectedHotspot) {
       this.thePanorama.addHotSpot({
-        id: "test",
         draggable: true,
         pitch: this.thePanorama.getPitch(),
         yaw: this.thePanorama.getYaw(),
         hfov: this.thePanorama.getHfov(),
         type: "info",
         text: this.hotspotText,
-        cssClass: "custom-iba " + selectedHotspot.id,
+        cssClass: "interior-hotspot " + selectedHotspot.id,
         createTooltipFunc: this.hotspotUi,
-        createTooltipArgs: "<p>" + selectedHotspot.title + "</p>" //   sceneId: sceneTitle,
+        createTooltipArgs: "<div>" + selectedHotspot.title + "</div>" //   sceneId: sceneTitle,
 
-      } // sceneTitle
-      );
+      });
       var dPanorama = this.thePanorama;
       this.onMouseUp(dPanorama, selectedHotspot.id);
     },
@@ -4986,15 +5010,25 @@ var toSaveHotspot = [];
       var span = document.createElement("span");
       span.innerHTML = args;
       hotSpotDiv.appendChild(span);
-      span.style.width = span.scrollWidth - 20 + "px";
-      span.style.marginLeft = -(span.scrollWidth - hotSpotDiv.offsetWidth) / 2 + "px";
-      span.style.marginTop = -span.scrollHeight - 12 + "px";
+      span.classList.add("hotspot-label"); // span.style.width = span.scrollWidth - 20 + "px";
+      // span.style.marginLeft =
+      //   -(span.scrollWidth - hotSpotDiv.offsetWidth) / 2 + "px";
+      // span.style.marginTop = -span.scrollHeight - 12 + "px";
     },
     onMouseUp: function onMouseUp(p, id) {
+      // console.log(id)
+      toSaveHotspot[id] = {};
+      var selectedItem = this.selectedItem.id;
       setTimeout(function () {
-        $(".custom-iba." + id).on("mouseup", function (e) {
-          toSaveHotspot[id] = p.mouseEventToCoords(e); // push to global variable
-          // console.log(p.mouseEventToCoords(e));  
+        $(".interior-hotspot." + id).on("mouseup", function (e) {
+          var settingsToString = {
+            pitch: p.mouseEventToCoords(e)[0],
+            yaw: p.mouseEventToCoords(e)[1]
+          };
+          toSaveHotspot[id]["hotspotsID"] = id;
+          toSaveHotspot[id]["itemID"] = selectedItem;
+          toSaveHotspot[id]["hotspotSettings"] = settingsToString; // push to global variable
+          // console.log(p.mouseEventToCoords(e));
 
           console.log(toSaveHotspot);
         });
@@ -5049,44 +5083,7 @@ var toSaveHotspot = [];
         panorama: this.baseUrl + "/storage/uploads/user-" + this.authUser.id + "/" + i.media_file.path,
         hotSpots: []
       });
-      this.thePanorama.loadScene(sceneTitle); // this.thePanorama.addHotSpot(
-      //   {
-      //     draggable: true,
-      //     pitch: -14.94618622367452,
-      //     yaw: -174.5048581866088,
-      //     type: "scene",
-      //     text: "Passenger Seats",
-      //     //   sceneId: sceneTitle,
-      //   }
-      //   // sceneTitle
-      // );
-
-      this.thePanorama.addHotSpot({
-        draggable: true,
-        pitch: -15.691242114430711,
-        yaw: -31.176752681058826,
-        type: "info",
-        cssClass: "custom-iba madami",
-        createTooltipFunc: this.hotspotUi,
-        createTooltipArgs: "<p>Sample Dashboard</p>"
-      } // sceneTitle
-      ); // mouseup
-      // this.thePanorama.on("touchend", function (event) {
-      //       // console.log(event);
-      //       // For pitch and yaw of center of viewer
-      //       console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
-      //       // For pitch and yaw of mouse location
-      //       // console.log(this.thePanorama.mouseEventToCoords(event));
-      //     });
-      // let dPanorama = null;
-      // dPanorama = this.thePanorama;
-      //   // console.log(event);
-      //   // console.log("yoyoyoyoyoyo");
-      //   // For pitch and yaw of center of viewer
-      //   // console.log(dPanorama.getPitch(), dPanorama.getYaw());
-      //   // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
-      //   // For pitch and yaw of mouse locationF
-      // this.onMouseUp(dPanorama);
+      this.thePanorama.loadScene(sceneTitle);
     },
     selectedScene: function selectedScene(i) {
       var _this2 = this;
@@ -5100,7 +5097,10 @@ var toSaveHotspot = [];
 
       setTimeout(function () {
         _this2.loadPanorama(_this2.selectedItem);
-      }, 300);
+      }, 300); // console.log(this.selectedItem);
+      // Fetch all saved hotspots
+
+      this.fetchAllInteriorHotspots();
     },
     mediaResponse: function mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = false;
@@ -5184,6 +5184,25 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 // module
 exports.push([module.i, ".custom-scroll[data-v-3762d2da] {\n  overflow-y: scroll;\n  max-height: 550px;\n}\n.custom-scroll[data-v-3762d2da]::-webkit-scrollbar {\n  width: 10px;\n}\n.custom-scroll[data-v-3762d2da]::-webkit-scrollbar-track {\n  background-color: #f9f9f9;\n}\n.custom-scroll[data-v-3762d2da]::-webkit-scrollbar-thumb {\n  border-radius: 10px;\n  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.15);\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss&":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/sass-loader/dist/cjs.js??ref--7-3!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss& ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".interior-hotspot {\n  cursor: move;\n  position: absolute;\n  z-index: 2;\n  display: block;\n  width: 25px;\n  height: 25px;\n  border-radius: 50%;\n  background: #d95353;\n  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);\n  transition: background-color 0.2s;\n}\n.interior-hotspot::after {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n  width: 2px;\n  height: 12px;\n}\n.interior-hotspot::before {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n  width: 12px;\n  height: 2px;\n}\n.interior-hotspot .hotspot-label {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: -webkit-box;\n  -webkit-line-clamp: 1;\n  /* number of lines to show */\n  -webkit-box-orient: vertical;\n  position: absolute;\n  left: 100%;\n  right: auto;\n  top: 0;\n  bottom: auto;\n  background-color: #fff;\n  border-radius: 10px;\n  padding: 0 8px;\n  width: 120px;\n  max-width: 120px;\n  margin-left: 5px;\n}\n.interior-hotspot .hotspot-label::before {\n  content: \"\";\n  width: 0px;\n  height: 0px;\n  border-top: 8px solid transparent;\n  border-bottom: 8px solid transparent;\n  border-right: 8px solid #fff;\n  position: absolute;\n  right: 98%;\n  top: 0;\n  bottom: auto;\n  left: auto;\n  margin-top: 3.5px;\n}", ""]);
 
 // exports
 
@@ -23213,6 +23232,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss&":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/sass-loader/dist/cjs.js??ref--7-3!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss& ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../node_modules/css-loader!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/sass-loader/dist/cjs.js??ref--7-3!../../../../../node_modules/vue-loader/lib??vue-loader-options!./InteriorPanel.vue?vue&type=style&index=0&lang=scss& */ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/lib/addStyles.js":
 /*!****************************************************!*\
   !*** ./node_modules/style-loader/lib/addStyles.js ***!
@@ -29054,7 +29103,7 @@ var render = function() {
     [
       _c(
         "div",
-        { staticClass: "col-12 col-md-12 d-flex align-center flex-start" },
+        { staticClass: "col-12 pt-0 col-md-12 d-flex align-center flex-start" },
         [
           _c(
             "v-card",
@@ -29238,10 +29287,50 @@ var render = function() {
         1
       ),
       _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "col-12 py-0 d-flex justify-space-between align-center"
+        },
+        [
+          _c(
+            "v-toolbar",
+            { staticClass: "elevation-1", attrs: { dense: "" } },
+            [
+              _c("v-toolbar-title", [_vm._v("Title")]),
+              _vm._v(" "),
+              _c("v-spacer"),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  staticClass: "primary--text",
+                  attrs: { small: "", text: "" },
+                  on: {
+                    click: function($event) {
+                      return _vm.saveHotspotSettings()
+                    }
+                  }
+                },
+                [
+                  _c("v-icon", { staticClass: "mr-1", attrs: { small: "" } }, [
+                    _vm._v("mdi-check")
+                  ]),
+                  _vm._v("Save Hotspots\n      ")
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
       _vm.selectedItem.length == 0
         ? _c(
             "div",
-            { staticClass: "col-12 pb-0" },
+            { staticClass: "col-12 pt-0" },
             [
               _c(
                 "v-sheet",
@@ -29274,53 +29363,13 @@ var render = function() {
             ],
             1
           )
-        : _c("div", { staticClass: "col-12 pb-0" }, [
+        : _c("div", { staticClass: "col-12 pt-0" }, [
             _c("div", {
               staticClass: "elevation-1",
               staticStyle: { height: "400px", width: "100%", margin: "0 auto" },
               attrs: { id: "panorama" }
             })
           ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "col-12 pt-0 d-flex justify-space-between align-center"
-        },
-        [
-          _c(
-            "v-toolbar",
-            { staticClass: "elevation-1", attrs: { dense: "" } },
-            [
-              _c("v-toolbar-title", [_vm._v("Title")]),
-              _vm._v(" "),
-              _c("v-spacer"),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                {
-                  staticClass: "primary--text",
-                  attrs: { small: "", text: "" },
-                  on: {
-                    click: function($event) {
-                      return _vm.addHotspot(555)
-                    }
-                  }
-                },
-                [
-                  _c("v-icon", { staticClass: "mr-1", attrs: { small: "" } }, [
-                    _vm._v("mdi-check")
-                  ]),
-                  _vm._v("Save Hotspots\n      ")
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      ),
       _vm._v(" "),
       _c("media-files", {
         attrs: { mediaOptions: _vm.mediaFilesSettings },
@@ -89407,7 +89456,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _InteriorPanel_vue_vue_type_template_id_ec03aa64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./InteriorPanel.vue?vue&type=template&id=ec03aa64& */ "./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=template&id=ec03aa64&");
 /* harmony import */ var _InteriorPanel_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./InteriorPanel.vue?vue&type=script&lang=js& */ "./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _InteriorPanel_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./InteriorPanel.vue?vue&type=style&index=0&lang=scss& */ "./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -89415,7 +89466,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _InteriorPanel_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _InteriorPanel_vue_vue_type_template_id_ec03aa64___WEBPACK_IMPORTED_MODULE_0__["render"],
   _InteriorPanel_vue_vue_type_template_id_ec03aa64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -89444,6 +89495,22 @@ component.options.__file = "resources/js/components/builder/edit/InteriorPanel.v
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./InteriorPanel.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss&":
+/*!**************************************************************************************************!*\
+  !*** ./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss& ***!
+  \**************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/sass-loader/dist/cjs.js??ref--7-3!../../../../../node_modules/vue-loader/lib??vue-loader-options!./InteriorPanel.vue?vue&type=style&index=0&lang=scss& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/InteriorPanel.vue?vue&type=style&index=0&lang=scss&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 

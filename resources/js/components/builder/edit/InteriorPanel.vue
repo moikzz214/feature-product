@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-12 col-md-12 d-flex align-center flex-start">
+    <div class="col-12 pt-0 col-md-12 d-flex align-center flex-start">
       <v-card class="text-center pa-2 mr-2" @click.stop="openMediaFiles">
         <v-icon small>mdi-plus</v-icon>
         <h5 class="font-weight-light">Add Scene</h5>
@@ -47,7 +47,16 @@
         </v-sheet>
       </v-skeleton-loader>
     </div>
-    <div v-if="selectedItem.length == 0" class="col-12 pb-0">
+    <div class="col-12 py-0 d-flex justify-space-between align-center">
+      <v-toolbar dense class="elevation-1">
+        <v-toolbar-title>Title</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn small text class="primary--text" @click="saveHotspotSettings()">
+          <v-icon small class="mr-1">mdi-check</v-icon>Save Hotspots
+        </v-btn>
+      </v-toolbar>
+    </div>
+    <div v-if="selectedItem.length == 0" class="col-12 pt-0">
       <v-sheet
         class="grey lighten-4 mr-auto pa-3 d-flex justify-center align-center elevation-1"
         style="min-height:480px;"
@@ -59,20 +68,10 @@
         <p v-else>Please select a scene</p>
       </v-sheet>
     </div>
-    <div v-else class="col-12 pb-0">
+    <div v-else class="col-12 pt-0">
       <div id="panorama" class="elevation-1" style="height:400px;width:100%;margin:0 auto;"></div>
     </div>
-    <div class="col-12 pt-0 d-flex justify-space-between align-center">
-      <v-toolbar dense class="elevation-1">
-        <v-toolbar-title>Title</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn small text class="primary--text" @click="addHotspot(555)">
-          <v-icon small class="mr-1">mdi-check</v-icon>Save Hotspots
-        </v-btn>
-      </v-toolbar>
-    </div>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
-
     <v-dialog v-model="deleteDialog" max-width="290">
       <v-card>
         <v-card-title class="subtitle-1">Are you sure you want to delete?</v-card-title>
@@ -112,7 +111,7 @@ export default {
   },
   data() {
     return {
-       
+      editingTitle: "",
 
       toDelete: [],
       deleteDialog: false,
@@ -144,27 +143,55 @@ export default {
     },
   },
   methods: {
+    fetchAllInteriorHotspots() {
+      axios
+        .get("/hotspot/all/interior/"+this.product)
+        .then((response) => {
+          // Add hotspots here
+          console.log(response.data.settings);
+        })
+        .catch((error) => {
+          console.log("Error Fetching Interior Hotspots");
+          console.log(error);
+        });
+    },
+    saveHotspotSettings() {
+      var filter = toSaveHotspot.filter(function (el) {
+        return el.hotspotsID != null;
+      });
+      let data = {
+        hotspot_settings: JSON.stringify(filter),
+      };
+      axios
+        .post("/hotspot/apply", data)
+        .then((response) => {
+          toSaveHotspot = [];
+          console.log(response);
+          // this.draggableFunc();
+          // this.getHotspotSettings();
+        })
+        .catch((error) => {
+          console.log("Error Applying Hotspots");
+          console.log(error);
+        });
+    },
     removeHotspot() {
       // need hotspotid
       // this.thePanorama.removeHotSpot();
     },
     addHotspot(selectedHotspot) {
-      this.thePanorama.addHotSpot(
-        {
-          id: "test",
-          draggable: true,
-          pitch: this.thePanorama.getPitch(),
-          yaw: this.thePanorama.getYaw(),
-          hfov: this.thePanorama.getHfov(),
-          type: "info",
-          text: this.hotspotText,
-          cssClass: "custom-iba "+selectedHotspot.id,
-          createTooltipFunc: this.hotspotUi,
-          createTooltipArgs: "<p>" + selectedHotspot.title + "</p>",
-          //   sceneId: sceneTitle,
-        }
-        // sceneTitle
-      );
+      this.thePanorama.addHotSpot({
+        draggable: true,
+        pitch: this.thePanorama.getPitch(),
+        yaw: this.thePanorama.getYaw(),
+        hfov: this.thePanorama.getHfov(),
+        type: "info",
+        text: this.hotspotText,
+        cssClass: "interior-hotspot " + selectedHotspot.id,
+        createTooltipFunc: this.hotspotUi,
+        createTooltipArgs: "<div>" + selectedHotspot.title + "</div>",
+        //   sceneId: sceneTitle,
+      });
       let dPanorama = this.thePanorama;
       this.onMouseUp(dPanorama, selectedHotspot.id);
     },
@@ -175,22 +202,32 @@ export default {
       var span = document.createElement("span");
       span.innerHTML = args;
       hotSpotDiv.appendChild(span);
-      span.style.width = span.scrollWidth - 20 + "px";
-      span.style.marginLeft =
-        -(span.scrollWidth - hotSpotDiv.offsetWidth) / 2 + "px";
-      span.style.marginTop = -span.scrollHeight - 12 + "px";
+      span.classList.add("hotspot-label");
+      // span.style.width = span.scrollWidth - 20 + "px";
+      // span.style.marginLeft =
+      //   -(span.scrollWidth - hotSpotDiv.offsetWidth) / 2 + "px";
+      // span.style.marginTop = -span.scrollHeight - 12 + "px";
     },
     onMouseUp(p, id) {
-      
+      // console.log(id)
+      toSaveHotspot[id] = {};
+      let selectedItem = this.selectedItem.id;
+
       setTimeout(() => {
-        $(".custom-iba."+id).on("mouseup", function (e) {
-          toSaveHotspot[id] = p.mouseEventToCoords(e);
+        $(".interior-hotspot." + id).on("mouseup", function (e) {
+          let settingsToString = {
+            pitch: p.mouseEventToCoords(e)[0],
+            yaw: p.mouseEventToCoords(e)[1],
+          };
+          toSaveHotspot[id]["hotspotsID"] = id;
+          toSaveHotspot[id]["itemID"] = selectedItem;
+          toSaveHotspot[id]["hotspotSettings"] = settingsToString;
           // push to global variable
-          // console.log(p.mouseEventToCoords(e));  
-           console.log(toSaveHotspot);
+          // console.log(p.mouseEventToCoords(e));
+
+          console.log(toSaveHotspot);
         });
       }, 500);
-       
     },
     onDebugger() {
       this.debugger = !this.debugger;
@@ -248,49 +285,6 @@ export default {
         hotSpots: [],
       });
       this.thePanorama.loadScene(sceneTitle);
-
-      // this.thePanorama.addHotSpot(
-      //   {
-      //     draggable: true,
-      //     pitch: -14.94618622367452,
-      //     yaw: -174.5048581866088,
-      //     type: "scene",
-      //     text: "Passenger Seats",
-      //     //   sceneId: sceneTitle,
-      //   }
-      //   // sceneTitle
-      // );
-
-      this.thePanorama.addHotSpot(
-        {
-          draggable: true,
-          pitch: -15.691242114430711,
-          yaw: -31.176752681058826,
-          type: "info",
-          cssClass: "custom-iba madami",
-          createTooltipFunc: this.hotspotUi,
-          createTooltipArgs: "<p>Sample Dashboard</p>",
-        }
-        // sceneTitle
-      );
-      // mouseup
-      // this.thePanorama.on("touchend", function (event) {
-      //       // console.log(event);
-      //       // For pitch and yaw of center of viewer
-      //       console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
-      //       // For pitch and yaw of mouse location
-      //       // console.log(this.thePanorama.mouseEventToCoords(event));
-      //     });
-      // let dPanorama = null;
-      // dPanorama = this.thePanorama;
-
-      //   // console.log(event);
-      //   // console.log("yoyoyoyoyoyo");
-      //   // For pitch and yaw of center of viewer
-      //   // console.log(dPanorama.getPitch(), dPanorama.getYaw());
-      //   // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
-      //   // For pitch and yaw of mouse locationF
-      // this.onMouseUp(dPanorama);
     },
     selectedScene(i) {
       this.selectedItem = Object.assign({}, i);
@@ -301,6 +295,10 @@ export default {
       setTimeout(() => {
         this.loadPanorama(this.selectedItem);
       }, 300);
+      // console.log(this.selectedItem);
+
+      // Fetch all saved hotspots
+      this.fetchAllInteriorHotspots();
     },
     mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = false;
@@ -332,3 +330,81 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.interior-hotspot {
+  cursor: move;
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #d95353;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  -webkit-transition: background-color 0.2s;
+  -moz-transition: background-color 0.2s;
+  transition: background-color 0.2s;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    right: auto;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: #ffffff;
+    transition-property: transform;
+    transition-duration: 0.2s;
+    width: 2px;
+    height: 12px;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    right: auto;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: #ffffff;
+    transition-property: transform;
+    transition-duration: 0.2s;
+    width: 12px;
+    height: 2px;
+  }
+  .hotspot-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* number of lines to show */
+    -webkit-box-orient: vertical;
+
+    position: absolute;
+    left: 100%;
+    right: auto;
+    top: 0;
+    bottom: auto;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 0 8px;
+    width: 120px;
+    max-width: 120px;
+    margin-left: 5px;
+    &::before {
+      content: "";
+      width: 0px;
+      height: 0px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 8px solid #fff;
+      position: absolute;
+      right: 98%;
+      top: 0;
+      bottom: auto;
+      left: auto;
+      margin-top: 3.5px;
+    }
+  }
+}
+</style>

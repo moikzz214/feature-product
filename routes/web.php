@@ -65,3 +65,5 @@ Route::post('/hotspot/apply', 'HotspotsController@applyHotspot')->name('hotspot.
 Route::get('/hotspot/settings/{id}', 'HotspotsController@fetchSettings')->name('hotspot.settings');
 Route::post('/hotspot/setting/delete', 'HotspotsController@deleteSetting')->name('hotspot.setting.delete');
 Route::get('/hotspot/product/{id}', 'HotspotsController@getProductHotspots')->name('hotspot.product');
+
+Route::get('/hotspot/all/interior/{id}', 'HotspotsController@getAllInteriorHotspotsByProductId')->name('hotspot.all.interior');
