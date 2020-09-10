@@ -35,7 +35,7 @@
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon small title="Set Hotspot" color="primary" class="mr-2" @click="setHotspot(item)">mdi-plus-thick</v-icon>
-          <v-icon small title="Edit Hotspot" @click="editItem(item)">mdi-pencil</v-icon>
+          <v-icon small title="Edit Hotspot" @click="editItem(item)">mdi-dots-vertical</v-icon>
         </template>
       </v-data-table>
       <!-- <template v-slot:[`item.actions`]="{ item }"> -->
@@ -44,7 +44,7 @@
     <v-dialog v-model="editDialog" width="600px">
       <v-card>
         <v-card-title>
-          <span class="subtitle-1">Edit Hotspot</span>
+          <h4 class="pb-2">Manage Hotspot</h4>
         </v-card-title>
         <v-card-text>
           <form>
@@ -271,7 +271,7 @@ export default {
       let data = {
         title: this.hotspotTitle,
         product_id: this.product,
-        hotspot_for: this.currentPanel && this.currentPanel 
+        hotspot_for: this.currentPanel && this.currentPanel
       };
       axios
         .post("/hotspot/new", data)

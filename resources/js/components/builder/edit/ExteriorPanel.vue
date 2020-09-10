@@ -2,8 +2,19 @@
   <div>
     <input type="hidden" id="cur-frame" />
     <!-- <div id="results"></div> -->
+    <!-- <div class="col-12 py-0 d-flex justify-space-between align-center"> -->
+    <v-toolbar dense class="elevation-1">
+      <v-toolbar-title>Title</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <div v-show="hotspots.length != 0">
+        <v-btn color="primary" small @click="applyHotspot">
+          <v-icon small class="mr-1">mdi-check</v-icon>Save Hotspots
+        </v-btn>
+      </div>
+    </v-toolbar>
+    <!-- </div> -->
     <div>
-      <div style="min-height:450px;">
+      <div style="min-height:450px;background-color:#eee;">
         <upload-zone v-if="uploader == true" :add-items="true" @uploaded="getImagesByProduct"></upload-zone>
         <div class="spritespin-wrapper">
           <spritespin
@@ -14,36 +25,33 @@
           />
           <!-- :data-hps="`${spot.hotspotObjectToEmit.id}`" -->
           <div v-show="hotspots.length != 0" style="width:100%;">
-            <div class="hotspot-draggable-wrapper">
-              <div class="hotspot-action">
-                <v-btn small @click="closeHotspot">Cancel</v-btn>
-                <v-btn color="primary" small @click="applyHotspot">Apply</v-btn>
-              </div>
-              <div
-                v-for="(spot, index) in hotspots"
-                :key="index"
-                :data-hps="`${spot.id}`"
-                :id="`${spot.id}`"
-                :class="`cd-single-point draggable-hotspot hotspot-default-position hotspot-id-${spot.id}`"
-              >
-                <a class="cd-img-replace" href="#0">More</a>
-                <div class="cd-label d-flex align-center">
-                  <span
-                    :title="spot.title"
-                    class="px-1"
-                  >{{spot.title != null && spot.title.length > 10 ? spot.title.substring(0, 10)+'..' : spot.title}}</span>
-                  <v-btn
-                    icon
-                    x-small
-                    :title="'Delete '+spot.title+' hotspot'"
-                    class="ml-auto"
-                    @click="removeHotspotSettings(spot.id)"
-                  >
-                    <v-icon x-small color="black">mdi-close</v-icon>
-                  </v-btn>
-                </div>
+            <!-- <div class="hotspot-draggable-wrapper"> -->
+            <!-- Action Buttons -->
+            <div
+              v-for="(spot, index) in hotspots"
+              :key="index"
+              :data-hps="`${spot.id}`"
+              :id="`${spot.id}`"
+              :class="`cd-single-point draggable-hotspot hotspot-default-position hotspot-id-${spot.id}`"
+            >
+              <a class="cd-img-replace" href="#0">More</a>
+              <div class="cd-label d-flex align-center">
+                <span
+                  :title="spot.title"
+                  class="px-1"
+                >{{spot.title != null && spot.title.length > 10 ? spot.title.substring(0, 10)+'..' : spot.title}}</span>
+                <v-btn
+                  icon
+                  x-small
+                  :title="'Delete '+spot.title+' hotspot'"
+                  class="ml-auto"
+                  @click="removeHotspotSettings(spot.id)"
+                >
+                  <v-icon x-small color="black">mdi-close</v-icon>
+                </v-btn>
               </div>
             </div>
+            <!-- </div> -->
           </div>
         </div>
       </div>
@@ -120,7 +128,11 @@
 </template>
 
 <script>
-// import SingleHotspot from "./SingleHotspot"
+/**
+ * To update
+ * 1. Add onframe event - hotspots should be set when onframe is triggered.
+ */
+
 import MediaFiles from "../../MediaFiles";
 import UploadZone from "../../UploadZone";
 export default {
@@ -145,6 +157,8 @@ export default {
   },
   data() {
     return {
+        enableButton: [],
+
       settingsInCurrentScene: [],
 
       // Fetched Hotspot Settings
@@ -194,7 +208,7 @@ export default {
         height: 450,
         frames: 0,
         framesX: 6,
-        plugins: ["drag", "360", "zoom"],
+        plugins: ["drag", "360"], //"zoom"
         sense: -1,
         onFrame: function (e, data) {
           // console.log(data.frame);

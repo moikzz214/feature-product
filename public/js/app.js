@@ -4117,7 +4117,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-// import SingleHotspot from "./SingleHotspot"
+//
+//
+//
+//
+//
+//
+//
+//
+
+/**
+ * To update
+ * 1. Add onframe event - hotspots should be set when onframe is triggered.
+ */
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4142,6 +4154,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      enableButton: [],
       settingsInCurrentScene: [],
       // Fetched Hotspot Settings
       fetchedHotspotSettings: null,
@@ -4186,7 +4199,8 @@ __webpack_require__.r(__webpack_exports__);
         height: 450,
         frames: 0,
         framesX: 6,
-        plugins: ["drag", "360", "zoom"],
+        plugins: ["drag", "360"],
+        //"zoom"
         sense: -1,
         onFrame: function onFrame(e, data) {// console.log(data.frame);
         }
@@ -28122,10 +28136,54 @@ var render = function() {
     [
       _c("input", { attrs: { type: "hidden", id: "cur-frame" } }),
       _vm._v(" "),
+      _c(
+        "v-toolbar",
+        { staticClass: "elevation-1", attrs: { dense: "" } },
+        [
+          _c("v-toolbar-title", [_vm._v("Title")]),
+          _vm._v(" "),
+          _c("v-spacer"),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.hotspots.length != 0,
+                  expression: "hotspots.length != 0"
+                }
+              ]
+            },
+            [
+              _c(
+                "v-btn",
+                {
+                  attrs: { color: "primary", small: "" },
+                  on: { click: _vm.applyHotspot }
+                },
+                [
+                  _c("v-icon", { staticClass: "mr-1", attrs: { small: "" } }, [
+                    _vm._v("mdi-check")
+                  ]),
+                  _vm._v("Save Hotspots\n      ")
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
       _c("div", [
         _c(
           "div",
-          { staticStyle: { "min-height": "450px" } },
+          {
+            staticStyle: { "min-height": "450px", "background-color": "#eee" }
+          },
           [
             _vm.uploader == true
               ? _c("upload-zone", {
@@ -28159,123 +28217,78 @@ var render = function() {
                     ],
                     staticStyle: { width: "100%" }
                   },
-                  [
-                    _c(
+                  _vm._l(_vm.hotspots, function(spot, index) {
+                    return _c(
                       "div",
-                      { staticClass: "hotspot-draggable-wrapper" },
+                      {
+                        key: index,
+                        class:
+                          "cd-single-point draggable-hotspot hotspot-default-position hotspot-id-" +
+                          spot.id,
+                        attrs: { "data-hps": "" + spot.id, id: "" + spot.id }
+                      },
                       [
                         _c(
+                          "a",
+                          {
+                            staticClass: "cd-img-replace",
+                            attrs: { href: "#0" }
+                          },
+                          [_vm._v("More")]
+                        ),
+                        _vm._v(" "),
+                        _c(
                           "div",
-                          { staticClass: "hotspot-action" },
+                          { staticClass: "cd-label d-flex align-center" },
                           [
                             _c(
-                              "v-btn",
+                              "span",
                               {
-                                attrs: { small: "" },
-                                on: { click: _vm.closeHotspot }
+                                staticClass: "px-1",
+                                attrs: { title: spot.title }
                               },
-                              [_vm._v("Cancel")]
+                              [
+                                _vm._v(
+                                  _vm._s(
+                                    spot.title != null && spot.title.length > 10
+                                      ? spot.title.substring(0, 10) + ".."
+                                      : spot.title
+                                  )
+                                )
+                              ]
                             ),
                             _vm._v(" "),
                             _c(
                               "v-btn",
                               {
-                                attrs: { color: "primary", small: "" },
-                                on: { click: _vm.applyHotspot }
+                                staticClass: "ml-auto",
+                                attrs: {
+                                  icon: "",
+                                  "x-small": "",
+                                  title: "Delete " + spot.title + " hotspot"
+                                },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.removeHotspotSettings(spot.id)
+                                  }
+                                }
                               },
-                              [_vm._v("Apply")]
+                              [
+                                _c(
+                                  "v-icon",
+                                  { attrs: { "x-small": "", color: "black" } },
+                                  [_vm._v("mdi-close")]
+                                )
+                              ],
+                              1
                             )
                           ],
                           1
-                        ),
-                        _vm._v(" "),
-                        _vm._l(_vm.hotspots, function(spot, index) {
-                          return _c(
-                            "div",
-                            {
-                              key: index,
-                              class:
-                                "cd-single-point draggable-hotspot hotspot-default-position hotspot-id-" +
-                                spot.id,
-                              attrs: {
-                                "data-hps": "" + spot.id,
-                                id: "" + spot.id
-                              }
-                            },
-                            [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "cd-img-replace",
-                                  attrs: { href: "#0" }
-                                },
-                                [_vm._v("More")]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                { staticClass: "cd-label d-flex align-center" },
-                                [
-                                  _c(
-                                    "span",
-                                    {
-                                      staticClass: "px-1",
-                                      attrs: { title: spot.title }
-                                    },
-                                    [
-                                      _vm._v(
-                                        _vm._s(
-                                          spot.title != null &&
-                                            spot.title.length > 10
-                                            ? spot.title.substring(0, 10) + ".."
-                                            : spot.title
-                                        )
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-btn",
-                                    {
-                                      staticClass: "ml-auto",
-                                      attrs: {
-                                        icon: "",
-                                        "x-small": "",
-                                        title:
-                                          "Delete " + spot.title + " hotspot"
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.removeHotspotSettings(
-                                            spot.id
-                                          )
-                                        }
-                                      }
-                                    },
-                                    [
-                                      _c(
-                                        "v-icon",
-                                        {
-                                          attrs: {
-                                            "x-small": "",
-                                            color: "black"
-                                          }
-                                        },
-                                        [_vm._v("mdi-close")]
-                                      )
-                                    ],
-                                    1
-                                  )
-                                ],
-                                1
-                              )
-                            ]
-                          )
-                        })
-                      ],
-                      2
+                        )
+                      ]
                     )
-                  ]
+                  }),
+                  0
                 )
               ],
               1
@@ -28786,7 +28799,7 @@ var render = function() {
                                 }
                               }
                             },
-                            [_vm._v("mdi-pencil")]
+                            [_vm._v("mdi-dots-vertical")]
                           )
                         ]
                       }
@@ -28817,9 +28830,7 @@ var render = function() {
             "v-card",
             [
               _c("v-card-title", [
-                _c("span", { staticClass: "subtitle-1" }, [
-                  _vm._v("Edit Hotspot")
-                ])
+                _c("h4", { staticClass: "pb-2" }, [_vm._v("Manage Hotspot")])
               ]),
               _vm._v(" "),
               _c("v-card-text", [
