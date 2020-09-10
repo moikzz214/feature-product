@@ -4932,6 +4932,7 @@ var toSaveHotspot = [];
   data: function data() {
     return {
       editingTitle: "",
+      fetchedHotspots: [],
       toDelete: [],
       deleteDialog: false,
       loading: false,
@@ -4954,15 +4955,17 @@ var toSaveHotspot = [];
   },
   watch: {
     selectedInteriorHotspot: function selectedInteriorHotspot(v) {
-      console.log("the selected hotspot: " + v.id);
+      console.log(v);
       this.addHotspot(v);
     }
   },
   methods: {
     fetchAllInteriorHotspots: function fetchAllInteriorHotspots() {
+      var _this = this;
+
       axios.get("/hotspot/all/interior/" + this.product).then(function (response) {
         // Add hotspots here
-        console.log(response.data.settings);
+        _this.fetchedHotspots = response.data.settings;
       })["catch"](function (error) {
         console.log("Error Fetching Interior Hotspots");
         console.log(error);
@@ -4986,6 +4989,22 @@ var toSaveHotspot = [];
     },
     removeHotspot: function removeHotspot() {// need hotspotid
       // this.thePanorama.removeHotSpot();
+    },
+    setHotspotFromDB: function setHotspotFromDB(selectedHotspot) {
+      var interiorSettings = JSON.parse(selectedHotspot.hotspot_settings[0].hotspot_settings);
+      this.thePanorama.addHotSpot({
+        draggable: true,
+        pitch: interiorSettings.pitch,
+        yaw: interiorSettings.yaw,
+        hfov: this.thePanorama.getHfov(),
+        type: "info",
+        text: this.hotspotText,
+        cssClass: "interior-hotspot " + selectedHotspot.id,
+        createTooltipFunc: this.hotspotUi,
+        createTooltipArgs: "<div>" + selectedHotspot.title + "</div>"
+      });
+      var dPanorama = this.thePanorama;
+      this.onMouseUp(dPanorama, selectedHotspot.id);
     },
     addHotspot: function addHotspot(selectedHotspot) {
       this.thePanorama.addHotSpot({
@@ -5016,7 +5035,7 @@ var toSaveHotspot = [];
       // span.style.marginTop = -span.scrollHeight - 12 + "px";
     },
     onMouseUp: function onMouseUp(p, id) {
-      // console.log(id)
+      //   console.log(p);
       toSaveHotspot[id] = {};
       var selectedItem = this.selectedItem.id;
       setTimeout(function () {
@@ -5043,17 +5062,17 @@ var toSaveHotspot = [];
       this.deleteDialog = true;
     },
     confirmDelete: function confirmDelete(item) {
-      var _this = this;
+      var _this2 = this;
 
       axios.post("/item/delete/" + item).then(function (response) {
-        _this.getScenes();
+        _this2.getScenes();
 
-        _this.deleteDialog = false;
-        _this.selectedItem = [];
+        _this2.deleteDialog = false;
+        _this2.selectedItem = [];
         console.log(response);
       })["catch"](function (error) {
         console.log("Error: " + error);
-        console.log(_this.scenes);
+        console.log(_this2.scenes);
       });
     },
     loadPanorama: function loadPanorama() {
@@ -5078,29 +5097,33 @@ var toSaveHotspot = [];
         pitch: -16.834687202204037,
         yaw: -36.30724382948786,
         type: "equirectangular",
-        // panorama: "http://127.0.0.1:8000/product/images/panoramic/20200826_120720.jpg",
-        // panorama: "http://127.0.0.1:8000/product/images/panoramic/panoramic-4k-optimized.jpg",
         panorama: this.baseUrl + "/storage/uploads/user-" + this.authUser.id + "/" + i.media_file.path,
         hotSpots: []
       });
       this.thePanorama.loadScene(sceneTitle);
     },
     selectedScene: function selectedScene(i) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.selectedItem = Object.assign({}, i);
 
       if (this.thePanorama != null) {
-        console.log("Item is null");
         this.thePanorama.destroy();
-      }
+        console.log("Destroyed Panorama");
+      } // Fetch all saved hotspots
 
-      setTimeout(function () {
-        _this2.loadPanorama(_this2.selectedItem);
-      }, 300); // console.log(this.selectedItem);
-      // Fetch all saved hotspots
 
       this.fetchAllInteriorHotspots();
+      setTimeout(function () {
+        // To prevent "TypeError: Cannot read property 'classList' of null"
+        _this3.loadPanorama(_this3.selectedItem);
+      }, 300);
+      setTimeout(function () {
+        // To prevent empty hotspots on first load
+        _this3.fetchedHotspots.map(function (hotspot) {
+          _this3.setHotspotFromDB(hotspot);
+        });
+      }, 600);
     },
     mediaResponse: function mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = false;
@@ -5114,15 +5137,15 @@ var toSaveHotspot = [];
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
     },
     getScenes: function getScenes() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.loading = true;
       axios.get("/item/scenes/by-product/" + this.product).then(function (response) {
-        _this3.scenes = Object.assign({}, response.data);
-        _this3.loading = false;
+        _this4.scenes = Object.assign({}, response.data);
+        _this4.loading = false;
       })["catch"](function (error) {
         console.log("Error: " + error);
-        console.log(_this3.scenes);
+        console.log(_this4.scenes);
       });
     }
   },
@@ -5202,7 +5225,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, ".interior-hotspot {\n  cursor: move;\n  position: absolute;\n  z-index: 2;\n  display: block;\n  width: 25px;\n  height: 25px;\n  border-radius: 50%;\n  background: #d95353;\n  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);\n  transition: background-color 0.2s;\n}\n.interior-hotspot::after {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n  width: 2px;\n  height: 12px;\n}\n.interior-hotspot::before {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n  width: 12px;\n  height: 2px;\n}\n.interior-hotspot .hotspot-label {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: -webkit-box;\n  -webkit-line-clamp: 1;\n  /* number of lines to show */\n  -webkit-box-orient: vertical;\n  position: absolute;\n  left: 100%;\n  right: auto;\n  top: 0;\n  bottom: auto;\n  background-color: #fff;\n  border-radius: 10px;\n  padding: 0 8px;\n  width: 120px;\n  max-width: 120px;\n  margin-left: 5px;\n}\n.interior-hotspot .hotspot-label::before {\n  content: \"\";\n  width: 0px;\n  height: 0px;\n  border-top: 8px solid transparent;\n  border-bottom: 8px solid transparent;\n  border-right: 8px solid #fff;\n  position: absolute;\n  right: 98%;\n  top: 0;\n  bottom: auto;\n  left: auto;\n  margin-top: 3.5px;\n}", ""]);
+exports.push([module.i, ".interior-hotspot {\n  cursor: move;\n  position: absolute;\n  z-index: 2;\n  display: block;\n  width: 25px;\n  height: 25px;\n  border-radius: 50%;\n  background: #d95353;\n  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);\n  transition: background-color 0.2s;\n}\n.interior-hotspot::after {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n  width: 2px;\n  height: 12px;\n}\n.interior-hotspot::before {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n  width: 12px;\n  height: 2px;\n}\n.interior-hotspot .hotspot-label {\n  line-height: 24px;\n  position: absolute;\n  left: 100%;\n  right: auto;\n  top: 0;\n  bottom: auto;\n  background-color: #fff;\n  border-radius: 10px;\n  padding: 0 8px;\n  width: 120px;\n  max-width: 120px;\n  margin-left: 5px;\n}\n.interior-hotspot .hotspot-label::before {\n  content: \"\";\n  width: 0px;\n  height: 0px;\n  border-top: 8px solid transparent;\n  border-bottom: 8px solid transparent;\n  border-right: 8px solid #fff;\n  position: absolute;\n  right: 98%;\n  top: 0;\n  bottom: auto;\n  left: auto;\n  margin-top: 4px;\n}", ""]);
 
 // exports
 
@@ -29304,8 +29327,7 @@ var render = function() {
               _c(
                 "v-btn",
                 {
-                  staticClass: "primary--text",
-                  attrs: { small: "", text: "" },
+                  attrs: { small: "", color: "primary" },
                   on: {
                     click: function($event) {
                       return _vm.saveHotspotSettings()
@@ -89628,8 +89650,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

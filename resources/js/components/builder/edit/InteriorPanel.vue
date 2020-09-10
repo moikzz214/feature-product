@@ -51,7 +51,7 @@
       <v-toolbar dense class="elevation-1">
         <v-toolbar-title>Title</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn small text class="primary--text" @click="saveHotspotSettings()">
+        <v-btn small color="primary" @click="saveHotspotSettings()">
           <v-icon small class="mr-1">mdi-check</v-icon>Save Hotspots
         </v-btn>
       </v-toolbar>
@@ -113,6 +113,8 @@ export default {
     return {
       editingTitle: "",
 
+      fetchedHotspots: [],
+
       toDelete: [],
       deleteDialog: false,
       loading: false,
@@ -138,17 +140,17 @@ export default {
   },
   watch: {
     selectedInteriorHotspot: function (v) {
-      console.log("the selected hotspot: " + v.id);
+      console.log(v);
       this.addHotspot(v);
     },
   },
   methods: {
     fetchAllInteriorHotspots() {
       axios
-        .get("/hotspot/all/interior/"+this.product)
+        .get("/hotspot/all/interior/" + this.product)
         .then((response) => {
           // Add hotspots here
-          console.log(response.data.settings);
+          this.fetchedHotspots = response.data.settings;
         })
         .catch((error) => {
           console.log("Error Fetching Interior Hotspots");
@@ -178,6 +180,24 @@ export default {
     removeHotspot() {
       // need hotspotid
       // this.thePanorama.removeHotSpot();
+    },
+    setHotspotFromDB(selectedHotspot) {
+      let interiorSettings = JSON.parse(
+        selectedHotspot.hotspot_settings[0].hotspot_settings
+      );
+      this.thePanorama.addHotSpot({
+        draggable: true,
+        pitch: interiorSettings.pitch,
+        yaw: interiorSettings.yaw,
+        hfov: this.thePanorama.getHfov(),
+        type: "info",
+        text: this.hotspotText,
+        cssClass: "interior-hotspot " + selectedHotspot.id,
+        createTooltipFunc: this.hotspotUi,
+        createTooltipArgs: "<div>" + selectedHotspot.title + "</div>",
+      });
+      let dPanorama = this.thePanorama;
+      this.onMouseUp(dPanorama, selectedHotspot.id);
     },
     addHotspot(selectedHotspot) {
       this.thePanorama.addHotSpot({
@@ -209,7 +229,7 @@ export default {
       // span.style.marginTop = -span.scrollHeight - 12 + "px";
     },
     onMouseUp(p, id) {
-      // console.log(id)
+      //   console.log(p);
       toSaveHotspot[id] = {};
       let selectedItem = this.selectedItem.id;
 
@@ -274,8 +294,6 @@ export default {
         pitch: -16.834687202204037,
         yaw: -36.30724382948786,
         type: "equirectangular",
-        // panorama: "http://127.0.0.1:8000/product/images/panoramic/20200826_120720.jpg",
-        // panorama: "http://127.0.0.1:8000/product/images/panoramic/panoramic-4k-optimized.jpg",
         panorama:
           this.baseUrl +
           "/storage/uploads/user-" +
@@ -289,16 +307,25 @@ export default {
     selectedScene(i) {
       this.selectedItem = Object.assign({}, i);
       if (this.thePanorama != null) {
-        console.log("Item is null");
         this.thePanorama.destroy();
+        console.log("Destroyed Panorama");
       }
-      setTimeout(() => {
-        this.loadPanorama(this.selectedItem);
-      }, 300);
-      // console.log(this.selectedItem);
 
       // Fetch all saved hotspots
       this.fetchAllInteriorHotspots();
+
+      setTimeout(() => {
+        // To prevent "TypeError: Cannot read property 'classList' of null"
+        this.loadPanorama(this.selectedItem);
+      }, 300);
+
+      setTimeout(() => {
+        // To prevent empty hotspots on first load
+        this.fetchedHotspots.map((hotspot) => {
+          this.setHotspotFromDB(hotspot);
+        });
+      }, 600);
+
     },
     mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = false;
@@ -374,12 +401,13 @@ export default {
     height: 2px;
   }
   .hotspot-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1; /* number of lines to show */
-    -webkit-box-orient: vertical;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+    // display: -webkit-box;
+    // -webkit-line-clamp: 1; /* number of lines to show */
+    // -webkit-box-orient: vertical;
 
+    line-height: 24px;
     position: absolute;
     left: 100%;
     right: auto;
@@ -403,7 +431,7 @@ export default {
       top: 0;
       bottom: auto;
       left: auto;
-      margin-top: 3.5px;
+      margin-top: 4px;
     }
   }
 }
