@@ -3450,6 +3450,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -3471,15 +3476,22 @@ __webpack_require__.r(__webpack_exports__);
       activateExterior: false,
       activateInterior: true,
       selected_item: null,
-      selected_hotspot_prop: null
+      selected_hotspot_prop: null,
+      selected_interior_hotspot_prop: null
     };
   },
   methods: {
     theSelectedItem: function theSelectedItem(v) {
       this.selected_item = v;
     },
+    hotspotToInterior: function hotspotToInterior(v) {
+      // Check if hotspot added are equal
+      if (JSON.stringify(this.selected_interior_hotspot_prop) != JSON.stringify(v)) {
+        this.selected_interior_hotspot_prop = v;
+      }
+    },
     hotspotToSet: function hotspotToSet(v) {
-      // set condition
+      // Check if hotspot added are equal
       if (JSON.stringify(this.selected_hotspot_prop) != JSON.stringify(v)) {
         this.selected_hotspot_prop = v;
       }
@@ -4751,24 +4763,28 @@ __webpack_require__.r(__webpack_exports__);
     },
     setHotspot: function setHotspot(h) {
       // console.log(h)
-      var hotspotToEmit = {
-        id: h.id,
-        item_id: this.selectedItem,
-        hotspot_settings: {
-          top: '50%',
-          left: '50%'
-        },
-        title: h.title // hotspotObjectToEmit: h,
-
-      };
-      console.log(hotspotToEmit); // console.log(this.selectedItem);
-
-      if (this.selectedItem.length != 0) {
-        this.$emit("emitHotspot", hotspotToEmit);
-        this.toDisableHotspot.push(h.id);
+      if (this.currentPanel == 'interior') {
+        this.$emit("emitInteriorHotspot", h);
       } else {
-        this.setButton.status = false;
-        this.setButton.msg = "Please select an item first";
+        var hotspotToEmit = {
+          id: h.id,
+          item_id: this.selectedItem,
+          hotspot_settings: {
+            top: '50%',
+            left: '50%'
+          },
+          title: h.title // hotspotObjectToEmit: h,
+
+        };
+        console.log(hotspotToEmit); // console.log(this.selectedItem);
+
+        if (this.selectedItem.length != 0) {
+          this.$emit("emitHotspot", hotspotToEmit);
+          this.toDisableHotspot.push(h.id);
+        } else {
+          this.setButton.status = false;
+          this.setButton.msg = "Please select an item first";
+        }
       }
     },
     getAllHotspots: function getAllHotspots() {
@@ -4891,9 +4907,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
+var toSaveHotspot = [];
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4903,6 +4917,10 @@ __webpack_require__.r(__webpack_exports__);
       "default": ""
     },
     authUser: {
+      type: Object,
+      "default": null
+    },
+    selectedInteriorHotspot: {
       type: Object,
       "default": null
     }
@@ -4933,38 +4951,54 @@ __webpack_require__.r(__webpack_exports__);
       hotspotText: "this is the hotspot Text"
     };
   },
+  watch: {
+    selectedInteriorHotspot: function selectedInteriorHotspot(v) {
+      console.log("the selected hotspot: " + v.id);
+      this.addHotspot(v);
+    }
+  },
   methods: {
-    removeHotspot: function removeHotspot() {
+    removeHotspot: function removeHotspot() {// need hotspotid
       // this.thePanorama.removeHotSpot();
-      this.thePanorama.on("mouseup", function (event) {
-        console.log(event); // For pitch and yaw of center of viewer
-        // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
-        // For pitch and yaw of mouse location
-        // console.log(this.thePanorama.mouseEventToCoords(event));
-      });
     },
-    addHotspot: function addHotspot() {
-      /**
-       * Select scene
-       * Select the hotspot
-       * Change the cursor inside the panellum or not
-       * Click inside the panellum
-       * Click apply to save
-       */
-      //   console.log(this.thePanorama.getPitch());
-      //   console.log(this.thePanorama.getYaw());
-      //   console.log(this.thePanorama.getHfov());
-      // console.log(this.thePanorama);
+    addHotspot: function addHotspot(selectedHotspot) {
       this.thePanorama.addHotSpot({
+        id: "test",
         draggable: true,
         pitch: this.thePanorama.getPitch(),
         yaw: this.thePanorama.getYaw(),
         hfov: this.thePanorama.getHfov(),
         type: "info",
-        text: this.hotspotText //   sceneId: sceneTitle,
+        text: this.hotspotText,
+        cssClass: "custom-iba " + selectedHotspot.id,
+        createTooltipFunc: this.hotspotUi,
+        createTooltipArgs: "<p>" + selectedHotspot.title + "</p>" //   sceneId: sceneTitle,
 
       } // sceneTitle
       );
+      var dPanorama = this.thePanorama;
+      this.onMouseUp(dPanorama, selectedHotspot.id);
+    },
+    hotspotUi: function hotspotUi(hotSpotDiv, args) {
+      // console.log(hotSpotDiv);
+      // console.log(args);
+      hotSpotDiv.classList.add("custom-tooltip");
+      var span = document.createElement("span");
+      span.innerHTML = args;
+      hotSpotDiv.appendChild(span);
+      span.style.width = span.scrollWidth - 20 + "px";
+      span.style.marginLeft = -(span.scrollWidth - hotSpotDiv.offsetWidth) / 2 + "px";
+      span.style.marginTop = -span.scrollHeight - 12 + "px";
+    },
+    onMouseUp: function onMouseUp(p, id) {
+      setTimeout(function () {
+        $(".custom-iba." + id).on("mouseup", function (e) {
+          toSaveHotspot[id] = p.mouseEventToCoords(e); // push to global variable
+          // console.log(p.mouseEventToCoords(e));  
+
+          console.log(toSaveHotspot);
+        });
+      }, 500);
     },
     onDebugger: function onDebugger() {
       this["debugger"] = !this["debugger"];
@@ -4997,8 +5031,8 @@ __webpack_require__.r(__webpack_exports__);
         hotSpotDebug: true,
         autoLoad: false,
         "default": {
-          firstScene: sceneTitle,
           // author: "Matthew Petroff",
+          firstScene: sceneTitle,
           sceneFadeDuration: 1000
         },
         scenes: {}
@@ -5015,34 +5049,44 @@ __webpack_require__.r(__webpack_exports__);
         panorama: this.baseUrl + "/storage/uploads/user-" + this.authUser.id + "/" + i.media_file.path,
         hotSpots: []
       });
-      this.thePanorama.loadScene(sceneTitle);
-      this.thePanorama.addHotSpot({
-        draggable: true,
-        pitch: -14.94618622367452,
-        yaw: -174.5048581866088,
-        type: "scene",
-        text: "Passenger Seats" //   sceneId: sceneTitle,
+      this.thePanorama.loadScene(sceneTitle); // this.thePanorama.addHotSpot(
+      //   {
+      //     draggable: true,
+      //     pitch: -14.94618622367452,
+      //     yaw: -174.5048581866088,
+      //     type: "scene",
+      //     text: "Passenger Seats",
+      //     //   sceneId: sceneTitle,
+      //   }
+      //   // sceneTitle
+      // );
 
-      } // sceneTitle
-      );
       this.thePanorama.addHotSpot({
         draggable: true,
-        pitch: -27.263801777525146,
-        yaw: 5.051667495791323,
+        pitch: -15.691242114430711,
+        yaw: -31.176752681058826,
         type: "info",
-        text: "Dashboard" //   cssClass: "custom-hotspot",
-        //   createTooltipFunc: hotspot,
-        //   createTooltipArgs:
-        //     "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
-
+        cssClass: "custom-iba madami",
+        createTooltipFunc: this.hotspotUi,
+        createTooltipArgs: "<p>Sample Dashboard</p>"
       } // sceneTitle
-      );
-      this.thePanorama.on("mouseup", function (event) {
-        console.log(event); // For pitch and yaw of center of viewer
-        // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
-        // For pitch and yaw of mouse location
-        // console.log(this.thePanorama.mouseEventToCoords(event));
-      }); // console.log(this.thePanorama);
+      ); // mouseup
+      // this.thePanorama.on("touchend", function (event) {
+      //       // console.log(event);
+      //       // For pitch and yaw of center of viewer
+      //       console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
+      //       // For pitch and yaw of mouse location
+      //       // console.log(this.thePanorama.mouseEventToCoords(event));
+      //     });
+      // let dPanorama = null;
+      // dPanorama = this.thePanorama;
+      //   // console.log(event);
+      //   // console.log("yoyoyoyoyoyo");
+      //   // For pitch and yaw of center of viewer
+      //   // console.log(dPanorama.getPitch(), dPanorama.getYaw());
+      //   // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
+      //   // For pitch and yaw of mouse locationF
+      // this.onMouseUp(dPanorama);
     },
     selectedScene: function selectedScene(i) {
       var _this2 = this;
@@ -5050,7 +5094,7 @@ __webpack_require__.r(__webpack_exports__);
       this.selectedItem = Object.assign({}, i);
 
       if (this.thePanorama != null) {
-        console.log("is null");
+        console.log("Item is null");
         this.thePanorama.destroy();
       }
 
@@ -5067,21 +5111,19 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     openMediaFiles: function openMediaFiles() {
-      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus; // this.mediaFilesSettings.data = item;
-      // console.log(this.mediaFilesSettings.dialogStatus);
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
     },
     getScenes: function getScenes() {
       var _this3 = this;
 
-      // if (this.scenes.length == 0) {
       this.loading = true;
       axios.get("/item/scenes/by-product/" + this.product).then(function (response) {
         _this3.scenes = Object.assign({}, response.data);
-        _this3.loading = false; // console.log(this.scenes);
+        _this3.loading = false;
       })["catch"](function (error) {
         console.log("Error: " + error);
         console.log(_this3.scenes);
-      }); // }
+      });
     }
   },
   created: function created() {
@@ -27219,7 +27261,10 @@ var render = function() {
                   product: this.$route.params.id,
                   "current-panel": _vm.selected_panel_prop
                 },
-                on: { emitHotspot: _vm.hotspotToSet }
+                on: {
+                  emitHotspot: _vm.hotspotToSet,
+                  emitInteriorHotspot: _vm.hotspotToInterior
+                }
               })
             ],
             1
@@ -27251,7 +27296,9 @@ var render = function() {
                   _c("interior-panel", {
                     attrs: {
                       "auth-user": _vm.authUser,
-                      product: this.$route.params.id
+                      product: this.$route.params.id,
+                      "selected-interior-hotspot":
+                        _vm.selected_interior_hotspot_prop
                     }
                   })
                 ],
@@ -28625,8 +28672,8 @@ var render = function() {
                           _c("span", [
                             _vm._v(
                               _vm._s(
-                                item.title.length > 20
-                                  ? item.title.substring(0, 20) + ".."
+                                item.title.length > 15
+                                  ? item.title.substring(0, 15) + ".."
                                   : item.title
                               )
                             )
@@ -29252,31 +29299,19 @@ var render = function() {
               _c(
                 "v-btn",
                 {
-                  staticClass: "mr-1 red--text",
-                  attrs: { small: "", text: "" },
-                  on: { click: _vm.removeHotspot }
-                },
-                [
-                  _c("v-icon", { staticClass: "mr-1", attrs: { small: "" } }, [
-                    _vm._v("mdi-close")
-                  ]),
-                  _vm._v("Remove\n      ")
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                {
                   staticClass: "primary--text",
                   attrs: { small: "", text: "" },
-                  on: { click: _vm.addHotspot }
+                  on: {
+                    click: function($event) {
+                      return _vm.addHotspot(555)
+                    }
+                  }
                 },
                 [
                   _c("v-icon", { staticClass: "mr-1", attrs: { small: "" } }, [
                     _vm._v("mdi-check")
                   ]),
-                  _vm._v("Apply Hotspot\n      ")
+                  _vm._v("Save Hotspots\n      ")
                 ],
                 1
               )

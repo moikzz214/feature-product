@@ -31,7 +31,7 @@
         hide-default-footer
       >
         <template v-slot:[`item.title`]="{ item }">
-           <span>{{item.title.length > 20 ? item.title.substring(0, 20)+'..' : item.title}}</span>
+           <span>{{item.title.length > 15 ? item.title.substring(0, 15)+'..' : item.title}}</span>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon small title="Set Hotspot" color="primary" class="mr-2" @click="setHotspot(item)">mdi-plus-thick</v-icon>
@@ -357,6 +357,9 @@ export default {
     },
     setHotspot(h) {
       // console.log(h)
+    if(this.currentPanel == 'interior'){
+      this.$emit("emitInteriorHotspot", h);
+    }else{
       let hotspotToEmit = {
         id: h.id,
         item_id: this.selectedItem,
@@ -376,6 +379,7 @@ export default {
         this.setButton.status = false;
         this.setButton.msg = "Please select an item first";
       }
+    }
     },
     getAllHotspots() {
       let panel = this.currentPanel;

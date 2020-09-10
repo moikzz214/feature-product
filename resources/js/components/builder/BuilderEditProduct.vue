@@ -24,6 +24,7 @@
           :product="this.$route.params.id"
           :current-panel="selected_panel_prop"
           @emitHotspot="hotspotToSet"
+          @emitInteriorHotspot="hotspotToInterior"
         />
       </v-col>
       <v-col v-if="activateExterior == true" cols="9">
@@ -35,7 +36,11 @@
         />
       </v-col>
       <v-col v-if="activateInterior == true" cols="9">
-        <interior-panel :auth-user="authUser" :product="this.$route.params.id" />
+        <interior-panel
+          :auth-user="authUser"
+          :product="this.$route.params.id"
+          :selected-interior-hotspot="selected_interior_hotspot_prop"
+        />
       </v-col>
     </v-row>
   </div>
@@ -66,15 +71,21 @@ export default {
       selected_item: null,
       selected_hotspot_prop: null,
 
-
+      selected_interior_hotspot_prop: null,
     };
   },
   methods: {
     theSelectedItem(v) {
       this.selected_item = v;
     },
+    hotspotToInterior(v) {
+      // Check if hotspot added are equal
+      if (JSON.stringify(this.selected_interior_hotspot_prop) != JSON.stringify(v)) {
+        this.selected_interior_hotspot_prop = v;
+      }
+    },
     hotspotToSet(v) {
-      // set condition
+      // Check if hotspot added are equal
       if (JSON.stringify(this.selected_hotspot_prop) != JSON.stringify(v)) {
         this.selected_hotspot_prop = v;
       }
@@ -91,7 +102,7 @@ export default {
         this.activateInterior = true;
         this.activateExterior = false;
       }
-    }
+    },
   },
 };
 </script>

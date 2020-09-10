@@ -66,11 +66,8 @@
       <v-toolbar dense class="elevation-1">
         <v-toolbar-title>Title</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn small text class="mr-1 red--text" @click="removeHotspot">
-          <v-icon small class="mr-1">mdi-close</v-icon>Remove
-        </v-btn>
-        <v-btn small text class="primary--text" @click="addHotspot">
-          <v-icon small class="mr-1">mdi-check</v-icon>Apply Hotspot
+        <v-btn small text class="primary--text" @click="addHotspot(555)">
+          <v-icon small class="mr-1">mdi-check</v-icon>Save Hotspots
         </v-btn>
       </v-toolbar>
     </div>
@@ -91,6 +88,7 @@
 </template>
 
 <script>
+var toSaveHotspot = [];
 import MediaFiles from "../../MediaFiles";
 import CreateScene from "./CreateScene";
 export default {
@@ -103,6 +101,10 @@ export default {
       type: Object,
       default: null,
     },
+    selectedInteriorHotspot: {
+      type: Object,
+      default: null,
+    },
   },
   components: {
     MediaFiles,
@@ -110,6 +112,8 @@ export default {
   },
   data() {
     return {
+       
+
       toDelete: [],
       deleteDialog: false,
       loading: false,
@@ -133,43 +137,60 @@ export default {
       hotspotText: "this is the hotspot Text",
     };
   },
+  watch: {
+    selectedInteriorHotspot: function (v) {
+      console.log("the selected hotspot: " + v.id);
+      this.addHotspot(v);
+    },
+  },
   methods: {
     removeHotspot() {
+      // need hotspotid
       // this.thePanorama.removeHotSpot();
-      this.thePanorama.on("mouseup", function (event) {
-        console.log(event);
-        // For pitch and yaw of center of viewer
-        // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
-        // For pitch and yaw of mouse location
-        // console.log(this.thePanorama.mouseEventToCoords(event));
-      });
     },
-    addHotspot() {
-      /**
-       * Select scene
-       * Select the hotspot
-       * Change the cursor inside the panellum or not
-       * Click inside the panellum
-       * Click apply to save
-       */
-
-      //   console.log(this.thePanorama.getPitch());
-      //   console.log(this.thePanorama.getYaw());
-      //   console.log(this.thePanorama.getHfov());
-
-      // console.log(this.thePanorama);
+    addHotspot(selectedHotspot) {
       this.thePanorama.addHotSpot(
         {
+          id: "test",
           draggable: true,
           pitch: this.thePanorama.getPitch(),
           yaw: this.thePanorama.getYaw(),
           hfov: this.thePanorama.getHfov(),
           type: "info",
           text: this.hotspotText,
+          cssClass: "custom-iba "+selectedHotspot.id,
+          createTooltipFunc: this.hotspotUi,
+          createTooltipArgs: "<p>" + selectedHotspot.title + "</p>",
           //   sceneId: sceneTitle,
         }
         // sceneTitle
       );
+      let dPanorama = this.thePanorama;
+      this.onMouseUp(dPanorama, selectedHotspot.id);
+    },
+    hotspotUi(hotSpotDiv, args) {
+      // console.log(hotSpotDiv);
+      // console.log(args);
+      hotSpotDiv.classList.add("custom-tooltip");
+      var span = document.createElement("span");
+      span.innerHTML = args;
+      hotSpotDiv.appendChild(span);
+      span.style.width = span.scrollWidth - 20 + "px";
+      span.style.marginLeft =
+        -(span.scrollWidth - hotSpotDiv.offsetWidth) / 2 + "px";
+      span.style.marginTop = -span.scrollHeight - 12 + "px";
+    },
+    onMouseUp(p, id) {
+      
+      setTimeout(() => {
+        $(".custom-iba."+id).on("mouseup", function (e) {
+          toSaveHotspot[id] = p.mouseEventToCoords(e);
+          // push to global variable
+          // console.log(p.mouseEventToCoords(e));  
+           console.log(toSaveHotspot);
+        });
+      }, 500);
+       
     },
     onDebugger() {
       this.debugger = !this.debugger;
@@ -202,8 +223,8 @@ export default {
         hotSpotDebug: true,
         autoLoad: false,
         default: {
-          firstScene: sceneTitle,
           // author: "Matthew Petroff",
+          firstScene: sceneTitle,
           sceneFadeDuration: 1000,
         },
         scenes: {},
@@ -228,46 +249,53 @@ export default {
       });
       this.thePanorama.loadScene(sceneTitle);
 
-      this.thePanorama.addHotSpot(
-        {
-          draggable: true,
-          pitch: -14.94618622367452,
-          yaw: -174.5048581866088,
-          type: "scene",
-          text: "Passenger Seats",
-          //   sceneId: sceneTitle,
-        }
-        // sceneTitle
-      );
+      // this.thePanorama.addHotSpot(
+      //   {
+      //     draggable: true,
+      //     pitch: -14.94618622367452,
+      //     yaw: -174.5048581866088,
+      //     type: "scene",
+      //     text: "Passenger Seats",
+      //     //   sceneId: sceneTitle,
+      //   }
+      //   // sceneTitle
+      // );
 
       this.thePanorama.addHotSpot(
         {
           draggable: true,
-          pitch: -27.263801777525146,
-          yaw: 5.051667495791323,
+          pitch: -15.691242114430711,
+          yaw: -31.176752681058826,
           type: "info",
-          text: "Dashboard",
-          //   cssClass: "custom-hotspot",
-          //   createTooltipFunc: hotspot,
-          //   createTooltipArgs:
-          //     "<p>Sample Dashboard</p><img width='100%' height='auto' src='images/panoramic/dashboard.png' alt='Gallega Demo'/>",
+          cssClass: "custom-iba madami",
+          createTooltipFunc: this.hotspotUi,
+          createTooltipArgs: "<p>Sample Dashboard</p>",
         }
         // sceneTitle
       );
+      // mouseup
+      // this.thePanorama.on("touchend", function (event) {
+      //       // console.log(event);
+      //       // For pitch and yaw of center of viewer
+      //       console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
+      //       // For pitch and yaw of mouse location
+      //       // console.log(this.thePanorama.mouseEventToCoords(event));
+      //     });
+      // let dPanorama = null;
+      // dPanorama = this.thePanorama;
 
-      this.thePanorama.on("mouseup", function (event) {
-        console.log(event);
-        // For pitch and yaw of center of viewer
-        // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
-        // For pitch and yaw of mouse location
-        // console.log(this.thePanorama.mouseEventToCoords(event));
-      });
-      // console.log(this.thePanorama);
+      //   // console.log(event);
+      //   // console.log("yoyoyoyoyoyo");
+      //   // For pitch and yaw of center of viewer
+      //   // console.log(dPanorama.getPitch(), dPanorama.getYaw());
+      //   // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
+      //   // For pitch and yaw of mouse locationF
+      // this.onMouseUp(dPanorama);
     },
     selectedScene(i) {
       this.selectedItem = Object.assign({}, i);
       if (this.thePanorama != null) {
-        console.log("is null");
+        console.log("Item is null");
         this.thePanorama.destroy();
       }
       setTimeout(() => {
@@ -284,24 +312,19 @@ export default {
     openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
-      // this.mediaFilesSettings.data = item;
-      // console.log(this.mediaFilesSettings.dialogStatus);
     },
     getScenes() {
-      // if (this.scenes.length == 0) {
       this.loading = true;
       axios
         .get("/item/scenes/by-product/" + this.product)
         .then((response) => {
           this.scenes = Object.assign({}, response.data);
           this.loading = false;
-          // console.log(this.scenes);
         })
         .catch((error) => {
           console.log("Error: " + error);
           console.log(this.scenes);
         });
-      // }
     },
   },
   created() {
@@ -309,6 +332,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>
