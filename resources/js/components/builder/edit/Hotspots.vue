@@ -356,8 +356,9 @@ export default {
       };
     },
     setHotspot(h) {
+      // console.log(h)
       let hotspotToEmit = {
-        hotspot_id: h.id,
+        id: h.id,
         item_id: this.selectedItem,
         hotspot_settings: {
           top: '50%',
@@ -366,7 +367,8 @@ export default {
         title: h.title
         // hotspotObjectToEmit: h,
       };
-      console.log(this.selectedItem);
+      console.log(hotspotToEmit)
+      // console.log(this.selectedItem);
       if (this.selectedItem.length != 0) {
         this.$emit("emitHotspot", hotspotToEmit);
         this.toDisableHotspot.push(h.id);
@@ -381,6 +383,7 @@ export default {
         .get("/hotspot/by-product/" + this.product + "/" + panel)
         .then((response) => {
           this.itemHotspots = response.data;
+          console.log(this.itemHotspots)
         })
         .catch((error) => {
           console.log("Error fetching items");

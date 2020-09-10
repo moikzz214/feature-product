@@ -47,9 +47,9 @@
         </v-sheet>
       </v-skeleton-loader>
     </div>
-    <div v-if="selectedItem.length == 0" class="col-12">
+    <div v-if="selectedItem.length == 0" class="col-12 pb-0">
       <v-sheet
-        class="grey lighten-4 mr-auto pa-3 d-flex justify-center align-center"
+        class="grey lighten-4 mr-auto pa-3 d-flex justify-center align-center elevation-1"
         style="min-height:480px;"
       >
         <p v-if="scenes.length == 0">
@@ -59,37 +59,20 @@
         <p v-else>Please select a scene</p>
       </v-sheet>
     </div>
-    <div v-else class="col-12">
-      <div id="panorama" style="height:400px;width:100%;margin:0 auto;"></div>
+    <div v-else class="col-12 pb-0">
+      <div id="panorama" class="elevation-1" style="height:400px;width:100%;margin:0 auto;"></div>
     </div>
-    <div class="col-12 d-flex justify-space-between align-center">
-      <v-toolbar dense class="elevation-0">
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
+    <div class="col-12 pt-0 d-flex justify-space-between align-center">
+      <v-toolbar dense class="elevation-1">
         <v-toolbar-title>Title</v-toolbar-title>
-
         <v-spacer></v-spacer>
-
-        <v-btn icon>
-          <v-icon>mdi-magnify</v-icon>
+        <v-btn small text class="mr-1 red--text" @click="removeHotspot">
+          <v-icon small class="mr-1">mdi-close</v-icon>Remove
         </v-btn>
-
-        <v-btn icon>
-          <v-icon>mdi-heart</v-icon>
-        </v-btn>
-
-        <v-btn icon>
-          <v-icon>mdi-dots-vertical</v-icon>
+        <v-btn small text class="primary--text" @click="addHotspot">
+          <v-icon small class="mr-1">mdi-check</v-icon>Apply Hotspot
         </v-btn>
       </v-toolbar>
-      <!-- <div>
-        <span class="overline">Editing:</span>
-        <span class="h2">Dashboard</span>
-      </div>
-      <div>
-        <v-btn text class="red--text" @click="removeHotspot">Remove</v-btn>
-        <v-btn class="primary" @click="addHotspot">Set Hotspot</v-btn>
-      </div> -->
     </div>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
 
@@ -152,7 +135,14 @@ export default {
   },
   methods: {
     removeHotspot() {
-      this.thePanorama.removeHotSpot();
+      // this.thePanorama.removeHotSpot();
+      this.thePanorama.on("mouseup", function (event) {
+        console.log(event);
+        // For pitch and yaw of center of viewer
+        // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
+        // For pitch and yaw of mouse location
+        // console.log(this.thePanorama.mouseEventToCoords(event));
+      });
     },
     addHotspot() {
       /**
@@ -170,6 +160,7 @@ export default {
       // console.log(this.thePanorama);
       this.thePanorama.addHotSpot(
         {
+          draggable: true,
           pitch: this.thePanorama.getPitch(),
           yaw: this.thePanorama.getYaw(),
           hfov: this.thePanorama.getHfov(),
@@ -203,10 +194,10 @@ export default {
           console.log(this.scenes);
         });
     },
-    loadPanorama(i) {
+    loadPanorama(i = null) {
       // console.log(i.media_file.original_name);
       let sceneTitle = "";
-      sceneTitle = i.media_file.original_name;
+      sceneTitle = i !== null ? i.media_file.original_name : "not-set";
       this.thePanorama = pannellum.viewer("panorama", {
         hotSpotDebug: true,
         autoLoad: false,
@@ -239,6 +230,7 @@ export default {
 
       this.thePanorama.addHotSpot(
         {
+          draggable: true,
           pitch: -14.94618622367452,
           yaw: -174.5048581866088,
           type: "scene",
@@ -250,6 +242,7 @@ export default {
 
       this.thePanorama.addHotSpot(
         {
+          draggable: true,
           pitch: -27.263801777525146,
           yaw: 5.051667495791323,
           type: "info",
@@ -262,7 +255,14 @@ export default {
         // sceneTitle
       );
 
-      console.log(this.thePanorama);
+      this.thePanorama.on("mouseup", function (event) {
+        console.log(event);
+        // For pitch and yaw of center of viewer
+        // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
+        // For pitch and yaw of mouse location
+        // console.log(this.thePanorama.mouseEventToCoords(event));
+      });
+      // console.log(this.thePanorama);
     },
     selectedScene(i) {
       this.selectedItem = Object.assign({}, i);

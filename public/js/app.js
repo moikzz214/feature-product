@@ -4185,6 +4185,8 @@ __webpack_require__.r(__webpack_exports__);
     selectedHotspotProp: {
       // To set hotspot
       handler: function handler(val) {
+        // console.log(val)
+        // console.log(this.hotspots)
         this.hotspots.push(val);
         this.draggableFunc();
       },
@@ -4277,6 +4279,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      $('.cd-single-point').hide();
       var dItemId = id.id; // Current Item ID
 
       this.settingsInCurrentScene = []; // Settings Variable
@@ -4747,8 +4750,9 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     setHotspot: function setHotspot(h) {
+      // console.log(h)
       var hotspotToEmit = {
-        hotspot_id: h.id,
+        id: h.id,
         item_id: this.selectedItem,
         hotspot_settings: {
           top: '50%',
@@ -4757,7 +4761,7 @@ __webpack_require__.r(__webpack_exports__);
         title: h.title // hotspotObjectToEmit: h,
 
       };
-      console.log(this.selectedItem);
+      console.log(hotspotToEmit); // console.log(this.selectedItem);
 
       if (this.selectedItem.length != 0) {
         this.$emit("emitHotspot", hotspotToEmit);
@@ -4773,6 +4777,7 @@ __webpack_require__.r(__webpack_exports__);
       var panel = this.currentPanel;
       axios.get("/hotspot/by-product/" + this.product + "/" + panel).then(function (response) {
         _this4.itemHotspots = response.data;
+        console.log(_this4.itemHotspots);
       })["catch"](function (error) {
         console.log("Error fetching items");
         console.log(error);
@@ -4797,23 +4802,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MediaFiles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../MediaFiles */ "./resources/js/components/MediaFiles.vue");
 /* harmony import */ var _CreateScene__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CreateScene */ "./resources/js/components/builder/edit/CreateScene.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -4947,7 +4935,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     removeHotspot: function removeHotspot() {
-      this.thePanorama.removeHotSpot();
+      // this.thePanorama.removeHotSpot();
+      this.thePanorama.on("mouseup", function (event) {
+        console.log(event); // For pitch and yaw of center of viewer
+        // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
+        // For pitch and yaw of mouse location
+        // console.log(this.thePanorama.mouseEventToCoords(event));
+      });
     },
     addHotspot: function addHotspot() {
       /**
@@ -4962,6 +4956,7 @@ __webpack_require__.r(__webpack_exports__);
       //   console.log(this.thePanorama.getHfov());
       // console.log(this.thePanorama);
       this.thePanorama.addHotSpot({
+        draggable: true,
         pitch: this.thePanorama.getPitch(),
         yaw: this.thePanorama.getYaw(),
         hfov: this.thePanorama.getHfov(),
@@ -4993,10 +4988,11 @@ __webpack_require__.r(__webpack_exports__);
         console.log(_this.scenes);
       });
     },
-    loadPanorama: function loadPanorama(i) {
+    loadPanorama: function loadPanorama() {
+      var i = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       // console.log(i.media_file.original_name);
       var sceneTitle = "";
-      sceneTitle = i.media_file.original_name;
+      sceneTitle = i !== null ? i.media_file.original_name : "not-set";
       this.thePanorama = pannellum.viewer("panorama", {
         hotSpotDebug: true,
         autoLoad: false,
@@ -5021,6 +5017,7 @@ __webpack_require__.r(__webpack_exports__);
       });
       this.thePanorama.loadScene(sceneTitle);
       this.thePanorama.addHotSpot({
+        draggable: true,
         pitch: -14.94618622367452,
         yaw: -174.5048581866088,
         type: "scene",
@@ -5029,6 +5026,7 @@ __webpack_require__.r(__webpack_exports__);
       } // sceneTitle
       );
       this.thePanorama.addHotSpot({
+        draggable: true,
         pitch: -27.263801777525146,
         yaw: 5.051667495791323,
         type: "info",
@@ -5039,7 +5037,12 @@ __webpack_require__.r(__webpack_exports__);
 
       } // sceneTitle
       );
-      console.log(this.thePanorama);
+      this.thePanorama.on("mouseup", function (event) {
+        console.log(event); // For pitch and yaw of center of viewer
+        // console.log(this.thePanorama.getPitch(), this.thePanorama.getYaw());
+        // For pitch and yaw of mouse location
+        // console.log(this.thePanorama.mouseEventToCoords(event));
+      }); // console.log(this.thePanorama);
     },
     selectedScene: function selectedScene(i) {
       var _this2 = this;
@@ -29191,13 +29194,13 @@ var render = function() {
       _vm.selectedItem.length == 0
         ? _c(
             "div",
-            { staticClass: "col-12" },
+            { staticClass: "col-12 pb-0" },
             [
               _c(
                 "v-sheet",
                 {
                   staticClass:
-                    "grey lighten-4 mr-auto pa-3 d-flex justify-center align-center",
+                    "grey lighten-4 mr-auto pa-3 d-flex justify-center align-center elevation-1",
                   staticStyle: { "min-height": "480px" }
                 },
                 [
@@ -29224,8 +29227,9 @@ var render = function() {
             ],
             1
           )
-        : _c("div", { staticClass: "col-12" }, [
+        : _c("div", { staticClass: "col-12 pb-0" }, [
             _c("div", {
+              staticClass: "elevation-1",
               staticStyle: { height: "400px", width: "100%", margin: "0 auto" },
               attrs: { id: "panorama" }
             })
@@ -29233,36 +29237,47 @@ var render = function() {
       _vm._v(" "),
       _c(
         "div",
-        { staticClass: "col-12 d-flex justify-space-between align-center" },
+        {
+          staticClass: "col-12 pt-0 d-flex justify-space-between align-center"
+        },
         [
           _c(
             "v-toolbar",
-            { staticClass: "elevation-0", attrs: { dense: "" } },
+            { staticClass: "elevation-1", attrs: { dense: "" } },
             [
-              _c("v-app-bar-nav-icon"),
-              _vm._v(" "),
               _c("v-toolbar-title", [_vm._v("Title")]),
               _vm._v(" "),
               _c("v-spacer"),
               _vm._v(" "),
               _c(
                 "v-btn",
-                { attrs: { icon: "" } },
-                [_c("v-icon", [_vm._v("mdi-magnify")])],
+                {
+                  staticClass: "mr-1 red--text",
+                  attrs: { small: "", text: "" },
+                  on: { click: _vm.removeHotspot }
+                },
+                [
+                  _c("v-icon", { staticClass: "mr-1", attrs: { small: "" } }, [
+                    _vm._v("mdi-close")
+                  ]),
+                  _vm._v("Remove\n      ")
+                ],
                 1
               ),
               _vm._v(" "),
               _c(
                 "v-btn",
-                { attrs: { icon: "" } },
-                [_c("v-icon", [_vm._v("mdi-heart")])],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                { attrs: { icon: "" } },
-                [_c("v-icon", [_vm._v("mdi-dots-vertical")])],
+                {
+                  staticClass: "primary--text",
+                  attrs: { small: "", text: "" },
+                  on: { click: _vm.addHotspot }
+                },
+                [
+                  _c("v-icon", { staticClass: "mr-1", attrs: { small: "" } }, [
+                    _vm._v("mdi-check")
+                  ]),
+                  _vm._v("Apply Hotspot\n      ")
+                ],
                 1
               )
             ],
@@ -89511,8 +89526,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

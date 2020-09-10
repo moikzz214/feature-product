@@ -206,6 +206,8 @@ export default {
     selectedHotspotProp: {
       // To set hotspot
       handler(val) {
+        // console.log(val)
+        // console.log(this.hotspots)
         this.hotspots.push(val);
         this.draggableFunc();
       },
@@ -300,6 +302,7 @@ export default {
         });
     },
     selected(index, id = null) {
+      $('.cd-single-point').hide();
       let dItemId = id.id; // Current Item ID
       this.settingsInCurrentScene = []; // Settings Variable
       let tempSettings = [];
