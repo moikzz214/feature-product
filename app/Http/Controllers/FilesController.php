@@ -35,7 +35,7 @@ class FilesController extends Controller
         $itemsArray = array();
         $fileArray = array();
 
-        $uploadKey = Carbon::now();
+        $uploadKey = Carbon::now()->format('YmdHis');
         // $uploadKey = "";
         // $uploadKey = Str::random();
 
@@ -54,6 +54,8 @@ class FilesController extends Controller
             $fileName = $image->getClientOriginalName();
             $title = pathinfo($fileName, PATHINFO_FILENAME);
             $extn = $image->getClientOriginalExtension();
+            $slugTitle = Str::slug($title, '-');
+            // $path = Str::slug($uploadKey."-".$fileName, "-"); // Added upload key to avoid replacing of duplicated filenames
             // $fname = $image->getClientOriginalName();
             // $fileName = substr($name,0,6).'-'.auth()->id().'-'.$randomName;
             // $imageExtensions = array('jpeg','jpg','png','JPEG','JPG','PNG');
@@ -64,6 +66,7 @@ class FilesController extends Controller
                 $format = 'png';
             }
 
+            // File Optimization
             // $img = Image::make($image)->fit(3840,2160); // UHD
             $img = Image::make($image);
             // if ($request->item_type == "360") {
@@ -86,7 +89,7 @@ class FilesController extends Controller
             array_push($fileArray, array(
                 'file_type' => 'image',
                 'title' => $title,
-                'original_name' => Str::slug($title, '-'),
+                'original_name' => $slugTitle,
                 'disk' => 'uploads',
                 'path' => $fileName,
                 'user_id' => auth()->id(),
@@ -94,6 +97,9 @@ class FilesController extends Controller
                 'created_at' => Carbon::now(),
             ));
         });
+        // 'path' => $uploadKey.".".$extn, // title-date.extension,
+        // 'path' => $fileName,
+        // 'path' => Str::slug($title, '-')."-".$uploadKey.".".$extn, // title-date.extension,
 
         // Save to Items table
         if ($request->add_items == 'true') {

@@ -205,8 +205,9 @@ export default {
         axios
           .get("/user/files/" + this.userId)
           .then((response) => {
-            console.log("requested");
+            console.log("Media Files has been loaded");
             this.files = Object.assign({}, response.data.data);
+            console.log(this.files);
           })
           .catch((error) => {
             console.log("Error Fetching Files");

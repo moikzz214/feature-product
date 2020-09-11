@@ -44,14 +44,14 @@ class ItemsController extends Controller
         // Check file Media_file id if exist
         $selectedFile = Media_file::where('id', '=', $requestData['selected'])->firstOrFail();
 
-        // Check if already assigned
-        if ($selectedFile->item_id != null) {
-            // Return error response
-            return response()->json([
-                'status' => 'error',
-                'message' => 'The selected file is already assigned to other item',
-            ], 200);
-        }
+        // // Check if already assigned
+        // if ($selectedFile->item_id != null) {
+        //     // Return error response
+        //     return response()->json([
+        //         'status' => 'error',
+        //         'message' => 'The selected file is already assigned to other item',
+        //     ], 200);
+        // }
 
         // Replace File
         if ($requestData['action'] == 'replace') {

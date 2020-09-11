@@ -27,7 +27,7 @@
                       <v-icon dark small>mdi-panorama-horizontal</v-icon>
                     </v-list-item-avatar>
                     <v-list-item-content>
-                      <v-list-item-title v-html="item.media_file.title.substring(0, 15)"></v-list-item-title>
+                      <v-list-item-title>{{item.media_file.title ? item.media_file.title.substring(0, 15) : 'Not Set'}}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-card>
@@ -345,6 +345,7 @@ export default {
         .then((response) => {
           this.scenes = Object.assign({}, response.data);
           this.loading = false;
+          console.log(this.scenes);
         })
         .catch((error) => {
           console.log("Error: " + error);
