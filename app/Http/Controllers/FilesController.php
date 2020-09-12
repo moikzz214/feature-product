@@ -52,10 +52,12 @@ class FilesController extends Controller
         // Do something on each files uploaded
         $images->each(function ($image, $key) use (&$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
             $userStorageDir = storage_path() . '/app' . $userStorage;
+            // $fileName = $uploadKey."-".$image->getClientOriginalName();
             $fileName = $image->getClientOriginalName();
             $title = pathinfo($fileName, PATHINFO_FILENAME);
             $extn = $image->getClientOriginalExtension();
             $slugTitle = Str::slug($title, '-');
+            $path = $slugTitle."-".$uploadKey.".".$extn;
             // $path = Str::slug($uploadKey."-".$fileName, "-"); // Added upload key to avoid replacing of duplicated filenames
             // $fname = $image->getClientOriginalName();
             // $fileName = substr($name,0,6).'-'.auth()->id().'-'.$randomName;
@@ -75,16 +77,14 @@ class FilesController extends Controller
             //     $img->fit(1920, 1080);
             //     $img->encode($format, 50);
             // }
-            $img->save($userStorageDir . '/' . $fileName); // FHD
+            $img->save($userStorageDir . '/' . $path); // FHD
 
-
-            // array_push($fileArray, $slugTitle);
 
             if ($request->add_items == 'true') {
                 array_push($itemsArray, array(
                     'item_type' => $request->item_type,
                     'product_id' => $request->product,
-                    'created_at' => $uploadKey,
+                    'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ));
             }
@@ -93,9 +93,9 @@ class FilesController extends Controller
             array_push($fileArray, array(
                 'file_type' => 'image',
                 'title' => $title,
-                'original_name' => $slugTitle,
+                'original_name' => $slugTitle."-".$uploadKey,
                 'disk' => 'uploads',
-                'path' => $fileName,
+                'path' => $path,
                 'user_id' => auth()->id(),
                 'item_id' => null,
                 'created_at' => Carbon::now(),
@@ -123,28 +123,30 @@ class FilesController extends Controller
         Media_file::insert($fileArray);
 
 
+        // If addItems == true in UploadZone component
+        if ($request->add_items == 'true') {
 
-        // Get the files by original_name
-        $originaNamesArray = array_column($fileArray, 'original_name');
-        $recentlySavedFiles = Media_file::whereIn('original_name', $originaNamesArray )->get();
+            // Get the files by original_name
+            $originaNamesArray = array_column($fileArray, 'original_name');
+            $recentlySavedFiles = Media_file::whereIn('original_name', $originaNamesArray )->get();
 
-        // Prepare items
-        // $toInsertItemsArray = array();
-        // foreach ($recentlySavedFiles as $file) {
-            // array_push($toInsertItemsArray, array(
-            //     'item_type' => '360',
-            //     'product_id' => $request->product,
-            //     'media_file_id' => $file->id,
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now()
-            // ));
-            // }
-        foreach ($recentlySavedFiles as $key => $file) {
-            $itemsArray[$key]['media_file_id'] = $file->id;
+            // Prepare items
+            // $toInsertItemsArray = array();
+            // foreach ($recentlySavedFiles as $file) {
+                // array_push($toInsertItemsArray, array(
+                //     'item_type' => '360',
+                //     'product_id' => $request->product,
+                //     'media_file_id' => $file->id,
+                //     'created_at' => Carbon::now(),
+                //     'updated_at' => Carbon::now()
+                // ));
+                // }
+            foreach ($recentlySavedFiles as $key => $file) {
+                $itemsArray[$key]['media_file_id'] = $file->id;
+            }
+            // Save to Items table
+            Item::insert($itemsArray);
         }
-
-        // // Save to Items table
-        Item::insert($itemsArray);
 
         // Return response
         return response()->json([

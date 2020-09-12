@@ -4997,8 +4997,8 @@ var toSaveHotspot = [];
         hotspot_settings: JSON.stringify(filter)
       };
       axios.post("/hotspot/apply", data).then(function (response) {
-        toSaveHotspot = [];
-        console.log(response); // this.draggableFunc();
+        toSaveHotspot = []; //   console.log(response);
+        // this.draggableFunc();
         // this.getHotspotSettings();
       })["catch"](function (error) {
         console.log("Error Applying Hotspots");

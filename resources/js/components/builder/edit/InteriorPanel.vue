@@ -168,7 +168,7 @@ export default {
         .post("/hotspot/apply", data)
         .then((response) => {
           toSaveHotspot = [];
-          console.log(response);
+        //   console.log(response);
           // this.draggableFunc();
           // this.getHotspotSettings();
         })
