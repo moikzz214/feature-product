@@ -278,6 +278,7 @@ export default {
         .then((response) => {
           // console.log(response);
           this.newHotspotDialog = false;
+          this.hotspotTitle = "";
           this.getAllHotspots();
         })
         .catch((error) => {

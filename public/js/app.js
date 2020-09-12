@@ -4719,6 +4719,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.post("/hotspot/new", data).then(function (response) {
         // console.log(response);
         _this2.newHotspotDialog = false;
+        _this2.hotspotTitle = "";
 
         _this2.getAllHotspots();
       })["catch"](function (error) {
