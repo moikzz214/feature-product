@@ -37,14 +37,22 @@
             <v-col v-for="file in files" :key="file.id" cols="2" class="pa-2">
               <v-card
                 @click="selectFile(file)"
-                :class="`pa-1 elevation-0 ${selected.includes(file.id) == true || selected.includes(file.path) == true ? 'primary dark' : 'transparent'}`"
+                :class="`pa-1 elevation-0 ${selected.includes(file.id) == true || selected.includes(file.path) == true ? 'primary' : 'transparent'}`"
               >
                 <v-img
                   :src="baseUrl+'/storage/uploads/user-'+userId+'/'+file.path"
-                  max-height="200"
+                  max-height="130"
+                  min-height="120"
                   contain
-                  class="grey darken-4"
+                  class="grey lighten-4"
                 >
+                  <template v-slot:placeholder>
+                    <v-img
+                      :src="baseUrl+'/images/no-image-placeholder.jpg'"
+                      cover
+                      class="grey lighten-4"
+                    ></v-img>
+                  </template>
                   <v-icon
                     v-if="selected.includes(file.id) == true"
                     class="primary"

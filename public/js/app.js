@@ -3105,6 +3105,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -27005,7 +27013,7 @@ var render = function() {
                                     "pa-1 elevation-0 " +
                                     (_vm.selected.includes(file.id) == true ||
                                     _vm.selected.includes(file.path) == true
-                                      ? "primary dark"
+                                      ? "primary"
                                       : "transparent"),
                                   on: {
                                     click: function($event) {
@@ -27017,7 +27025,7 @@ var render = function() {
                                   _c(
                                     "v-img",
                                     {
-                                      staticClass: "grey darken-4",
+                                      staticClass: "grey lighten-4",
                                       attrs: {
                                         src:
                                           _vm.baseUrl +
@@ -27025,11 +27033,36 @@ var render = function() {
                                           _vm.userId +
                                           "/" +
                                           file.path,
-                                        "max-height": "200",
+                                        "max-height": "130",
+                                        "min-height": "120",
                                         contain: ""
-                                      }
+                                      },
+                                      scopedSlots: _vm._u(
+                                        [
+                                          {
+                                            key: "placeholder",
+                                            fn: function() {
+                                              return [
+                                                _c("v-img", {
+                                                  staticClass: "grey lighten-4",
+                                                  attrs: {
+                                                    src:
+                                                      _vm.baseUrl +
+                                                      "/images/no-image-placeholder.jpg",
+                                                    cover: ""
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ],
+                                        null,
+                                        true
+                                      )
                                     },
                                     [
+                                      _vm._v(" "),
                                       _vm.selected.includes(file.id) == true
                                         ? _c(
                                             "v-icon",
