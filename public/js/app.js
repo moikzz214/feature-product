@@ -3204,16 +3204,18 @@ __webpack_require__.r(__webpack_exports__);
           action: this.submitAction,
           product: this.mediaOptions.product ? this.mediaOptions.product : null
         };
-        axios.post("/item/save/" + JSON.stringify(data)).then(function (response) {
+        axios.post("/item/save", data).then(function (response) {
           // console.log(response.data);
           if (response.data.status == "success") {
             _this.$emit("responded", response.data);
 
             _this.selected = [];
           }
+
+          console.log(response.data);
         })["catch"](function (error) {
           _this.selected = [];
-          console.log("Error Fetching Files");
+          console.log("Error Saving Setting File to Item");
           console.log(error);
         });
       }
@@ -3227,10 +3229,11 @@ __webpack_require__.r(__webpack_exports__);
 
       if (this.selected.length == 0) {
         axios.get("/user/files/" + this.userId).then(function (response) {
-          console.log("requested");
+          console.log("Media Files has been loaded");
           _this2.files = Object.assign({}, response.data.data);
+          console.log(_this2.files);
         })["catch"](function (error) {
-          console.log("Error Fetching Files");
+          console.log("Error Fetching Files in getUserFiles");
           console.log(error);
         });
       }
@@ -4306,7 +4309,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      $(".cd-single-point").hide();
+      //   $(".cd-single-point").hide();
       var dItemId = id.id; // Current Item ID
 
       this.settingsInCurrentScene = []; // Settings Variable
@@ -5157,6 +5160,7 @@ var toSaveHotspot = [];
       axios.get("/item/scenes/by-product/" + this.product).then(function (response) {
         _this4.scenes = Object.assign({}, response.data);
         _this4.loading = false;
+        console.log(_this4.scenes);
       })["catch"](function (error) {
         console.log("Error: " + error);
         console.log(_this4.scenes);
@@ -29257,16 +29261,18 @@ var render = function() {
                                         _c(
                                           "v-list-item-content",
                                           [
-                                            _c("v-list-item-title", {
-                                              domProps: {
-                                                innerHTML: _vm._s(
-                                                  item.media_file.title.substring(
-                                                    0,
-                                                    15
-                                                  )
+                                            _c("v-list-item-title", [
+                                              _vm._v(
+                                                _vm._s(
+                                                  item.media_file.title
+                                                    ? item.media_file.title.substring(
+                                                        0,
+                                                        15
+                                                      )
+                                                    : "Not Set"
                                                 )
-                                              }
-                                            })
+                                              )
+                                            ])
                                           ],
                                           1
                                         )

@@ -25,6 +25,7 @@ class FilesController extends Controller
 
     public function upload(Request $request)
     {
+        // dd($request);
         // Validate request
         // $this->validate($request, [
         //     'file' => 'required|image|mimes:jpeg,png,jpg|max:204800',
@@ -76,6 +77,9 @@ class FilesController extends Controller
             // }
             $img->save($userStorageDir . '/' . $fileName); // FHD
 
+
+            // array_push($fileArray, $slugTitle);
+
             if ($request->add_items == 'true') {
                 array_push($itemsArray, array(
                     'item_type' => $request->item_type,
@@ -102,39 +106,45 @@ class FilesController extends Controller
         // 'path' => Str::slug($title, '-')."-".$uploadKey.".".$extn, // title-date.extension,
 
         // Save to Items table
-        if ($request->add_items == 'true') {
-            Item::insert($itemsArray);
-            $recentlySavedItems = Item::where([
-                'product_id' => $request->product,
-                'created_at' => $uploadKey,
-            ])->get();
+        // if ($request->add_items == 'true') {
+        //     Item::insert($itemsArray);
+        //     $recentlySavedItems = Item::where([
+        //         'product_id' => $request->product,
+        //         'created_at' => $uploadKey,
+        //     ])->get();
 
-            // Prepare Media_files object before saving Set Connection
-            foreach ($recentlySavedItems as $key => $item) {
-                $fileArray[$key]['item_id'] = $item->id;
-            }
-        }
+        //     // Prepare Media_files object before saving Set Connection
+        //     foreach ($recentlySavedItems as $key => $item) {
+        //         $fileArray[$key]['item_id'] = $item->id;
+        //     }
+        // }
 
         // Save the files to Media_files table
         Media_file::insert($fileArray);
 
-        // Get the files by name
-        // $recentlySavedFiles = Media_file::whereIn('title', $fileNames )->get();
 
-        // // Prepare items
-        // $itemsArray = array();
+
+        // Get the files by original_name
+        $originaNamesArray = array_column($fileArray, 'original_name');
+        $recentlySavedFiles = Media_file::whereIn('original_name', $originaNamesArray )->get();
+
+        // Prepare items
+        // $toInsertItemsArray = array();
         // foreach ($recentlySavedFiles as $file) {
-        //     array_push($itemsArray, array(
-        //         'item_type' => '360',
-        //         'product_id' => $request->product,
-        //         'Media_files_id' => $file->id,
-        //         'created_at' => Carbon::now(),
-        //         'updated_at' => Carbon::now()
-        //     ));
-        // }
+            // array_push($toInsertItemsArray, array(
+            //     'item_type' => '360',
+            //     'product_id' => $request->product,
+            //     'media_file_id' => $file->id,
+            //     'created_at' => Carbon::now(),
+            //     'updated_at' => Carbon::now()
+            // ));
+            // }
+        foreach ($recentlySavedFiles as $key => $file) {
+            $itemsArray[$key]['media_file_id'] = $file->id;
+        }
 
         // // Save to Items table
-        // Item::insert($itemsArray);
+        Item::insert($itemsArray);
 
         // Return response
         return response()->json([

@@ -181,17 +181,18 @@ export default {
           product: this.mediaOptions.product ? this.mediaOptions.product : null,
         };
         axios
-          .post("/item/save/" + JSON.stringify(data))
+          .post("/item/save", data)
           .then((response) => {
             // console.log(response.data);
             if (response.data.status == "success") {
               this.$emit("responded", response.data);
               this.selected = [];
             }
+            console.log(response.data);
           })
           .catch((error) => {
             this.selected = [];
-            console.log("Error Fetching Files");
+            console.log("Error Saving Setting File to Item");
             console.log(error);
           });
       }
@@ -210,7 +211,7 @@ export default {
             console.log(this.files);
           })
           .catch((error) => {
-            console.log("Error Fetching Files");
+            console.log("Error Fetching Files in getUserFiles");
             console.log(error);
           });
       }

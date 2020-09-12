@@ -22,6 +22,7 @@ class Item extends Model
     }
     public function media_file()
     {
-        return $this->hasOne(Media_file::class);
+        return $this->belongsTo(Media_file::class);
+        // return $this->hasMany(Media_file::class);
     }
 }

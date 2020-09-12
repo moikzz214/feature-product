@@ -50,7 +50,7 @@ Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.us
 Route::get('/items/by-product/{id}', 'ItemsController@getItemsByProduct')->name('items.by.product');
 Route::post('/item/delete/{id}', 'ItemsController@destroy')->name('items.delete');
 // Save or replace depending on the request data
-Route::post('/item/save/{data}', 'ItemsController@saveItem')->name('items.save');
+Route::post('/item/save', 'ItemsController@saveItem')->name('items.save');
 
 // Panorama
 Route::get('/item/scenes/by-product/{id}', 'ItemsController@getScenesByProductId')->name('item.scenes');
