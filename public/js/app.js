@@ -4212,9 +4212,11 @@ __webpack_require__.r(__webpack_exports__);
         framesX: 6,
         plugins: ["drag", "360"],
         //"zoom"
-        sense: -1,
-        onFrame: function onFrame(e, data) {// console.log(data.frame);
-        }
+        sense: -1 // onFrame: function (e, data) {
+        //   // console.log(data.frame);
+        // },
+        // onFrame: spritespinOnFrame,
+
       }
     };
   },
@@ -4315,6 +4317,29 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
+    spritespinOnFrame: function spritespinOnFrame() {
+      var _this4 = this;
+
+      setTimeout(function () {
+        if (_this4.$refs.spritespin) {
+          console.log(_this4.$refs.spritespin); //   this.$refs.spritespin.bind("onFrame", function (e, data) {
+          //     console.log("oadasdnasdas");
+          //   });
+          // console.log(this.items[0]);
+          //   this.$refs.spritespin.bind("onFrame", function () {
+          //     //   console.log('binded')
+          //     // var data = api.data;
+          //     // console.log(data);
+          //     // data.stage.find(".detail:visible").stop(false).fadeOut();
+          //     // data.stage
+          //     //   .find(".detail.detail-" + data.frame)
+          //     //   .stop(false)
+          //     //   .fadeIn();
+          //   });
+          //   console.log(this.$refs.spritespin.data.frame);
+        }
+      }, 600);
+    },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       //   $(".cd-single-point").hide();
@@ -4364,35 +4389,35 @@ __webpack_require__.r(__webpack_exports__);
       this.tempItemID = id.id;
     },
     getImagesByProduct: function getImagesByProduct() {
-      var _this4 = this;
+      var _this5 = this;
 
       this.show = false;
       axios.get("/items/by-product/" + this.product).then(function (response) {
         // console.log(response.data.items);
         // If no items found
         if (response.data.items.length == 0) {
-          _this4.withItems = false;
-          _this4.uploader = true;
+          _this5.withItems = false;
+          _this5.uploader = true;
           return;
         }
 
-        _this4.withItems = true;
-        _this4.uploader = false; // Set Items
+        _this5.withItems = true;
+        _this5.uploader = false; // Set Items
 
-        _this4.items = response.data.items;
-        _this4.isItemsLoaded = true; // Setup 360
+        _this5.items = response.data.items;
+        _this5.isItemsLoaded = true; // Setup 360
 
-        _this4.options.frames = response.data.items.length;
-        _this4.options.source = response.data.items.map(function (item) {
-          return window.location.origin + "/storage/uploads/user-" + _this4.authUser.id + "/" + item.media_file.path;
+        _this5.options.frames = response.data.items.length;
+        _this5.options.source = response.data.items.map(function (item) {
+          return window.location.origin + "/storage/uploads/user-" + _this5.authUser.id + "/" + item.media_file.path;
         });
         setTimeout(function () {
-          _this4.show = true;
+          _this5.show = true;
         }, 1);
 
-        if (_this4.items[0].length !== 0) {
+        if (_this5.items[0].length !== 0) {
           setTimeout(function () {
-            _this4.selected(0, _this4.items[0]);
+            _this5.selected(0, _this5.items[0]);
           }, 2000);
         }
       })["catch"](function (error) {
@@ -4453,8 +4478,13 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
+    var _this6 = this;
+
     this.getImagesByProduct();
     this.getHotspotSettings();
+    setTimeout(function () {
+      _this6.spritespinOnFrame();
+    }, 300);
   },
   mounted: function mounted() {}
 });
@@ -4819,8 +4849,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var panel = this.currentPanel;
       axios.get("/hotspot/by-product/" + this.product + "/" + panel).then(function (response) {
-        _this4.itemHotspots = response.data;
-        console.log(_this4.itemHotspots);
+        _this4.itemHotspots = response.data; //   console.log(this.itemHotspots)
       })["catch"](function (error) {
         console.log("Error fetching items");
         console.log(error);
@@ -28348,7 +28377,11 @@ var render = function() {
                       "v-slide-group",
                       {
                         staticClass: "pa-1",
-                        attrs: { "active-class": "grey", "show-arrows": "" },
+                        attrs: {
+                          "center-active": "",
+                          "active-class": "grey",
+                          "show-arrows": ""
+                        },
                         model: {
                           value: _vm.model,
                           callback: function($$v) {
@@ -28691,23 +28724,6 @@ var render = function() {
                   _vm._v(" "),
                   _c("v-text-field", {
                     attrs: { label: "Hotspot Title", required: "" },
-                    on: {
-                      keyup: function($event) {
-                        if (
-                          !$event.type.indexOf("key") &&
-                          _vm._k(
-                            $event.keyCode,
-                            "enter",
-                            13,
-                            $event.key,
-                            "Enter"
-                          )
-                        ) {
-                          return null
-                        }
-                        return _vm.submitNewHotspot($event)
-                      }
-                    },
                     model: {
                       value: _vm.hotspotTitle,
                       callback: function($$v) {

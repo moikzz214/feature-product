@@ -7,10 +7,10 @@
           <h3 class="font-weight-light">New Hotspot</h3>
           <v-text-field
             v-model="hotspotTitle"
-            v-on:keyup.enter="submitNewHotspot"
             label="Hotspot Title"
             required
           ></v-text-field>
+            <!-- v-on:keyup.enter="submitNewHotspot" -->
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn text color="grey" @click.prevent="newHotspotDialog = false">Cancel</v-btn>
@@ -388,7 +388,7 @@ export default {
         .get("/hotspot/by-product/" + this.product + "/" + panel)
         .then((response) => {
           this.itemHotspots = response.data;
-          console.log(this.itemHotspots)
+        //   console.log(this.itemHotspots)
         })
         .catch((error) => {
           console.log("Error fetching items");

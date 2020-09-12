@@ -57,7 +57,7 @@
       </div>
       <div class="d-flex" v-if="withItems == true">
         <v-card class="mt-3" style="width:90%;">
-          <v-slide-group v-model="model" class="pa-1" active-class="grey" show-arrows>
+          <v-slide-group v-model="model" center-active class="pa-1" active-class="grey" show-arrows>
             <v-slide-item
               v-for="(item, index) in items"
               :key="index"
@@ -157,7 +157,7 @@ export default {
   },
   data() {
     return {
-        enableButton: [],
+      enableButton: [],
 
       settingsInCurrentScene: [],
 
@@ -210,9 +210,10 @@ export default {
         framesX: 6,
         plugins: ["drag", "360"], //"zoom"
         sense: -1,
-        onFrame: function (e, data) {
-          // console.log(data.frame);
-        },
+        // onFrame: function (e, data) {
+        //   // console.log(data.frame);
+        // },
+        // onFrame: spritespinOnFrame,
       },
     };
   },
@@ -316,8 +317,31 @@ export default {
           console.log(error);
         });
     },
+
+    spritespinOnFrame() {
+      setTimeout(() => {
+        if (this.$refs.spritespin) {
+          console.log(this.$refs.spritespin);
+        //   this.$refs.spritespin.bind("onFrame", function (e, data) {
+        //     console.log("oadasdnasdas");
+        //   });
+          // console.log(this.items[0]);
+          //   this.$refs.spritespin.bind("onFrame", function () {
+          //     //   console.log('binded')
+          //     // var data = api.data;
+          //     // console.log(data);
+          //     // data.stage.find(".detail:visible").stop(false).fadeOut();
+          //     // data.stage
+          //     //   .find(".detail.detail-" + data.frame)
+          //     //   .stop(false)
+          //     //   .fadeIn();
+          //   });
+          //   console.log(this.$refs.spritespin.data.frame);
+        }
+      }, 600);
+    },
     selected(index, id = null) {
-    //   $(".cd-single-point").hide();
+      //   $(".cd-single-point").hide();
       let dItemId = id.id; // Current Item ID
       this.settingsInCurrentScene = []; // Settings Variable
       let tempSettings = [];
@@ -466,6 +490,9 @@ export default {
   created() {
     this.getImagesByProduct();
     this.getHotspotSettings();
+    setTimeout(() => {
+      this.spritespinOnFrame();
+    }, 300);
   },
   mounted() {},
 };
