@@ -326,32 +326,10 @@ export default {
         let targetFrame = this.$refs.spritespin.data.frame;
         let targetItem = $('.target-frame-'+targetFrame).data('targetid');
         // targetItem = JSON.parse(targetItem);
-        console.log("frame: "+ targetFrame);
-        console.log("item: "+ targetItem);
+        // console.log("frame: "+ targetFrame);
+        // console.log("item: "+ targetItem);
         this.selected(targetFrame, targetItem);
       }
-      // this.$nextTick(function () {
-      //   setTimeout(() => {
-      //     if (this.$refs.spritespin) {
-      //       console.log(this.$refs.spritespin);
-      //       //   this.$refs.spritespin.bind("onFrame", function (e, data) {
-      //       //     console.log("oadasdnasdas");
-      //       //   });
-      //       // console.log(this.items[0]);
-      //       //   this.$refs.spritespin.bind("onFrame", function () {
-      //       //     //   console.log('binded')
-      //       //     // var data = api.data;
-      //       //     // console.log(data);
-      //       //     // data.stage.find(".detail:visible").stop(false).fadeOut();
-      //       //     // data.stage
-      //       //     //   .find(".detail.detail-" + data.frame)
-      //       //     //   .stop(false)
-      //       //     //   .fadeIn();
-      //       //   });
-      //       //   console.log(this.$refs.spritespin.data.frame);
-      //     }
-      //   }, 600);
-      // });
     },
     selected(index, id = null) {
       //   $(".cd-single-point").hide();
@@ -433,6 +411,7 @@ export default {
           setTimeout(() => {
             this.show = true;
           }, 1);
+
 
           if (this.items[0].length !== 0) {
             setTimeout(() => {

@@ -4327,33 +4327,11 @@ __webpack_require__.r(__webpack_exports__);
         // console.log("item id: "+$("#cur-frame").val())
         var targetFrame = this.$refs.spritespin.data.frame;
         var targetItem = $('.target-frame-' + targetFrame).data('targetid'); // targetItem = JSON.parse(targetItem);
+        // console.log("frame: "+ targetFrame);
+        // console.log("item: "+ targetItem);
 
-        console.log("frame: " + targetFrame);
-        console.log("item: " + targetItem);
         this.selected(targetFrame, targetItem);
-      } // this.$nextTick(function () {
-      //   setTimeout(() => {
-      //     if (this.$refs.spritespin) {
-      //       console.log(this.$refs.spritespin);
-      //       //   this.$refs.spritespin.bind("onFrame", function (e, data) {
-      //       //     console.log("oadasdnasdas");
-      //       //   });
-      //       // console.log(this.items[0]);
-      //       //   this.$refs.spritespin.bind("onFrame", function () {
-      //       //     //   console.log('binded')
-      //       //     // var data = api.data;
-      //       //     // console.log(data);
-      //       //     // data.stage.find(".detail:visible").stop(false).fadeOut();
-      //       //     // data.stage
-      //       //     //   .find(".detail.detail-" + data.frame)
-      //       //     //   .stop(false)
-      //       //     //   .fadeIn();
-      //       //   });
-      //       //   console.log(this.$refs.spritespin.data.frame);
-      //     }
-      //   }, 600);
-      // });
-
+      }
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
