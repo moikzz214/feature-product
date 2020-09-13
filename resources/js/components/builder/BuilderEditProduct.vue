@@ -21,6 +21,7 @@
     </v-row>
     <v-divider></v-divider>
     <v-row>
+      <div></div>
       <div class="col-12 col-md-3" v-show="activateVideo == false">
         <Hotspots
           :item="selected_item"
@@ -47,10 +48,7 @@
         />
       </div>
       <div class="col-12 col-md-9" v-if="activateVideo == true">
-        <video-panel 
-          :auth-user="authUser"
-          :product="this.$route.params.id"
-        />
+        <video-panel :auth-user="authUser" :product="this.$route.params.id" />
       </div>
     </v-row>
   </div>

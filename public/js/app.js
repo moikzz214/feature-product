@@ -3488,6 +3488,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -27520,6 +27526,18 @@ var render = function() {
     "div",
     [
       _c("v-row", { staticClass: "px-3" }, [
+        _c("div", { staticClass: "col-12" }, [
+          _c("iframe", {
+            attrs: {
+              src:
+                "https://www.fresha.com/pornpirom-thai-yoga-massage-tshvap3r/booking",
+              height: "500",
+              width: "100%",
+              frameborder: "0"
+            }
+          })
+        ]),
+        _vm._v(" "),
         _c(
           "div",
           { staticClass: "col-12 pb-3 pa-0" },
@@ -27589,6 +27607,8 @@ var render = function() {
       _c("v-divider"),
       _vm._v(" "),
       _c("v-row", [
+        _c("div"),
+        _vm._v(" "),
         _c(
           "div",
           {
