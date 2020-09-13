@@ -40,7 +40,7 @@ class FilesController extends Controller
         // $uploadKey = "";
         // $uploadKey = Str::random();
 
-        // $userId = auth()->id();
+        $userId = auth()->id();
         $userStorage = '/public/uploads/user-' . auth()->id();
         if (!Storage::exists($userStorage)) {
             Storage::makeDirectory($userStorage, 0755, true);
@@ -50,7 +50,7 @@ class FilesController extends Controller
         $files = Collection::wrap(request()->file('file'));
 
         // Do something on each files uploaded
-        $files->each(function ($file, $key) use (&$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
+        $files->each(function ($file, $key) use (&$userId, &$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
             $userStorageDir = storage_path() . '/app' . $userStorage;
             // $fileName = $uploadKey."-".$file->getClientOriginalName();
             $fileName = $file->getClientOriginalName();
@@ -72,7 +72,7 @@ class FilesController extends Controller
             // Check file if image or video
             if($request->item_type == 'video'){
                 // dd('vidoeeasdasdas');
-                $file->move(storage_path().'uploads/user-1/', $path); // add user id
+                $file->move('storage/uploads/user-'.$userId.'/', $path); // add user id
                 // dd($userStorageDir);
                 // $path = $request->file('slide')->storeAs('public/videos/',$fileNameToStore);
                 // $img->save($userStorageDir . '/' . $path); // FHD
@@ -88,8 +88,8 @@ class FilesController extends Controller
                 $img->save($userStorageDir . '/' . $path); // FHD
             }
 
-        
-     
+
+
 
 
             if ($request->add_items == 'true') {

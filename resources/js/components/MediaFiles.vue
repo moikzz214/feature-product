@@ -40,6 +40,7 @@
                 :class="`pa-1 elevation-0 ${selected.includes(file.id) == true || selected.includes(file.path) == true ? 'primary' : 'transparent'}`"
               >
                 <v-img
+                  v-if="file.file_type == 'image'"
                   :src="baseUrl+'/storage/uploads/user-'+userId+'/'+file.path"
                   max-height="130"
                   min-height="120"
@@ -49,6 +50,8 @@
                   <template v-slot:placeholder>
                     <v-img
                       :src="baseUrl+'/images/no-image-placeholder.jpg'"
+                      max-height="130"
+                      min-height="120"
                       cover
                       class="grey lighten-4"
                     ></v-img>
@@ -60,6 +63,14 @@
                     small
                   >mdi-check</v-icon>
                 </v-img>
+                <v-img
+                  v-else
+                  :src="baseUrl+'/images/video-placeholder.jpg'"
+                  max-height="130"
+                  min-height="120"
+                  cover
+                  class="grey lighten-4"
+                ></v-img>
               </v-card>
               <div
                 class="caption"

@@ -3113,6 +3113,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -27208,60 +27219,75 @@ var render = function() {
                                   }
                                 },
                                 [
-                                  _c(
-                                    "v-img",
-                                    {
-                                      staticClass: "grey lighten-4",
-                                      attrs: {
-                                        src:
-                                          _vm.baseUrl +
-                                          "/storage/uploads/user-" +
-                                          _vm.userId +
-                                          "/" +
-                                          file.path,
-                                        "max-height": "130",
-                                        "min-height": "120",
-                                        contain: ""
-                                      },
-                                      scopedSlots: _vm._u(
-                                        [
-                                          {
-                                            key: "placeholder",
-                                            fn: function() {
-                                              return [
-                                                _c("v-img", {
-                                                  staticClass: "grey lighten-4",
-                                                  attrs: {
-                                                    src:
-                                                      _vm.baseUrl +
-                                                      "/images/no-image-placeholder.jpg",
-                                                    cover: ""
-                                                  }
-                                                })
-                                              ]
-                                            },
-                                            proxy: true
-                                          }
-                                        ],
-                                        null,
-                                        true
-                                      )
-                                    },
-                                    [
-                                      _vm._v(" "),
-                                      _vm.selected.includes(file.id) == true
-                                        ? _c(
-                                            "v-icon",
-                                            {
-                                              staticClass: "primary",
-                                              attrs: { dark: "", small: "" }
-                                            },
-                                            [_vm._v("mdi-check")]
+                                  file.file_type == "image"
+                                    ? _c(
+                                        "v-img",
+                                        {
+                                          staticClass: "grey lighten-4",
+                                          attrs: {
+                                            src:
+                                              _vm.baseUrl +
+                                              "/storage/uploads/user-" +
+                                              _vm.userId +
+                                              "/" +
+                                              file.path,
+                                            "max-height": "130",
+                                            "min-height": "120",
+                                            contain: ""
+                                          },
+                                          scopedSlots: _vm._u(
+                                            [
+                                              {
+                                                key: "placeholder",
+                                                fn: function() {
+                                                  return [
+                                                    _c("v-img", {
+                                                      staticClass:
+                                                        "grey lighten-4",
+                                                      attrs: {
+                                                        src:
+                                                          _vm.baseUrl +
+                                                          "/images/no-image-placeholder.jpg",
+                                                        "max-height": "130",
+                                                        "min-height": "120",
+                                                        cover: ""
+                                                      }
+                                                    })
+                                                  ]
+                                                },
+                                                proxy: true
+                                              }
+                                            ],
+                                            null,
+                                            true
                                           )
-                                        : _vm._e()
-                                    ],
-                                    1
-                                  )
+                                        },
+                                        [
+                                          _vm._v(" "),
+                                          _vm.selected.includes(file.id) == true
+                                            ? _c(
+                                                "v-icon",
+                                                {
+                                                  staticClass: "primary",
+                                                  attrs: { dark: "", small: "" }
+                                                },
+                                                [_vm._v("mdi-check")]
+                                              )
+                                            : _vm._e()
+                                        ],
+                                        1
+                                      )
+                                    : _c("v-img", {
+                                        staticClass: "grey lighten-4",
+                                        attrs: {
+                                          src:
+                                            _vm.baseUrl +
+                                            "/images/video-placeholder.jpg",
+                                          "max-height": "130",
+                                          "min-height": "120",
+                                          cover: ""
+                                        }
+                                      })
                                 ],
                                 1
                               ),
@@ -90205,8 +90231,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
