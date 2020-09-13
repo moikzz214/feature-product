@@ -3324,7 +3324,7 @@ __webpack_require__.r(__webpack_exports__);
         autoProcessQueue: false,
         maxFiles: 100,
         parallelUploads: 100,
-        maxFilesize: 1,
+        maxFilesize: this.itemType == 'video' ? 30 : 1,
         timeout: 180000,
         previewTemplate: this.dropzoneTemplate(),
         clickable: ".open-uploader",
@@ -3418,6 +3418,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _edit_Hotspots__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./edit/Hotspots */ "./resources/js/components/builder/edit/Hotspots.vue");
 /* harmony import */ var _edit_ExteriorPanel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit/ExteriorPanel */ "./resources/js/components/builder/edit/ExteriorPanel.vue");
 /* harmony import */ var _edit_InteriorPanel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit/InteriorPanel */ "./resources/js/components/builder/edit/InteriorPanel.vue");
+/* harmony import */ var _edit_VideoPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit/VideoPanel */ "./resources/js/components/builder/edit/VideoPanel.vue");
 //
 //
 //
@@ -3466,6 +3467,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -3479,13 +3491,15 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Hotspots: _edit_Hotspots__WEBPACK_IMPORTED_MODULE_0__["default"],
     ExteriorPanel: _edit_ExteriorPanel__WEBPACK_IMPORTED_MODULE_1__["default"],
-    InteriorPanel: _edit_InteriorPanel__WEBPACK_IMPORTED_MODULE_2__["default"]
+    InteriorPanel: _edit_InteriorPanel__WEBPACK_IMPORTED_MODULE_2__["default"],
+    VideoPanel: _edit_VideoPanel__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   data: function data() {
     return {
-      selected_panel_prop: "exterior",
-      activateExterior: true,
+      selected_panel_prop: "video",
+      activateExterior: false,
       activateInterior: false,
+      activateVideo: true,
       selected_item: null,
       selected_hotspot_prop: null,
       selected_interior_hotspot_prop: null
@@ -3512,11 +3526,17 @@ __webpack_require__.r(__webpack_exports__);
       if (panel == "exterior") {
         this.activateExterior = true;
         this.activateInterior = false;
+        this.activateVideo = false;
         this.selected_panel_prop = "exterior";
-      } else {
+      } else if (panel == "interior") {
         // Interior
         this.selected_panel_prop = "interior";
         this.activateInterior = true;
+        this.activateExterior = false;
+        this.activateVideo = false;
+      } else {
+        this.activateVideo = true;
+        this.activateInterior = false;
         this.activateExterior = false;
       }
     }
@@ -5199,6 +5219,151 @@ var toSaveHotspot = [];
   },
   created: function created() {
     this.getScenes();
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/VideoPanel.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/builder/edit/VideoPanel.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    product: {
+      type: String,
+      "default": ""
+    },
+    authUser: {
+      type: Object,
+      "default": null
+    }
+  },
+  data: function data() {
+    return {
+      dialogVideo: [],
+      editDialog: false,
+      title: "",
+      videoPath: "",
+      // Media Files
+      mediaFilesSettings: {
+        dialog: true,
+        dialogStatus: false,
+        user: this.authUser,
+        action: "save",
+        data: null,
+        product: this.product,
+        itemType: "video",
+        returnUrl: true
+      },
+      headers: [{
+        text: "Videos",
+        align: "start",
+        value: "title",
+        sortable: false
+      }, {
+        text: "Actions",
+        align: "end",
+        value: "actions",
+        sortable: false
+      }],
+      desserts: [{
+        title: "Frozen Yogurt"
+      }, {
+        title: "Ice cream sandwich"
+      }, {
+        title: "Eclair"
+      }, {
+        title: "Cupcake"
+      }, {
+        title: "Gingerbread"
+      }, {
+        title: "Jelly bean"
+      }, {
+        title: "Lollipop"
+      }]
+    };
+  },
+  methods: {
+    mediaResponse: function mediaResponse(v) {
+      console.log(v);
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
+    },
+    openMediaFiles: function openMediaFiles() {
+      this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
+    },
+    editVideo: function editVideo(v) {
+      this.videoPath = "hey";
+      this.title = "hey";
+      this.editDialog = true;
+      console.log(v);
+    }
   }
 });
 
@@ -26994,7 +27159,7 @@ var render = function() {
                     },
                     [
                       _c("upload-zone", {
-                        attrs: { "add-items": false },
+                        attrs: { "add-items": false, "item-type": "video" },
                         on: { uploaded: _vm.uploadZoneResponse }
                       })
                     ],
@@ -27376,10 +27541,15 @@ var render = function() {
             _c(
               "v-btn",
               {
-                attrs: { large: "", color: "primary" },
+                attrs: {
+                  large: "",
+                  color:
+                    "" +
+                    (_vm.activateVideo == true ? "yellow accent-4" : "primary")
+                },
                 on: {
                   click: function($event) {
-                    0
+                    return _vm.selectPanel("video")
                   }
                 }
               },
@@ -27392,67 +27562,89 @@ var render = function() {
       _vm._v(" "),
       _c("v-divider"),
       _vm._v(" "),
-      _c(
-        "v-row",
-        [
-          _c(
-            "v-col",
-            { attrs: { cols: "3" } },
-            [
-              _c("Hotspots", {
-                attrs: {
-                  item: _vm.selected_item,
-                  "auth-user": _vm.authUser,
-                  product: this.$route.params.id,
-                  "current-panel": _vm.selected_panel_prop
-                },
-                on: {
-                  emitHotspot: _vm.hotspotToSet,
-                  emitInteriorHotspot: _vm.hotspotToInterior
-                }
-              })
+      _c("v-row", [
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.activateVideo == false,
+                expression: "activateVideo == false"
+              }
             ],
-            1
-          ),
-          _vm._v(" "),
-          _vm.activateExterior == true
-            ? _c(
-                "v-col",
-                { attrs: { cols: "9" } },
-                [
-                  _c("exterior-panel", {
-                    attrs: {
-                      "auth-user": _vm.authUser,
-                      product: this.$route.params.id,
-                      "selected-hotspot-prop": _vm.selected_hotspot_prop
-                    },
-                    on: { selectedItem: _vm.theSelectedItem }
-                  })
-                ],
-                1
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.activateInterior == true
-            ? _c(
-                "v-col",
-                { attrs: { cols: "9" } },
-                [
-                  _c("interior-panel", {
-                    attrs: {
-                      "auth-user": _vm.authUser,
-                      product: this.$route.params.id,
-                      "selected-interior-hotspot":
-                        _vm.selected_interior_hotspot_prop
-                    }
-                  })
-                ],
-                1
-              )
-            : _vm._e()
-        ],
-        1
-      )
+            staticClass: "col-12 col-md-3"
+          },
+          [
+            _c("Hotspots", {
+              attrs: {
+                item: _vm.selected_item,
+                "auth-user": _vm.authUser,
+                product: this.$route.params.id,
+                "current-panel": _vm.selected_panel_prop
+              },
+              on: {
+                emitHotspot: _vm.hotspotToSet,
+                emitInteriorHotspot: _vm.hotspotToInterior
+              }
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _vm.activateExterior == true
+          ? _c(
+              "div",
+              { staticClass: "col-12 col-md-9", attrs: { cols: "9" } },
+              [
+                _c("exterior-panel", {
+                  attrs: {
+                    "auth-user": _vm.authUser,
+                    product: this.$route.params.id,
+                    "selected-hotspot-prop": _vm.selected_hotspot_prop
+                  },
+                  on: { selectedItem: _vm.theSelectedItem }
+                })
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.activateInterior == true
+          ? _c(
+              "div",
+              { staticClass: "col-12 col-md-9", attrs: { cols: "9" } },
+              [
+                _c("interior-panel", {
+                  attrs: {
+                    "auth-user": _vm.authUser,
+                    product: this.$route.params.id,
+                    "selected-interior-hotspot":
+                      _vm.selected_interior_hotspot_prop
+                  }
+                })
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.activateVideo == true
+          ? _c(
+              "div",
+              { staticClass: "col-12 col-md-9" },
+              [
+                _c("video-panel", {
+                  attrs: {
+                    "auth-user": _vm.authUser,
+                    product: this.$route.params.id
+                  }
+                })
+              ],
+              1
+            )
+          : _vm._e()
+      ])
     ],
     1
   )
@@ -29526,6 +29718,237 @@ var render = function() {
         ],
         1
       )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/VideoPanel.vue?vue&type=template&id=785ce0c2&":
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/builder/edit/VideoPanel.vue?vue&type=template&id=785ce0c2& ***!
+  \**************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "row" },
+    [
+      _c(
+        "div",
+        { staticClass: "col-12" },
+        [
+          _c(
+            "v-btn",
+            {
+              staticClass: "primary mb-3",
+              on: {
+                click: function($event) {
+                  _vm.videoDialog = true
+                }
+              }
+            },
+            [_vm._v("New Video")]
+          ),
+          _vm._v(" "),
+          _c("v-data-table", {
+            staticClass: "elevation-1",
+            attrs: {
+              headers: _vm.headers,
+              items: _vm.desserts,
+              "hide-default-footer": ""
+            },
+            scopedSlots: _vm._u(
+              [
+                {
+                  key: "item.title",
+                  fn: function(ref) {
+                    var item = ref.item
+                    return [
+                      _c(
+                        "v-icon",
+                        {
+                          staticClass: "mr-2",
+                          attrs: {
+                            small: "",
+                            title: "Edit Hotspot",
+                            color: "primary"
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.editVideo(item)
+                            }
+                          }
+                        },
+                        [_vm._v("mdi-pencil")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-icon",
+                        {
+                          attrs: { small: "", title: "Delete Hotspot" },
+                          on: {
+                            click: function($event) {
+                              return _vm.deleteVideo(item)
+                            }
+                          }
+                        },
+                        [_vm._v("mdi-trash-can")]
+                      )
+                    ]
+                  }
+                }
+              ],
+              null,
+              true
+            )
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "600px" },
+          model: {
+            value: _vm.editDialog,
+            callback: function($$v) {
+              _vm.editDialog = $$v
+            },
+            expression: "editDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", [
+                _c("h4", { staticClass: "pb-2" }, [_vm._v("Manage Hotspot")])
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _c(
+                  "form",
+                  [
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Title",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.title,
+                        callback: function($$v) {
+                          _vm.title = $$v
+                        },
+                        expression: "title"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex" },
+                      [
+                        _c("v-text-field", {
+                          staticClass: "py-0 mr-1",
+                          attrs: {
+                            outlined: "",
+                            dense: "",
+                            label: "Video URL",
+                            required: ""
+                          },
+                          model: {
+                            value: _vm.videoPath,
+                            callback: function($$v) {
+                              _vm.videoPath = $$v
+                            },
+                            expression: "videoPath"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "mt-2",
+                            attrs: { small: "", icon: "" },
+                            on: { click: _vm.openMediaFiles }
+                          },
+                          [
+                            _c("v-icon", { attrs: { small: "" } }, [
+                              _vm._v("mdi-folder-image")
+                            ])
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex justify-end" },
+                      [
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "mr-1",
+                            attrs: { text: "", color: "grey" },
+                            on: {
+                              click: function($event) {
+                                _vm.editDialog = false
+                              }
+                            }
+                          },
+                          [_vm._v("cancel")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "primary",
+                            on: {
+                              click: function($event) {
+                                return _vm.updateHotspot()
+                              }
+                            }
+                          },
+                          [_vm._v("update")]
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ])
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("media-files", {
+        attrs: { mediaOptions: _vm.mediaFilesSettings },
+        on: { responded: _vm.mediaResponse }
+      })
     ],
     1
   )
@@ -89612,6 +90035,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_template_id_ec03aa64___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_InteriorPanel_vue_vue_type_template_id_ec03aa64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/builder/edit/VideoPanel.vue":
+/*!*************************************************************!*\
+  !*** ./resources/js/components/builder/edit/VideoPanel.vue ***!
+  \*************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _VideoPanel_vue_vue_type_template_id_785ce0c2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VideoPanel.vue?vue&type=template&id=785ce0c2& */ "./resources/js/components/builder/edit/VideoPanel.vue?vue&type=template&id=785ce0c2&");
+/* harmony import */ var _VideoPanel_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VideoPanel.vue?vue&type=script&lang=js& */ "./resources/js/components/builder/edit/VideoPanel.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _VideoPanel_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _VideoPanel_vue_vue_type_template_id_785ce0c2___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _VideoPanel_vue_vue_type_template_id_785ce0c2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/builder/edit/VideoPanel.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/builder/edit/VideoPanel.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************!*\
+  !*** ./resources/js/components/builder/edit/VideoPanel.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoPanel_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./VideoPanel.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/VideoPanel.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoPanel_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/builder/edit/VideoPanel.vue?vue&type=template&id=785ce0c2&":
+/*!********************************************************************************************!*\
+  !*** ./resources/js/components/builder/edit/VideoPanel.vue?vue&type=template&id=785ce0c2& ***!
+  \********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoPanel_vue_vue_type_template_id_785ce0c2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./VideoPanel.vue?vue&type=template&id=785ce0c2& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/builder/edit/VideoPanel.vue?vue&type=template&id=785ce0c2&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoPanel_vue_vue_type_template_id_785ce0c2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoPanel_vue_vue_type_template_id_785ce0c2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

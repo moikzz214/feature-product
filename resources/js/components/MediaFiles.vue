@@ -30,7 +30,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
-          <upload-zone :add-items="false" @uploaded="uploadZoneResponse" />
+          <upload-zone :add-items="false" item-type="video" @uploaded="uploadZoneResponse" />
         </v-card-text>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'mediafiles'">
           <v-row class="px-2">

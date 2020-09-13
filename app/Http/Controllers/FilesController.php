@@ -47,21 +47,21 @@ class FilesController extends Controller
         }
 
         // Wrap the files to collection
-        $images = Collection::wrap(request()->file('file'));
+        $files = Collection::wrap(request()->file('file'));
 
         // Do something on each files uploaded
-        $images->each(function ($image, $key) use (&$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
+        $files->each(function ($file, $key) use (&$userStorage, &$itemsArray, &$fileArray, &$request, &$uploadKey) {
             $userStorageDir = storage_path() . '/app' . $userStorage;
-            // $fileName = $uploadKey."-".$image->getClientOriginalName();
-            $fileName = $image->getClientOriginalName();
+            // $fileName = $uploadKey."-".$file->getClientOriginalName();
+            $fileName = $file->getClientOriginalName();
             $title = pathinfo($fileName, PATHINFO_FILENAME);
-            $extn = $image->getClientOriginalExtension();
+            $extn = $file->getClientOriginalExtension();
             $slugTitle = Str::slug($title, '-');
             $path = $slugTitle."-".$uploadKey.".".$extn;
             // $path = Str::slug($uploadKey."-".$fileName, "-"); // Added upload key to avoid replacing of duplicated filenames
-            // $fname = $image->getClientOriginalName();
+            // $fname = $file->getClientOriginalName();
             // $fileName = substr($name,0,6).'-'.auth()->id().'-'.$randomName;
-            // $imageExtensions = array('jpeg','jpg','png','JPEG','JPG','PNG');
+            // $fileExtensions = array('jpeg','jpg','png','JPEG','JPG','PNG');
             $jpgExtensions = array('jpeg', 'jpg', 'JPEG', 'JPG');
             $pngExtensions = array('png', 'PNG');
             $format = 'jpg';
@@ -69,15 +69,27 @@ class FilesController extends Controller
                 $format = 'png';
             }
 
-            // File Optimization
-            // $img = Image::make($image)->fit(3840,2160); // UHD
-            $img = Image::make($image);
-            // if ($request->item_type == "360") {
-            //     // Optimize 360 images only
-            //     $img->fit(1920, 1080);
-            //     $img->encode($format, 50);
-            // }
-            $img->save($userStorageDir . '/' . $path); // FHD
+            // Check file if image or video
+            if($request->item_type == 'video'){
+                // dd('vidoeeasdasdas');
+                $file->move(storage_path().'uploads/user-1/', $path); // add user id
+                // dd($userStorageDir);
+                // $path = $request->file('slide')->storeAs('public/videos/',$fileNameToStore);
+                // $img->save($userStorageDir . '/' . $path); // FHD
+            }else{
+                // File Optimization
+                // $img = Image::make($file)->fit(3840,2160); // UHD
+                $img = Image::make($file);
+                // if ($request->item_type == "360") {
+                //     // Optimize 360 images only
+                //     $img->fit(1920, 1080);
+                //     $img->encode($format, 50);
+                // }
+                $img->save($userStorageDir . '/' . $path); // FHD
+            }
+
+        
+     
 
 
             if ($request->add_items == 'true') {
@@ -91,7 +103,7 @@ class FilesController extends Controller
 
             // Prepare object before saving
             array_push($fileArray, array(
-                'file_type' => 'image',
+                'file_type' => $request->item_type == 'video' ? 'video' : 'image',
                 'title' => $title,
                 'original_name' => $slugTitle."-".$uploadKey,
                 'disk' => 'uploads',
@@ -164,8 +176,8 @@ class FilesController extends Controller
     {
         $m = Media_file::where('path', $path)->firstOrFail();
         if (isset($m)) {
-            $image = storage_path() . '/uploads/user-1/1/' . $path;
-            return response()->file($image, array('Content-Type' => 'image/jpeg'));
+            $file = storage_path() . '/uploads/user-1/1/' . $path;
+            return response()->file($file, array('Content-Type' => 'image/jpeg'));
         } else {
             return abort('403');
         }
