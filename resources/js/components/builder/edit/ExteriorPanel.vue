@@ -75,7 +75,8 @@
                   <v-img
                     @click="selected(index, item)"
                     :aspect-ratio="16/9"
-                    class="white--text align-end"
+                    :data-targetid="JSON.stringify(item)"
+                    :class="'white--text align-end target-frame-'+index"
                     :src="baseUrl+'/storage/uploads/user-1/'+item.media_file.path"
                     style="border:0;opacity:.75;"
                   >
@@ -213,7 +214,7 @@ export default {
         // onFrame: function (e, data) {
         //   // console.log(data.frame);
         // },
-        // onFrame: spritespinOnFrame,
+        onFrameChanged: this.spritespinOnFrame,
       },
     };
   },
@@ -240,6 +241,7 @@ export default {
         .post("/hotspot/setting/delete", data)
         .then((response) => {
           console.log(response);
+          $("#"+spotId).css({'left':'5%',"top": "5%"});
           // remove the hotspot from 360
           //   this.getHotspotSettings();
         })
@@ -319,26 +321,37 @@ export default {
     },
 
     spritespinOnFrame() {
-      setTimeout(() => {
-        if (this.$refs.spritespin) {
-          console.log(this.$refs.spritespin);
-        //   this.$refs.spritespin.bind("onFrame", function (e, data) {
-        //     console.log("oadasdnasdas");
-        //   });
-          // console.log(this.items[0]);
-          //   this.$refs.spritespin.bind("onFrame", function () {
-          //     //   console.log('binded')
-          //     // var data = api.data;
-          //     // console.log(data);
-          //     // data.stage.find(".detail:visible").stop(false).fadeOut();
-          //     // data.stage
-          //     //   .find(".detail.detail-" + data.frame)
-          //     //   .stop(false)
-          //     //   .fadeIn();
-          //   });
-          //   console.log(this.$refs.spritespin.data.frame);
-        }
-      }, 600);
+      if (this.$refs.spritespin) {
+        // console.log("item id: "+$("#cur-frame").val())
+        let targetFrame = this.$refs.spritespin.data.frame;
+        let targetItem = $('.target-frame-'+targetFrame).data('targetid');
+        // targetItem = JSON.parse(targetItem);
+        console.log("frame: "+ targetFrame);
+        console.log("item: "+ targetItem);
+        this.selected(targetFrame, targetItem);
+      }
+      // this.$nextTick(function () {
+      //   setTimeout(() => {
+      //     if (this.$refs.spritespin) {
+      //       console.log(this.$refs.spritespin);
+      //       //   this.$refs.spritespin.bind("onFrame", function (e, data) {
+      //       //     console.log("oadasdnasdas");
+      //       //   });
+      //       // console.log(this.items[0]);
+      //       //   this.$refs.spritespin.bind("onFrame", function () {
+      //       //     //   console.log('binded')
+      //       //     // var data = api.data;
+      //       //     // console.log(data);
+      //       //     // data.stage.find(".detail:visible").stop(false).fadeOut();
+      //       //     // data.stage
+      //       //     //   .find(".detail.detail-" + data.frame)
+      //       //     //   .stop(false)
+      //       //     //   .fadeIn();
+      //       //   });
+      //       //   console.log(this.$refs.spritespin.data.frame);
+      //     }
+      //   }, 600);
+      // });
     },
     selected(index, id = null) {
       //   $(".cd-single-point").hide();
@@ -351,15 +364,17 @@ export default {
           if (inner.item_id == dItemId) {
             // Insert all the settings on the selected Item ID
             tempSettings.push(inner);
-          }
+          } 
         });
       });
       tempSettings.map(function (s, index) {
+        let parseData = JSON.parse(s.hotspot_settings); 
+        
         // Apply hotspot style from the settings variable
         $(".draggable-hotspot.hotspot-id-" + s.hotspot_id).css({
-          left: JSON.parse(s.hotspot_settings).left + "%",
-          top: JSON.parse(s.hotspot_settings).top + "%",
-          display: "block",
+          left: parseData.left ? parseData.left+"%" : "5%",
+          top: parseData.top ? parseData.top+"%" : "5%",
+          display: parseData.display,
         });
       });
       this.settingsInCurrentScene = tempSettings;
@@ -388,7 +403,7 @@ export default {
       this.show = false;
       axios
         .get("/items/by-product/" + this.product)
-        .then((response) => {
+        .then((response) => {   
           // console.log(response.data.items);
           // If no items found
           if (response.data.items.length == 0) {
@@ -422,7 +437,7 @@ export default {
           if (this.items[0].length !== 0) {
             setTimeout(() => {
               this.selected(0, this.items[0]);
-            }, 2000);
+            }, 3000);
           }
         })
         .catch((error) => {
@@ -439,11 +454,11 @@ export default {
       // this.$nextTick(function () {
       $(function () {
         $(".draggable-hotspot").draggable({
-          containment: ".hotspot-draggable-wrapper",
+          containment: ".spritespin-wrapper",
           drag: function () {
             // coordinates(".draggable-hotspot");
-            var widthWrapper = $(".hotspot-draggable-wrapper").width();
-            var heightWrapper = $(".hotspot-draggable-wrapper").height();
+            var widthWrapper = $(".spritespin-wrapper").width();
+            var heightWrapper = $(".spritespin-wrapper").height();
             var left = $(this).position().left;
             var top = $(this).position().top;
             leftPercentage = (left / widthWrapper) * 100;
@@ -455,9 +470,11 @@ export default {
             var hpSettings = {
               top: null,
               left: null,
+              display: 'none'
             };
             hpSettings.top = topPercentage.toFixed(2);
             hpSettings.left = leftPercentage.toFixed(2);
+            hpSettings.display = 'block';
             var ieID = $("#cur-frame").val();
             var hpsId = $(this).attr("data-hps");
             temp_hotspots[ieID + hpsId] = {
@@ -490,9 +507,7 @@ export default {
   created() {
     this.getImagesByProduct();
     this.getHotspotSettings();
-    setTimeout(() => {
-      this.spritespinOnFrame();
-    }, 300);
+   
   },
   mounted() {},
 };
@@ -855,8 +870,8 @@ ul {
 .hotspot-default-position {
   // left: 50%;
   // bottom: 50%;
-  left: 50%;
-  bottom: 50%;
+  left: 5%;
+  bottom: 5%;
 }
 // .cd-single-point.hotspot-1 {
 //   bottom: 54%;

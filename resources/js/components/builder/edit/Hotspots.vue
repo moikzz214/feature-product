@@ -365,8 +365,9 @@ export default {
         id: h.id,
         item_id: this.selectedItem,
         hotspot_settings: {
-          top: '50%',
-          left: '50%'
+          top: '5%',
+          left: '5%',
+          display: 'block'
         },
         title: h.title
         // hotspotObjectToEmit: h,
