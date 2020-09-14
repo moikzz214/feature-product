@@ -2991,20 +2991,8 @@ __webpack_require__.r(__webpack_exports__);
         icon: "mdi-diamond-stone",
         text: "Products",
         location: "/builder/products"
-      }, {
-        icon: "mdi-cloud-upload-outline",
-        text: "Upload Video",
-        location: "/builder/product/upload-video"
-      } // { icon: "mdi-playlist-play", text: "Playlists" },
-      // { icon: "mdi-clock", text: "Watch Later" },
-      ],
-      items2: [{
-        picture: 28,
-        text: "Joseph"
-      }, {
-        picture: 38,
-        text: "Apple"
-      }]
+      } // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
+      ]
     };
   },
   methods: {
