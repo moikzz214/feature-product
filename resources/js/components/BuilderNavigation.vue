@@ -110,9 +110,14 @@ export default {
       ],
       clientSettings: [
         {
-          icon: "mdi-account-group",
+          icon: "mdi-star",
           text: "Organization",
           location: "/settings/organization",
+        },
+        {
+          icon: "mdi-account-group",
+          text: "Teams",
+          location: "/settings/Teams",
         },
         {
           icon: "mdi-account",

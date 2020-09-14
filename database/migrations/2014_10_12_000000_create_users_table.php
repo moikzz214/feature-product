@@ -18,6 +18,8 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->unsignedBigInteger('company_id');
+            $table->integer('role')->nullable();
+            $table->boolean('status')->nullable()->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -27,7 +29,6 @@ class CreateUsersTable extends Migration
             $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->string('zip')->nullable();
-            $table->integer('role')->nullable();
             $table->string('profile_image')->nullable();
             $table->timestamps();
         });

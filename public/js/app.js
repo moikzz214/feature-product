@@ -3013,9 +3013,13 @@ __webpack_require__.r(__webpack_exports__);
       // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
       ],
       clientSettings: [{
-        icon: "mdi-account-group",
+        icon: "mdi-star",
         text: "Organization",
         location: "/settings/organization"
+      }, {
+        icon: "mdi-account-group",
+        text: "Teams",
+        location: "/settings/Teams"
       }, {
         icon: "mdi-account",
         text: "Account",
@@ -5484,6 +5488,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -30301,117 +30308,129 @@ var render = function() {
         "v-col",
         { staticClass: "px-5", attrs: { cols: "12" } },
         [
-          _c("v-simple-table", {
-            scopedSlots: _vm._u([
-              {
-                key: "default",
-                fn: function() {
-                  return [
-                    _c("thead", [
-                      _c("tr", [
-                        _c("th", { staticClass: "text-left" }, [
-                          _vm._v("Name")
+          _c("h3", { staticClass: "font-weight-light mb-5" }, [
+            _vm._v("Teams")
+          ]),
+          _vm._v(" "),
+          _c(
+            "v-card",
+            [
+              _c("v-simple-table", {
+                scopedSlots: _vm._u([
+                  {
+                    key: "default",
+                    fn: function() {
+                      return [
+                        _c("thead", [
+                          _c("tr", [
+                            _c("th", { staticClass: "text-left" }, [
+                              _vm._v("Name")
+                            ]),
+                            _vm._v(" "),
+                            _c("th", { staticClass: "text-left" }, [
+                              _vm._v("Email")
+                            ]),
+                            _vm._v(" "),
+                            _c("th", { staticClass: "text-left" }, [
+                              _vm._v("Status")
+                            ]),
+                            _vm._v(" "),
+                            _c("th", { staticClass: "text-right" }, [
+                              _vm._v("Actions")
+                            ])
+                          ])
                         ]),
                         _vm._v(" "),
-                        _c("th", { staticClass: "text-left" }, [
-                          _vm._v("Email")
-                        ]),
-                        _vm._v(" "),
-                        _c("th", { staticClass: "text-left" }, [
-                          _vm._v("Status")
-                        ]),
-                        _vm._v(" "),
-                        _c("th", { staticClass: "text-right" }, [
-                          _vm._v("Actions")
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "tbody",
-                      _vm._l(_vm.orgUsers, function(item) {
-                        return _c("tr", { key: item.id }, [
-                          _c("td", [_vm._v(_vm._s(item.name))]),
-                          _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(item.email))]),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            {
-                              class:
-                                (item.status == 1
-                                  ? "green--text"
-                                  : "blue--text") + " text-left"
-                            },
-                            [
-                              _vm._v(
-                                _vm._s(item.status == 1 ? "active" : "inactive")
-                              )
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            { staticClass: "text-right" },
-                            [
+                        _c(
+                          "tbody",
+                          _vm._l(_vm.orgUsers, function(item) {
+                            return _c("tr", { key: item.id }, [
+                              _c("td", [_vm._v(_vm._s(item.name))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(item.email))]),
+                              _vm._v(" "),
                               _c(
-                                "v-btn",
+                                "td",
                                 {
-                                  attrs: {
-                                    title: "Edit",
-                                    icon: "",
-                                    small: "",
-                                    color: "blue"
-                                  },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.editUser(item.id)
-                                    }
-                                  }
+                                  class:
+                                    (item.status == 1
+                                      ? "green--text"
+                                      : "blue--text") + " text-left"
                                 },
                                 [
-                                  _c("v-icon", { attrs: { small: "" } }, [
-                                    _vm._v("mdi-pencil")
-                                  ])
-                                ],
-                                1
+                                  _vm._v(
+                                    _vm._s(
+                                      item.status == 1 ? "active" : "inactive"
+                                    )
+                                  )
+                                ]
                               ),
                               _vm._v(" "),
                               _c(
-                                "v-btn",
-                                {
-                                  attrs: {
-                                    title: "Delete",
-                                    icon: "",
-                                    small: "",
-                                    color: "red"
-                                  },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.deleteUser(item.id)
-                                    }
-                                  }
-                                },
+                                "td",
+                                { staticClass: "text-right" },
                                 [
-                                  _c("v-icon", { attrs: { small: "" } }, [
-                                    _vm._v("mdi-trash-can-outline")
-                                  ])
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        title: "Edit",
+                                        icon: "",
+                                        small: "",
+                                        color: "blue"
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.editUser(item.id)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c("v-icon", { attrs: { small: "" } }, [
+                                        _vm._v("mdi-pencil")
+                                      ])
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        title: "Delete",
+                                        icon: "",
+                                        small: "",
+                                        color: "red"
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.deleteUser(item.id)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c("v-icon", { attrs: { small: "" } }, [
+                                        _vm._v("mdi-trash-can-outline")
+                                      ])
+                                    ],
+                                    1
+                                  )
                                 ],
                                 1
                               )
-                            ],
-                            1
-                          )
-                        ])
-                      }),
-                      0
-                    )
-                  ]
-                },
-                proxy: true
-              }
-            ])
-          })
+                            ])
+                          }),
+                          0
+                        )
+                      ]
+                    },
+                    proxy: true
+                  }
+                ])
+              })
+            ],
+            1
+          )
         ],
         1
       )
@@ -90751,8 +90770,8 @@ var opts = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp7.3.14.2\htdocs\product-feature\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp7.3.15\htdocs\feature-product\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

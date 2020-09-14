@@ -17,6 +17,7 @@ class UsersTableSeeder extends Seeder
             'password'      => Hash::make('123456789'),
             'phone'         => '05012345678',
             'role'          => 1,
+            'status'        => true,
             'company_id'    => 1,
         ]);
         $user->save();
@@ -26,6 +27,7 @@ class UsersTableSeeder extends Seeder
             'password'      => Hash::make('123456789'),
             'phone'         => '05012345678',
             'role'          => 5,
+            'status'        => true,
             'company_id'    => 2,
         ]);
         $user->save();
@@ -35,6 +37,7 @@ class UsersTableSeeder extends Seeder
             'password'      => Hash::make('123456789'),
             'phone'         => '05012345678',
             'role'          => 4,
+            'status'        => true,
             'company_id'    => 3,
         ]);
         $user->save();
