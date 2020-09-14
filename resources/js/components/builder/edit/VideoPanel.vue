@@ -128,7 +128,7 @@ export default {
     mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
-      this.videoPath = v;
+      this.videoPath = v != false ? v : this.videoPath;
     },
     openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings

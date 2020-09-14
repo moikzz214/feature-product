@@ -5398,7 +5398,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     mediaResponse: function mediaResponse(v) {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
-      this.videoPath = v;
+      this.videoPath = v != false ? v : this.videoPath;
     },
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;

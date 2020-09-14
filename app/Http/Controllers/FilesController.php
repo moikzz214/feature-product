@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
@@ -43,7 +44,7 @@ class FilesController extends Controller
         // $userId = auth()->id();
         $user = Auth::user();
         $companyId = $user->company_id;
-        $userStorage = '/public/uploads/user-' . auth()->id();
+        $userStorage = '/public/uploads/' . $companyId;
         if (!Storage::exists($userStorage)) {
             Storage::makeDirectory($userStorage, 0755, true);
         }
@@ -74,7 +75,7 @@ class FilesController extends Controller
             // Check file if image or video
             if($request->item_type == 'video'){
                 // dd('vidoeeasdasdas');
-                $file->move('storage/uploads/user-'.$companyId.'/', $path); // add user id
+                $file->move('storage/uploads/'.$companyId.'/', $path); // add user id
                 // dd($userStorageDir);
                 // $path = $request->file('slide')->storeAs('public/videos/',$fileNameToStore);
                 // $img->save($userStorageDir . '/' . $path); // FHD
