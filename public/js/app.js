@@ -3174,6 +3174,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       tabItem: "upload",
+      companyId: this.mediaOptions.user.company_id,
       userId: this.mediaOptions.user.id,
       files: [],
       baseUrl: window.location.origin,
@@ -3238,7 +3239,7 @@ __webpack_require__.r(__webpack_exports__);
 
       // If only needs to return the url of the selected image
       if (this.return_url == true) {
-        var toReturlUrl = this.baseUrl + "/storage/uploads/user-" + this.userId + "/" + this.selected[0];
+        var toReturlUrl = this.baseUrl + "/storage/uploads/" + this.companyId + "/" + this.selected[0];
         this.$emit("responded", toReturlUrl);
         this.selected = [];
       } else {
@@ -4460,7 +4461,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this4.options.frames = response.data.items.length;
         _this4.options.source = response.data.items.map(function (item) {
-          return window.location.origin + "/storage/uploads/user-" + _this4.authUser.id + "/" + item.media_file.path;
+          return window.location.origin + "/storage/uploads/" + _this4.authUser.company_id + "/" + item.media_file.path;
         });
         setTimeout(function () {
           _this4.show = true;
@@ -5201,7 +5202,7 @@ var toSaveHotspot = [];
         pitch: -16.834687202204037,
         yaw: -36.30724382948786,
         type: "equirectangular",
-        panorama: this.baseUrl + "/storage/uploads/user-" + this.authUser.id + "/" + i.media_file.path,
+        panorama: this.baseUrl + "/storage/uploads/" + this.authUser.company_id + "/" + i.media_file.path,
         hotSpots: []
       });
       this.thePanorama.loadScene(sceneTitle);
@@ -27363,8 +27364,8 @@ var render = function() {
                                           attrs: {
                                             src:
                                               _vm.baseUrl +
-                                              "/storage/uploads/user-" +
-                                              _vm.userId +
+                                              "/storage/uploads/" +
+                                              _vm.companyId +
                                               "/" +
                                               file.path,
                                             "max-height": "130",
@@ -28796,7 +28797,9 @@ var render = function() {
                                                   ),
                                                   src:
                                                     _vm.baseUrl +
-                                                    "/storage/uploads/user-1/" +
+                                                    "/storage/uploads/" +
+                                                    _vm.authUser.company_id +
+                                                    "/" +
                                                     item.media_file.path
                                                 },
                                                 on: {

@@ -41,7 +41,7 @@
               >
                 <v-img
                   v-if="file.file_type == 'image'"
-                  :src="baseUrl+'/storage/uploads/user-'+userId+'/'+file.path"
+                  :src="baseUrl+'/storage/uploads/'+companyId+'/'+file.path"
                   max-height="130"
                   min-height="120"
                   contain
@@ -119,6 +119,7 @@ export default {
   data() {
     return {
       tabItem: "upload",
+      companyId: this.mediaOptions.user.company_id,
       userId: this.mediaOptions.user.id,
       files: [],
       baseUrl: window.location.origin,
@@ -187,8 +188,7 @@ export default {
       if (this.return_url == true) {
         let toReturlUrl =
           this.baseUrl +
-          "/storage/uploads/user-" +
-          this.userId +
+          "/storage/uploads/" +this.companyId +
           "/" +
           this.selected[0];
         this.$emit("responded", toReturlUrl);

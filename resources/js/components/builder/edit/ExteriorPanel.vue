@@ -77,7 +77,7 @@
                     :aspect-ratio="16/9"
                     :data-targetid="JSON.stringify(item)"
                     :class="'white--text align-end target-frame-'+index"
-                    :src="baseUrl+'/storage/uploads/user-1/'+item.media_file.path"
+                    :src="baseUrl+'/storage/uploads/'+authUser.company_id+'/'+item.media_file.path"
                     style="border:0;opacity:.75;"
                   >
                     <v-card-text>{{index+1}}</v-card-text>
@@ -402,8 +402,8 @@ export default {
           this.options.source = response.data.items.map(
             (item) =>
               window.location.origin +
-              "/storage/uploads/user-" +
-              this.authUser.id +
+              "/storage/uploads/" +
+              this.authUser.company_id +
               "/" +
               item.media_file.path
           );

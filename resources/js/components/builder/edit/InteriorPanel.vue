@@ -296,8 +296,8 @@ export default {
         type: "equirectangular",
         panorama:
           this.baseUrl +
-          "/storage/uploads/user-" +
-          this.authUser.id +
+          "/storage/uploads/" +
+          this.authUser.company_id +
           "/" +
           i.media_file.path,
         hotSpots: [],
