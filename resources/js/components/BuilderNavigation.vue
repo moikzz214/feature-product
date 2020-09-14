@@ -11,12 +11,30 @@
           </v-list-item-content>
         </v-list-item>
         <v-spacer></v-spacer>
+        <!-- Client Settings -->
         <v-subheader class="mt-4 mt-auto grey--text text--darken-1">Settings</v-subheader>
-        <v-list-item link>
+        <v-list-item
+          link
+          v-for="setting in clientSettings"
+          :key="setting.text"
+          :to="setting.location"
+        >
           <v-list-item-action>
-            <v-icon color="grey darken-1">mdi-cog</v-icon>
+            <v-icon color="grey darken-1">{{ setting.icon }}</v-icon>
           </v-list-item-action>
-          <v-list-item-title class="grey--text text--darken-1">Account Settings</v-list-item-title>
+          <v-list-item-title class="grey--text text--darken-1">{{ setting.text }}</v-list-item-title>
+        </v-list-item>
+        <v-subheader class="mt-4 mt-auto grey--text text--darken-1">Admin</v-subheader>
+        <v-list-item
+          link
+          v-for="adminSetting in adminSettings"
+          :key="adminSetting.text"
+          :to="adminSetting.location"
+        >
+          <v-list-item-action>
+            <v-icon color="grey darken-1">{{ adminSetting.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-title class="grey--text text--darken-1">{{ adminSetting.text }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -80,7 +98,7 @@ export default {
         {
           icon: "mdi-view-dashboard",
           text: "Dashboard",
-          location: "/builder/dashboard",
+          location: "/dashboard",
         },
         {
           icon: "mdi-diamond-stone",
@@ -88,6 +106,26 @@ export default {
           location: "/builder/products",
         },
         // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
+        // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
+      ],
+      clientSettings: [
+        {
+          icon: "mdi-account-group",
+          text: "Organization",
+          location: "/settings/organization",
+        },
+        {
+          icon: "mdi-account",
+          text: "Account",
+          location: "/settings/account",
+        },
+      ],
+      adminSettings: [
+        {
+          icon: "mdi-account-group",
+          text: "Companies",
+          location: "/settings/companies",
+        },
       ],
     };
   },

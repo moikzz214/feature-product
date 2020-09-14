@@ -2977,6 +2977,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["authUser"],
   data: function data() {
@@ -2986,13 +3004,28 @@ __webpack_require__.r(__webpack_exports__);
       items: [{
         icon: "mdi-view-dashboard",
         text: "Dashboard",
-        location: "/builder/dashboard"
+        location: "/dashboard"
       }, {
         icon: "mdi-diamond-stone",
         text: "Products",
         location: "/builder/products"
       } // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
-      ]
+      // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
+      ],
+      clientSettings: [{
+        icon: "mdi-account-group",
+        text: "Organization",
+        location: "/settings/organization"
+      }, {
+        icon: "mdi-account",
+        text: "Account",
+        location: "/settings/account"
+      }],
+      adminSettings: [{
+        icon: "mdi-account-group",
+        text: "Companies",
+        location: "/settings/companies"
+      }]
     };
   },
   methods: {
@@ -26935,28 +26968,67 @@ var render = function() {
                 [_vm._v("Settings")]
               ),
               _vm._v(" "),
+              _vm._l(_vm.clientSettings, function(setting) {
+                return _c(
+                  "v-list-item",
+                  {
+                    key: setting.text,
+                    attrs: { link: "", to: setting.location }
+                  },
+                  [
+                    _c(
+                      "v-list-item-action",
+                      [
+                        _c("v-icon", { attrs: { color: "grey darken-1" } }, [
+                          _vm._v(_vm._s(setting.icon))
+                        ])
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-list-item-title",
+                      { staticClass: "grey--text text--darken-1" },
+                      [_vm._v(_vm._s(setting.text))]
+                    )
+                  ],
+                  1
+                )
+              }),
+              _vm._v(" "),
               _c(
-                "v-list-item",
-                { attrs: { link: "" } },
-                [
-                  _c(
-                    "v-list-item-action",
-                    [
-                      _c("v-icon", { attrs: { color: "grey darken-1" } }, [
-                        _vm._v("mdi-cog")
-                      ])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-list-item-title",
-                    { staticClass: "grey--text text--darken-1" },
-                    [_vm._v("Account Settings")]
-                  )
-                ],
-                1
-              )
+                "v-subheader",
+                { staticClass: "mt-4 mt-auto grey--text text--darken-1" },
+                [_vm._v("Admin")]
+              ),
+              _vm._v(" "),
+              _vm._l(_vm.adminSettings, function(adminSetting) {
+                return _c(
+                  "v-list-item",
+                  {
+                    key: adminSetting.text,
+                    attrs: { link: "", to: adminSetting.location }
+                  },
+                  [
+                    _c(
+                      "v-list-item-action",
+                      [
+                        _c("v-icon", { attrs: { color: "grey darken-1" } }, [
+                          _vm._v(_vm._s(adminSetting.icon))
+                        ])
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-list-item-title",
+                      { staticClass: "grey--text text--darken-1" },
+                      [_vm._v(_vm._s(adminSetting.text))]
+                    )
+                  ],
+                  1
+                )
+              })
             ],
             2
           )
