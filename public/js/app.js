@@ -5310,6 +5310,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     product: {
@@ -5322,17 +5328,25 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   watch: {
+    deleteDialog: function deleteDialog(val) {
+      if (val == false) {
+        this.id = null;
+      }
+    },
     videoDialog: function videoDialog(val) {
       if (val == false) {
         this.title = "";
         this.videoPath = "";
+        this.dialogAction = "save";
       }
     }
   },
   data: function data() {
     return {
-      videoDialogData: [],
+      deleteDialog: false,
+      dialogAction: "save",
       videoDialog: false,
+      id: null,
       title: "",
       videoPath: "",
       // Media Files
@@ -5368,33 +5382,64 @@ __webpack_require__.r(__webpack_exports__);
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
     },
+    deleteVideo: function deleteVideo(v) {
+      this.id = v.id;
+      this.deleteDialog = true;
+    },
+    confirmDelete: function confirmDelete() {
+      var _this = this;
+
+      axios.post("/video/delete/" + this.id).then(function (response) {
+        _this.deleteDialog = false;
+        _this.id = null;
+        console.log("delete success");
+
+        _this.fetchAllVideos();
+      })["catch"](function (error) {
+        console.log("Error Deleting Video");
+        console.log(error);
+      });
+    },
     editVideo: function editVideo(v) {
+      this.dialogAction = "update";
+      this.id = v.id;
       this.title = v.title;
       this.videoPath = v.video_path;
       this.videoDialog = true;
     },
     saveVideo: function saveVideo() {
-      var _this = this;
+      var _this2 = this;
+
+      var route = "save";
+
+      if (this.dialogAction == "update") {
+        route = "update/" + this.id;
+      }
 
       var data = {
         title: this.title,
         video_path: this.videoPath,
         product_id: this.product
       };
-      axios.post("/video/save", data).then(function (response) {
-        _this.videoDialog = false;
-        _this.title = "";
-        _this.videoPath = "";
+      axios.post("/video/" + route, data).then(function (response) {
+        _this2.videoDialog = false;
+        _this2.title = "";
+        _this2.videoPath = "";
+        _this2.id = null;
+
+        _this2.fetchAllVideos();
+
+        console.log("success");
       })["catch"](function (error) {
         console.log("Error Saving Video");
         console.log(error);
       });
     },
     fetchAllVideos: function fetchAllVideos() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.get("/video/all/" + this.product).then(function (response) {
-        _this2.videos = response.data.videos;
+        _this3.videos = response.data.videos;
       })["catch"](function (error) {
         console.log("Error Fetching Videos");
         console.log(error);
@@ -29909,11 +29954,7 @@ var render = function() {
             "v-card",
             [
               _c("v-card-title", [
-                _c("h4", { staticClass: "pb-2" }, [
-                  _vm._v(
-                    _vm._s(_vm.title != "" ? "Edit " + _vm.title : "New Video")
-                  )
-                ])
+                _c("h4", { staticClass: "pb-2" }, [_vm._v("Video")])
               ]),
               _vm._v(" "),
               _c("v-card-text", [
@@ -30009,6 +30050,70 @@ var render = function() {
                   1
                 )
               ])
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "300px" },
+          model: {
+            value: _vm.deleteDialog,
+            callback: function($$v) {
+              _vm.deleteDialog = $$v
+            },
+            expression: "deleteDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "subtitle-1" }, [
+                _vm._v("Confirm delete")
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _vm._v("\n        Are you sure you want to delete\n        "),
+                _c("strong", { staticClass: "black--text" }, [
+                  _vm._v(_vm._s(_vm.title ? _vm.title : "this video"))
+                ]),
+                _vm._v("?\n      ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "grey", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.deleteDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("cancel")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: { click: _vm.confirmDelete }
+                    },
+                    [_vm._v("Confirm")]
+                  )
+                ],
+                1
+              )
             ],
             1
           )

@@ -70,4 +70,6 @@ Route::get('/hotspot/all/interior/{id}', 'HotspotsController@getAllInteriorHotsp
 
 // Videos
 Route::post('/video/save', 'VideosController@store')->name('video.save');
+Route::post('/video/update/{id}', 'VideosController@update')->name('video.update');
+Route::post('/video/delete/{id}', 'VideosController@destroy')->name('video.delete');
 Route::get('/video/all/{id}', 'VideosController@fetchAllVideos')->name('video.all');

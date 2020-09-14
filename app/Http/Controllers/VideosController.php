@@ -8,26 +8,6 @@ use Illuminate\Http\Request;
 class VideosController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -61,28 +41,7 @@ class VideosController extends Controller
             'message' => 'Videos have been fetched',
         ], 200);
     }
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
+  
     /**
      * Update the specified resource in storage.
      *
@@ -92,7 +51,11 @@ class VideosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $video = Video::where('id', $id)->firstOrFail();
+        $video->update($this->validateRequest());
+        return response()->json([
+            'message' => 'Video has been updated',
+        ], 200);
     }
 
     /**
@@ -103,14 +66,18 @@ class VideosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $video = Video::where('id', $id)->firstOrFail();
+        $video->delete();
+        return response()->json([
+            'message' => 'Video has been deleted',
+        ], 200);
     }
 
     public function validateRequest()
     {
         return request()->validate([
             'title' => ['required', 'min:1', 'max:50', 'string'],
-            'video_path' => ['required'],
+            'video_path' => [''],
             'product_id' => ['required'],
         ]);
 

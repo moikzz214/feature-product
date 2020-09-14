@@ -19,7 +19,7 @@
     <v-dialog v-model="videoDialog" max-width="600px">
       <v-card>
         <v-card-title>
-          <h4 class="pb-2">{{title != "" ? 'Edit '+title : 'New Video'}}</h4>
+          <h4 class="pb-2">Video</h4>
         </v-card-title>
         <v-card-text>
           <form>
@@ -45,16 +45,22 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <!-- <v-card-title class="subtitle-1">Confirm delete</v-card-title> -->
-    <!-- <v-card-text>
+    <v-dialog v-model="deleteDialog" max-width="300px">
+      <v-card>
+        <v-card-title class="subtitle-1">Confirm delete</v-card-title>
+        <v-card-text>
           Are you sure you want to delete
-          <strong class="black--text">{{title ? title : 'this hotspot'}}</strong>?
+          <strong
+            class="black--text"
+          >{{title ? title : 'this video'}}</strong>?
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" text @click="deleteDialog = false">cancel</v-btn>
           <v-btn color="primary" text @click="confirmDelete">Confirm</v-btn>
-    </v-card-actions>-->
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
   </div>
 </template>
@@ -72,17 +78,25 @@ export default {
     },
   },
   watch: {
-     videoDialog: function (val) {
-       if(val == false){
-          this.title = "";
-          this.videoPath = "";
-       }
+    deleteDialog: function (val) {
+      if (val == false) {
+        this.id = null;
+      }
+    },
+    videoDialog: function (val) {
+      if (val == false) {
+        this.title = "";
+        this.videoPath = "";
+        this.dialogAction = "save";
+      }
     },
   },
   data() {
     return {
-      videoDialogData: [],
+      deleteDialog: false,
+      dialogAction: "save",
       videoDialog: false,
+      id: null,
       title: "",
       videoPath: "",
 
@@ -120,23 +134,50 @@ export default {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
     },
+    deleteVideo(v){
+      this.id = v.id;
+      this.deleteDialog = true;
+    },
+    confirmDelete(){
+      axios
+        .post("/video/delete/" + this.id)
+        .then((response) => {
+          this.deleteDialog = false;
+          this.id = null;
+          console.log("delete success");
+          this.fetchAllVideos();
+        })
+        .catch((error) => {
+          console.log("Error Deleting Video");
+          console.log(error);
+        });
+    },
     editVideo(v) {
+      this.dialogAction = "update";
+      this.id = v.id;
       this.title = v.title;
       this.videoPath = v.video_path;
       this.videoDialog = true;
     },
     saveVideo() {
+      let route = "save";
+      if (this.dialogAction == "update") {
+        route = "update/" + this.id;
+      }
       let data = {
         title: this.title,
         video_path: this.videoPath,
         product_id: this.product,
       };
       axios
-        .post("/video/save", data)
+        .post("/video/" + route, data)
         .then((response) => {
           this.videoDialog = false;
           this.title = "";
           this.videoPath = "";
+          this.id = null;
+          this.fetchAllVideos();
+          console.log("success");
         })
         .catch((error) => {
           console.log("Error Saving Video");
