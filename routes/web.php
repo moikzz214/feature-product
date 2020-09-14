@@ -19,8 +19,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/dashboard', 'BuilderController@index')->name('builder.dashboard');
 Route::get('/builder', 'BuilderController@index')->name('builder');
-Route::get('/builder/dashboard', 'BuilderController@index')->name('builder.dashboard');
 Route::get('/builder/product/new', 'BuilderController@index')->name('builder.new.product');
 Route::get('/builder/product/edit/{id}', 'BuilderController@edit')->name('builder.edit.product');
 Route::get('/builder/products', 'BuilderController@index')->name('builder.products');
@@ -32,9 +32,13 @@ Route::get('/builder/product/upload-video', 'BuilderController@index')->name('bu
 Route::post('/video/store', 'VideoController@store')->name('upload.video');
 
 Route::get('/builder/scenes/product/{id}', 'ScenesController@scenesByProductId')->name('builder.scenes.by.product.id');
-
 Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.store.scene');
 
+// Settings
+Route::get('/settings/organization', 'BuilderController@index')->name('settings.organization');
+Route::get('/settings/get-org-users/{id}', 'SettingsController@getOrgUsers')->name('settings.org.users');
+Route::get('/settings/account', 'BuilderController@index')->name('settings.account');
+Route::get('/settings/companies', 'BuilderController@index')->name('settings.companies');
 
 Route::get('/product/{slug}', 'ProductsController@show')->name('single.product');
 

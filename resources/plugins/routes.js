@@ -4,14 +4,20 @@ import BuilderProducts from "../js/components/builder/BuilderProducts";
 import BuilderEditProduct from "../js/components/builder/BuilderEditProduct";
 import UploadVideo from "../js/components/builder/UploadVideo";
 
+import OrgSettings from "../js/components/settings/OrgSettings"
+
 export const routes = [
     {
-        path: "/builder",
+        path: "/",
         component: BuilderDashboard
     },
     {
-        path: "/builder/dashboard",
+        path: "/dashboard",
         component: BuilderDashboard
+    },
+    {
+        path: "/builder",
+        component: BuilderProducts
     },
     {
         path: "/builder/products",
@@ -30,11 +36,18 @@ export const routes = [
         name: 'BuilderEditProduct',
         component: BuilderEditProduct,
         props: true
-    }
+    },
     // {
     //     path: '/admin/post/edit/:id',
     //     name: 'EditPost',
     //     component: EditPost,
     //     props: true
     // },
+
+    { // Org Settings
+        path: "/settings/organization",
+        name: 'OrgSettings',
+        component: OrgSettings,
+        props: true
+    }
 ];
