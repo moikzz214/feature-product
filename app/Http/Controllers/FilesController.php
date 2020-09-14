@@ -25,7 +25,7 @@ class FilesController extends Controller
 
     public function upload(Request $request)
     {
-        // dd($request);
+        dd($request->item_type);
         // Validate request
         // $this->validate($request, [
         //     'file' => 'required|image|mimes:jpeg,png,jpg|max:204800',
@@ -102,8 +102,14 @@ class FilesController extends Controller
             }
 
             // Prepare object before saving
+            $mediaFileType = "";
+            if($request->item_type == 'video'){
+                $mediaFileType = "video";
+            }else{
+                $mediaFileType = "image";
+            }
             array_push($fileArray, array(
-                'file_type' => $request->item_type == 'video' ? 'video' : 'image',
+                'file_type' => $mediaFileType,
                 'title' => $title,
                 'original_name' => $slugTitle."-".$uploadKey,
                 'disk' => 'uploads',

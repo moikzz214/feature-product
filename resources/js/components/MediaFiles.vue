@@ -30,7 +30,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'upload'">
-          <upload-zone :add-items="false" item-type="video" @uploaded="uploadZoneResponse" />
+          <upload-zone :add-items="false" :item-type="mediaOptions.itemType" @uploaded="uploadZoneResponse" />
         </v-card-text>
         <v-card-text class="blue-grey lighten-5 pt-3" v-show="tabItem == 'mediafiles'">
           <v-row class="px-2">
@@ -70,7 +70,14 @@
                   min-height="120"
                   cover
                   class="grey lighten-4"
-                ></v-img>
+                >
+                  <v-icon
+                    v-if="selected.includes(file.id) == true"
+                    class="primary"
+                    dark
+                    small
+                  >mdi-check</v-icon>
+                </v-img>
               </v-card>
               <div
                 class="caption"
@@ -82,7 +89,7 @@
         <v-card-actions v-if="tabItem == 'mediafiles'">
           <v-spacer></v-spacer>
           <v-btn color="grey" text @click="closeMediaDialog">Cancel</v-btn>
-          <v-btn color="primary" text @click="submitSelected()">Select</v-btn>
+          <v-btn color="primary" text @click="submitSelected">Select</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -176,8 +183,6 @@ export default {
       }
     },
     submitSelected() {
-      // Save to Item Table
-
       // If only needs to return the url of the selected image
       if (this.return_url == true) {
         let toReturlUrl =
@@ -189,6 +194,7 @@ export default {
         this.$emit("responded", toReturlUrl);
         this.selected = [];
       } else {
+        // Save to Item Table
         // Replace Item 360 Image
         let data = {
           selected: this.selected,

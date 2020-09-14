@@ -3124,6 +3124,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -3208,13 +3215,13 @@ __webpack_require__.r(__webpack_exports__);
     submitSelected: function submitSelected() {
       var _this = this;
 
-      // Save to Item Table
       // If only needs to return the url of the selected image
       if (this.return_url == true) {
         var toReturlUrl = this.baseUrl + "/storage/uploads/user-" + this.userId + "/" + this.selected[0];
         this.$emit("responded", toReturlUrl);
         this.selected = [];
       } else {
+        // Save to Item Table
         // Replace Item 360 Image
         var data = {
           selected: this.selected,
@@ -27168,7 +27175,10 @@ var render = function() {
                     },
                     [
                       _c("upload-zone", {
-                        attrs: { "add-items": false, "item-type": "video" },
+                        attrs: {
+                          "add-items": false,
+                          "item-type": _vm.mediaOptions.itemType
+                        },
                         on: { uploaded: _vm.uploadZoneResponse }
                       })
                     ],
@@ -27275,17 +27285,33 @@ var render = function() {
                                         ],
                                         1
                                       )
-                                    : _c("v-img", {
-                                        staticClass: "grey lighten-4",
-                                        attrs: {
-                                          src:
-                                            _vm.baseUrl +
-                                            "/images/video-placeholder.jpg",
-                                          "max-height": "130",
-                                          "min-height": "120",
-                                          cover: ""
-                                        }
-                                      })
+                                    : _c(
+                                        "v-img",
+                                        {
+                                          staticClass: "grey lighten-4",
+                                          attrs: {
+                                            src:
+                                              _vm.baseUrl +
+                                              "/images/video-placeholder.jpg",
+                                            "max-height": "130",
+                                            "min-height": "120",
+                                            cover: ""
+                                          }
+                                        },
+                                        [
+                                          _vm.selected.includes(file.id) == true
+                                            ? _c(
+                                                "v-icon",
+                                                {
+                                                  staticClass: "primary",
+                                                  attrs: { dark: "", small: "" }
+                                                },
+                                                [_vm._v("mdi-check")]
+                                              )
+                                            : _vm._e()
+                                        ],
+                                        1
+                                      )
                                 ],
                                 1
                               ),
@@ -27327,11 +27353,7 @@ var render = function() {
                             "v-btn",
                             {
                               attrs: { color: "primary", text: "" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.submitSelected()
-                                }
-                              }
+                              on: { click: _vm.submitSelected }
                             },
                             [_vm._v("Select")]
                           )
@@ -28464,7 +28486,7 @@ var render = function() {
           [
             _vm.uploader == true
               ? _c("upload-zone", {
-                  attrs: { "add-items": true },
+                  attrs: { "add-items": true, "item-type": "360" },
                   on: { uploaded: _vm.getImagesByProduct }
                 })
               : _vm._e(),

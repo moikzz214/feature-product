@@ -15,7 +15,7 @@
     <!-- </div> -->
     <div>
       <div style="min-height:450px;background-color:#eee;">
-        <upload-zone v-if="uploader == true" :add-items="true" @uploaded="getImagesByProduct"></upload-zone>
+        <upload-zone v-if="uploader == true" :add-items="true" :item-type="'360'" @uploaded="getImagesByProduct"></upload-zone>
         <div class="spritespin-wrapper">
           <spritespin
             v-bind:options="options"
