@@ -2,9 +2,9 @@
   <div class="row">
     <div class="col-12">
       <v-btn @click="videoDialog = true" class="primary mb-3">New Video</v-btn>
-      <v-data-table :headers="headers" :items="desserts" hide-default-footer class="elevation-1">
-        <!-- <template v-slot:[`item.title`]="{ item }"> -->
-        <template v-slot:[`item.title`]="{ item }">
+      <v-data-table :headers="headers" :items="videos" hide-default-footer class="elevation-1">
+        <!-- <template v-slot:[`item.actions`]="{ item }"> -->
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon
             small
             title="Edit Hotspot"
@@ -16,10 +16,10 @@
         </template>
       </v-data-table>
     </div>
-    <v-dialog v-model="editDialog" max-width="600px">
+    <v-dialog v-model="videoDialog" max-width="600px">
       <v-card>
         <v-card-title>
-          <h4 class="pb-2">Manage Hotspot</h4>
+          <h4 class="pb-2">{{title != "" ? 'Edit '+title : 'New Video'}}</h4>
         </v-card-title>
         <v-card-text>
           <form>
@@ -38,8 +38,8 @@
               </v-btn>
             </div>
             <div class="d-flex justify-end">
-              <v-btn class="mr-1" text color="grey" @click="editDialog = false">cancel</v-btn>
-              <v-btn class="primary" @click="updateHotspot()">update</v-btn>
+              <v-btn class="mr-1" text color="grey" @click="videoDialog = false">cancel</v-btn>
+              <v-btn class="primary" @click="saveVideo">Save</v-btn>
             </div>
           </form>
         </v-card-text>
@@ -55,41 +55,48 @@
           <v-btn color="grey" text @click="deleteDialog = false">cancel</v-btn>
           <v-btn color="primary" text @click="confirmDelete">Confirm</v-btn>
     </v-card-actions>-->
-     <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
+    <media-files :mediaOptions="mediaFilesSettings" @responded="mediaResponse" />
   </div>
 </template>
 
 <script>
 export default {
-    props:{
-        product: {
-            type: String,
-            default: "",
-        },
-        authUser: {
-            type: Object,
-            default: null,
-        },
+  props: {
+    product: {
+      type: String,
+      default: "",
     },
+    authUser: {
+      type: Object,
+      default: null,
+    },
+  },
+  watch: {
+     videoDialog: function (val) {
+       if(val == false){
+          this.title = "";
+          this.videoPath = "";
+       }
+    },
+  },
   data() {
     return {
-      dialogVideo: [],
-      editDialog: false,
+      videoDialogData: [],
+      videoDialog: false,
       title: "",
       videoPath: "",
 
-        // Media Files
-        mediaFilesSettings: {
-            dialog: true,
-            dialogStatus: false,
-            user: this.authUser,
-            action: "save",
-            data: null,
-            product: this.product,
-            itemType: "video",
-            returnUrl: true,
-        },
-
+      // Media Files
+      mediaFilesSettings: {
+        dialog: true,
+        dialogStatus: false,
+        user: this.authUser,
+        action: "save",
+        data: null,
+        product: this.product,
+        itemType: "video",
+        returnUrl: true,
+      },
 
       headers: [
         {
@@ -100,47 +107,56 @@ export default {
         },
         { text: "Actions", align: "end", value: "actions", sortable: false },
       ],
-      desserts: [
-        {
-          title: "Frozen Yogurt",
-        },
-        {
-          title: "Ice cream sandwich",
-        },
-        {
-          title: "Eclair",
-        },
-        {
-          title: "Cupcake",
-        },
-        {
-          title: "Gingerbread",
-        },
-        {
-          title: "Jelly bean",
-        },
-        {
-          title: "Lollipop",
-        },
-      ],
+      videos: [],
     };
   },
   methods: {
     mediaResponse(v) {
-      console.log(v);
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
+      this.videoPath = v;
     },
     openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings
         .dialogStatus;
     },
     editVideo(v) {
-      this.videoPath = "hey";
-      this.title = "hey";
-      this.editDialog = true;
-      console.log(v);
+      this.title = v.title;
+      this.videoPath = v.video_path;
+      this.videoDialog = true;
     },
+    saveVideo() {
+      let data = {
+        title: this.title,
+        video_path: this.videoPath,
+        product_id: this.product,
+      };
+      axios
+        .post("/video/save", data)
+        .then((response) => {
+          this.videoDialog = false;
+          this.title = "";
+          this.videoPath = "";
+        })
+        .catch((error) => {
+          console.log("Error Saving Video");
+          console.log(error);
+        });
+    },
+    fetchAllVideos() {
+      axios
+        .get("/video/all/" + this.product)
+        .then((response) => {
+          this.videos = response.data.videos;
+        })
+        .catch((error) => {
+          console.log("Error Fetching Videos");
+          console.log(error);
+        });
+    },
+  },
+  created() {
+    this.fetchAllVideos();
   },
 };
 </script>

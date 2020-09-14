@@ -67,3 +67,7 @@ Route::post('/hotspot/setting/delete', 'HotspotsController@deleteSetting')->name
 Route::get('/hotspot/product/{id}', 'HotspotsController@getProductHotspots')->name('hotspot.product');
 
 Route::get('/hotspot/all/interior/{id}', 'HotspotsController@getAllInteriorHotspotsByProductId')->name('hotspot.all.interior');
+
+// Videos
+Route::post('/video/save', 'VideosController@store')->name('video.save');
+Route::get('/video/all/{id}', 'VideosController@fetchAllVideos')->name('video.all');

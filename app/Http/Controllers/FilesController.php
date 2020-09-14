@@ -25,7 +25,7 @@ class FilesController extends Controller
 
     public function upload(Request $request)
     {
-        dd($request->item_type);
+        // dd($request->item_type);
         // Validate request
         // $this->validate($request, [
         //     'file' => 'required|image|mimes:jpeg,png,jpg|max:204800',

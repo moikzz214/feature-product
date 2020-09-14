@@ -5321,10 +5321,18 @@ __webpack_require__.r(__webpack_exports__);
       "default": null
     }
   },
+  watch: {
+    videoDialog: function videoDialog(val) {
+      if (val == false) {
+        this.title = "";
+        this.videoPath = "";
+      }
+    }
+  },
   data: function data() {
     return {
-      dialogVideo: [],
-      editDialog: false,
+      videoDialogData: [],
+      videoDialog: false,
       title: "",
       videoPath: "",
       // Media Files
@@ -5349,37 +5357,52 @@ __webpack_require__.r(__webpack_exports__);
         value: "actions",
         sortable: false
       }],
-      desserts: [{
-        title: "Frozen Yogurt"
-      }, {
-        title: "Ice cream sandwich"
-      }, {
-        title: "Eclair"
-      }, {
-        title: "Cupcake"
-      }, {
-        title: "Gingerbread"
-      }, {
-        title: "Jelly bean"
-      }, {
-        title: "Lollipop"
-      }]
+      videos: []
     };
   },
   methods: {
     mediaResponse: function mediaResponse(v) {
-      console.log(v);
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
+      this.videoPath = v;
     },
     openMediaFiles: function openMediaFiles() {
       this.mediaFilesSettings.dialogStatus = !this.mediaFilesSettings.dialogStatus;
     },
     editVideo: function editVideo(v) {
-      this.videoPath = "hey";
-      this.title = "hey";
-      this.editDialog = true;
-      console.log(v);
+      this.title = v.title;
+      this.videoPath = v.video_path;
+      this.videoDialog = true;
+    },
+    saveVideo: function saveVideo() {
+      var _this = this;
+
+      var data = {
+        title: this.title,
+        video_path: this.videoPath,
+        product_id: this.product
+      };
+      axios.post("/video/save", data).then(function (response) {
+        _this.videoDialog = false;
+        _this.title = "";
+        _this.videoPath = "";
+      })["catch"](function (error) {
+        console.log("Error Saving Video");
+        console.log(error);
+      });
+    },
+    fetchAllVideos: function fetchAllVideos() {
+      var _this2 = this;
+
+      axios.get("/video/all/" + this.product).then(function (response) {
+        _this2.videos = response.data.videos;
+      })["catch"](function (error) {
+        console.log("Error Fetching Videos");
+        console.log(error);
+      });
     }
+  },
+  created: function created() {
+    this.fetchAllVideos();
   }
 });
 
@@ -29817,13 +29840,13 @@ var render = function() {
             staticClass: "elevation-1",
             attrs: {
               headers: _vm.headers,
-              items: _vm.desserts,
+              items: _vm.videos,
               "hide-default-footer": ""
             },
             scopedSlots: _vm._u(
               [
                 {
-                  key: "item.title",
+                  key: "item.actions",
                   fn: function(ref) {
                     var item = ref.item
                     return [
@@ -29874,11 +29897,11 @@ var render = function() {
         {
           attrs: { "max-width": "600px" },
           model: {
-            value: _vm.editDialog,
+            value: _vm.videoDialog,
             callback: function($$v) {
-              _vm.editDialog = $$v
+              _vm.videoDialog = $$v
             },
-            expression: "editDialog"
+            expression: "videoDialog"
           }
         },
         [
@@ -29886,7 +29909,11 @@ var render = function() {
             "v-card",
             [
               _c("v-card-title", [
-                _c("h4", { staticClass: "pb-2" }, [_vm._v("Manage Hotspot")])
+                _c("h4", { staticClass: "pb-2" }, [
+                  _vm._v(
+                    _vm._s(_vm.title != "" ? "Edit " + _vm.title : "New Video")
+                  )
+                ])
               ]),
               _vm._v(" "),
               _c("v-card-text", [
@@ -29960,7 +29987,7 @@ var render = function() {
                             attrs: { text: "", color: "grey" },
                             on: {
                               click: function($event) {
-                                _vm.editDialog = false
+                                _vm.videoDialog = false
                               }
                             }
                           },
@@ -29971,13 +29998,9 @@ var render = function() {
                           "v-btn",
                           {
                             staticClass: "primary",
-                            on: {
-                              click: function($event) {
-                                return _vm.updateHotspot()
-                              }
-                            }
+                            on: { click: _vm.saveVideo }
                           },
-                          [_vm._v("update")]
+                          [_vm._v("Save")]
                         )
                       ],
                       1
