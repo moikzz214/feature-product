@@ -25,6 +25,7 @@ class UserPolicy
      */
     public function accessCompanyPages(User $user, Product $product)
     {
+        
         // return in_array($user->company_id, );
         return $user->company_id == $product->company_id;
     }
