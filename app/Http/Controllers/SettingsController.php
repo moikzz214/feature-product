@@ -25,6 +25,13 @@ class SettingsController extends Controller
     public function deleteOrgUser($id)
     {
         $user = User::where('id', $id)->firstOrFail();
+
+        if($user->role == 3 && $this->hasOneAdmin() == false){
+            return response()->json([
+                'message' => 'Unable to delete user. A team should have at least one Administrator.',
+            ], 422);
+        }
+     
         $user->delete();
         return response()->json([
             'message' => 'User has been deleted',
@@ -32,8 +39,12 @@ class SettingsController extends Controller
     }
     public function updateOrgUser(Request $request, $id)
     {
-        $this->hasOneAdmin();
         $user = User::where('id', $id)->firstOrFail();
+        if($this->hasOneAdmin() == false && ($user->role == 3 && $request->role != 3) ){
+            return response()->json([
+                'message' => 'Unable to update user. A team should have at least one Administrator.',
+            ], 422);
+        }
         $user->update($this->validateRequest());
         return response()->json([
             'message' => 'User has been updated',
@@ -53,15 +64,14 @@ class SettingsController extends Controller
 
     public function hasOneAdmin()
     {
-        $user = Auth::user();
-        $check = User::where([
-            'company_id' => $user->company_id,
+        $teamAdmins = User::where([
+            'company_id' => Auth::user()->company_id,
             'role' => 3,
         ])->get();
 
-        if($check->count() < 1 ){
-            return false;
+        if($teamAdmins->count() > 1 ){
+            return true;
         }
-        return true;
+        return false;
     }
 }
