@@ -3368,7 +3368,7 @@ __webpack_require__.r(__webpack_exports__);
         autoProcessQueue: false,
         maxFiles: 100,
         parallelUploads: 100,
-        maxFilesize: this.itemType == 'video' ? 30 : 1,
+        maxFilesize: this.itemType == 'video' ? 30 : 3,
         timeout: 180000,
         previewTemplate: this.dropzoneTemplate(),
         clickable: ".open-uploader",
