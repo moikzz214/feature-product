@@ -118,9 +118,9 @@ export default {
         window.location.origin +
         "/product/" +
         slug +
-        '" height="768px" width="100%" title="' +
+        '" height="768px" width="100%" title="' +  
         title +
-        '"></iframe>';
+        '" scrolling="no"></iframe>';
     },
     selectCode() {
       let theCode = this.$refs.code.$el.querySelector("textarea");

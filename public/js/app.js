@@ -3711,7 +3711,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     openCode: function openCode(slug, title) {
       this.dialog = true;
-      this.code = '<iframe src="' + window.location.origin + "/product/" + slug + '" height="768px" width="100%" title="' + title + '"></iframe>';
+      this.code = '<iframe src="' + window.location.origin + "/product/" + slug + '" height="768px" width="100%" title="' + title + '" scrolling="no"></iframe>';
     },
     selectCode: function selectCode() {
       var theCode = this.$refs.code.$el.querySelector("textarea");
