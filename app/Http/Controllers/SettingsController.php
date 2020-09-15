@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SettingsController extends Controller
 {
@@ -12,55 +13,55 @@ class SettingsController extends Controller
         $this->middleware('auth');
     }
 
-    // Client Organization
+    /**
+     * Client Organization
+     */
     public function getOrgUsers($id)
     {
         $users = User::where('company_id', $id)->orderBy('created_at', 'desc')->get();
         return response()->json($users, 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function deleteOrgUser($id)
     {
-        //
+        $user = User::where('id', $id)->firstOrFail();
+        $user->delete();
+        return response()->json([
+            'message' => 'User has been deleted',
+        ], 200);
+    }
+    public function updateOrgUser(Request $request, $id)
+    {
+        $this->hasOneAdmin();
+        $user = User::where('id', $id)->firstOrFail();
+        $user->update($this->validateRequest());
+        return response()->json([
+            'message' => 'User has been updated',
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function validateRequest()
     {
-        //
+        return request()->validate([
+            'name' => ['required', 'min:1', 'max:50', 'string'],
+            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users'],
+            'phone' => [''],
+            'role' => ['integer'],
+        ]);
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function hasOneAdmin()
     {
-        //
-    }
+        $user = Auth::user();
+        $check = User::where([
+            'company_id' => $user->company_id,
+            'role' => 3,
+        ])->get();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        if($check->count() < 1 ){
+            return false;
+        }
+        return true;
     }
 }

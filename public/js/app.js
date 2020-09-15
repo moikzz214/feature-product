@@ -3019,7 +3019,7 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         icon: "mdi-account-group",
         text: "Teams",
-        location: "/settings/Teams"
+        location: "/settings/teams"
       }, {
         icon: "mdi-account",
         text: "Account",
@@ -5479,15 +5479,72 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/settings/OrgSettings.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/settings/OrgSettings.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/settings/Teams.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/settings/Teams.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5536,24 +5593,115 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      orgUsers: [] // Company Users
-
+      dialogData: [],
+      userFormDialog: false,
+      deleteDialog: false,
+      orgUsers: [],
+      // Company Users
+      roleItems: [{
+        role: "Team Admin",
+        value: 3
+      }, {
+        role: "Team Editor",
+        value: 4
+      }],
+      name: "",
+      email: "",
+      phone: "",
+      role: {}
     };
   },
   methods: {
-    getOrgUsers: function getOrgUsers() {
+    printRole: function printRole(role) {
+      console.log(role);
+      var roleLabel = "";
+
+      if (role == 1) {
+        roleLabel = "Super Admin";
+      } else if (role == 2) {
+        roleLabel = "App Admin";
+      } else if (role == 3) {
+        roleLabel = "Admin";
+      } else {
+        roleLabel = "Editor";
+      }
+
+      return roleLabel;
+    },
+    actionFunction: function actionFunction(action, value) {
+      this.dialogData = [];
+      this.dialogData = value;
+
+      if (action == "edit") {
+        this.userFormDialog = true;
+        this.name = this.dialogData.name;
+        this.email = this.dialogData.email;
+        this.phone = this.dialogData.phone ? this.dialogData.phone : "";
+        this.role = {
+          role: this.dialogData.role == 3 ? "Admin" : "Editor",
+          value: this.dialogData.role
+        };
+      } else {
+        this.deleteDialog = true;
+      }
+    },
+    confirmDelete: function confirmDelete() {
       var _this = this;
 
+      axios.post("/settings/team/delete/" + this.dialogData.id).then(function (response) {
+        _this.deleteDialog = false;
+        _this.dialogData = [];
+
+        _this.getOrgUsers();
+      })["catch"](function (error) {
+        console.log("Error Deleting User");
+        console.log(error);
+      });
+    },
+    saveUser: function saveUser(action) {
+      var _this2 = this;
+
+      var route = "save";
+
+      if (action == "update") {
+        route = "update/" + this.dialogData.id;
+      }
+
+      var data = {
+        name: this.name,
+        phone: this.phone,
+        role: this.role.value
+      };
+
+      if (this.email != this.dialogData.email) {
+        data.email = this.email;
+      }
+
+      console.log(data);
+      axios.post("/settings/team/" + route, data).then(function (response) {
+        if (action == "update") {
+          _this2.userFormDialog = false;
+        }
+
+        _this2.dialogData = [];
+
+        _this2.getOrgUsers();
+      })["catch"](function (error) {
+        console.log("Error Saving User");
+        console.log(error);
+      });
+    },
+    getOrgUsers: function getOrgUsers() {
+      var _this3 = this;
+
       axios.get("/settings/get-org-users/" + this.authUser.company_id).then(function (response) {
-        _this.orgUsers = response.data;
+        _this3.orgUsers = response.data;
         console.log(response);
       })["catch"](function (error) {
         console.log("Error Fetching Org Users");
         console.log("Error: " + error);
       });
-    },
-    deleteUser: function deleteUser() {},
-    editUser: function editUser() {}
+    }
   },
   created: function created() {
     this.getOrgUsers();
@@ -30286,10 +30434,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/settings/OrgSettings.vue?vue&type=template&id=ab82d334&":
-/*!***********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/settings/OrgSettings.vue?vue&type=template&id=ab82d334& ***!
-  \***********************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/settings/Teams.vue?vue&type=template&id=29e8feb5&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/settings/Teams.vue?vue&type=template&id=29e8feb5& ***!
+  \*****************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -30332,7 +30480,11 @@ var render = function() {
                             ]),
                             _vm._v(" "),
                             _c("th", { staticClass: "text-left" }, [
-                              _vm._v("Status")
+                              _vm._v("Phone")
+                            ]),
+                            _vm._v(" "),
+                            _c("th", { staticClass: "text-left" }, [
+                              _vm._v("Role")
                             ]),
                             _vm._v(" "),
                             _c("th", { staticClass: "text-right" }, [
@@ -30349,21 +30501,19 @@ var render = function() {
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(item.email))]),
                               _vm._v(" "),
+                              _c("td", [
+                                _vm._v(
+                                  _vm._s(item.phone ? item.phone : "not set")
+                                )
+                              ]),
+                              _vm._v(" "),
                               _c(
                                 "td",
                                 {
                                   class:
-                                    (item.status == 1
-                                      ? "green--text"
-                                      : "blue--text") + " text-left"
+                                    "" + (item.role < 4 ? "primary--text" : "")
                                 },
-                                [
-                                  _vm._v(
-                                    _vm._s(
-                                      item.status == 1 ? "active" : "inactive"
-                                    )
-                                  )
-                                ]
+                                [_vm._v(_vm._s(_vm.printRole(item.role)))]
                               ),
                               _vm._v(" "),
                               _c(
@@ -30381,7 +30531,10 @@ var render = function() {
                                       },
                                       on: {
                                         click: function($event) {
-                                          return _vm.editUser(item.id)
+                                          return _vm.actionFunction(
+                                            "edit",
+                                            item
+                                          )
                                         }
                                       }
                                     },
@@ -30404,7 +30557,10 @@ var render = function() {
                                       },
                                       on: {
                                         click: function($event) {
-                                          return _vm.deleteUser(item.id)
+                                          return _vm.actionFunction(
+                                            "delete",
+                                            item
+                                          )
                                         }
                                       }
                                     },
@@ -30428,6 +30584,210 @@ var render = function() {
                   }
                 ])
               })
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "600px" },
+          model: {
+            value: _vm.userFormDialog,
+            callback: function($$v) {
+              _vm.userFormDialog = $$v
+            },
+            expression: "userFormDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", [
+                _c("h4", { staticClass: "pb-2" }, [_vm._v("User Form")])
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _c(
+                  "form",
+                  [
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Name",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.name,
+                        callback: function($$v) {
+                          _vm.name = $$v
+                        },
+                        expression: "name"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Email",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.email,
+                        callback: function($$v) {
+                          _vm.email = $$v
+                        },
+                        expression: "email"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      staticClass: "py-0",
+                      attrs: {
+                        outlined: "",
+                        label: "Phone",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.phone,
+                        callback: function($$v) {
+                          _vm.phone = $$v
+                        },
+                        expression: "phone"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-select", {
+                      staticClass: "py-0",
+                      attrs: {
+                        items: _vm.roleItems,
+                        "item-text": "role",
+                        "item-value": "value",
+                        label: "Role",
+                        "persistent-hint": "",
+                        "return-object": "",
+                        outlined: "",
+                        "single-line": "",
+                        required: "",
+                        dense: ""
+                      },
+                      model: {
+                        value: _vm.role,
+                        callback: function($$v) {
+                          _vm.role = $$v
+                        },
+                        expression: "role"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex justify-end" },
+                      [
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "mr-1",
+                            attrs: { text: "", color: "grey" },
+                            on: {
+                              click: function($event) {
+                                _vm.userFormDialog = false
+                              }
+                            }
+                          },
+                          [_vm._v("cancel")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          {
+                            staticClass: "primary",
+                            on: {
+                              click: function($event) {
+                                return _vm.saveUser("update")
+                              }
+                            }
+                          },
+                          [_vm._v("Update")]
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ])
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "300px" },
+          model: {
+            value: _vm.deleteDialog,
+            callback: function($$v) {
+              _vm.deleteDialog = $$v
+            },
+            expression: "deleteDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "subtitle-1" }, [
+                _vm._v("Confirm delete")
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _vm._v("\n        Are you sure you want to delete\n        "),
+                _c("strong", [_vm._v(_vm._s(_vm.dialogData.name))]),
+                _vm._v("'s account?\n      ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "grey", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.deleteDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("cancel")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: { click: _vm.confirmDelete }
+                    },
+                    [_vm._v("Confirm")]
+                  )
+                ],
+                1
+              )
             ],
             1
           )
@@ -90594,17 +90954,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/settings/OrgSettings.vue":
-/*!**********************************************************!*\
-  !*** ./resources/js/components/settings/OrgSettings.vue ***!
-  \**********************************************************/
+/***/ "./resources/js/components/settings/Teams.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/components/settings/Teams.vue ***!
+  \****************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _OrgSettings_vue_vue_type_template_id_ab82d334___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./OrgSettings.vue?vue&type=template&id=ab82d334& */ "./resources/js/components/settings/OrgSettings.vue?vue&type=template&id=ab82d334&");
-/* harmony import */ var _OrgSettings_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./OrgSettings.vue?vue&type=script&lang=js& */ "./resources/js/components/settings/OrgSettings.vue?vue&type=script&lang=js&");
+/* harmony import */ var _Teams_vue_vue_type_template_id_29e8feb5___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Teams.vue?vue&type=template&id=29e8feb5& */ "./resources/js/components/settings/Teams.vue?vue&type=template&id=29e8feb5&");
+/* harmony import */ var _Teams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Teams.vue?vue&type=script&lang=js& */ "./resources/js/components/settings/Teams.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -90614,9 +90974,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _OrgSettings_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _OrgSettings_vue_vue_type_template_id_ab82d334___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _OrgSettings_vue_vue_type_template_id_ab82d334___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Teams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Teams_vue_vue_type_template_id_29e8feb5___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Teams_vue_vue_type_template_id_29e8feb5___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -90626,38 +90986,38 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/settings/OrgSettings.vue"
+component.options.__file = "resources/js/components/settings/Teams.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/settings/OrgSettings.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************!*\
-  !*** ./resources/js/components/settings/OrgSettings.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************/
+/***/ "./resources/js/components/settings/Teams.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/settings/Teams.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_OrgSettings_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./OrgSettings.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/settings/OrgSettings.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_OrgSettings_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Teams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Teams.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/settings/Teams.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Teams_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/settings/OrgSettings.vue?vue&type=template&id=ab82d334&":
-/*!*****************************************************************************************!*\
-  !*** ./resources/js/components/settings/OrgSettings.vue?vue&type=template&id=ab82d334& ***!
-  \*****************************************************************************************/
+/***/ "./resources/js/components/settings/Teams.vue?vue&type=template&id=29e8feb5&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/settings/Teams.vue?vue&type=template&id=29e8feb5& ***!
+  \***********************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_OrgSettings_vue_vue_type_template_id_ab82d334___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./OrgSettings.vue?vue&type=template&id=ab82d334& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/settings/OrgSettings.vue?vue&type=template&id=ab82d334&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_OrgSettings_vue_vue_type_template_id_ab82d334___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Teams_vue_vue_type_template_id_29e8feb5___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Teams.vue?vue&type=template&id=29e8feb5& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/settings/Teams.vue?vue&type=template&id=29e8feb5&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Teams_vue_vue_type_template_id_29e8feb5___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_OrgSettings_vue_vue_type_template_id_ab82d334___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Teams_vue_vue_type_template_id_29e8feb5___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -90677,12 +91037,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_components_builder_BuilderProducts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../js/components/builder/BuilderProducts */ "./resources/js/components/builder/BuilderProducts.vue");
 /* harmony import */ var _js_components_builder_BuilderEditProduct__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../js/components/builder/BuilderEditProduct */ "./resources/js/components/builder/BuilderEditProduct.vue");
 /* harmony import */ var _js_components_builder_UploadVideo__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../js/components/builder/UploadVideo */ "./resources/js/components/builder/UploadVideo.vue");
-/* harmony import */ var _js_components_settings_OrgSettings__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../js/components/settings/OrgSettings */ "./resources/js/components/settings/OrgSettings.vue");
+/* harmony import */ var _js_components_settings_Teams__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../js/components/settings/Teams */ "./resources/js/components/settings/Teams.vue");
 
  // import BuilderNewProduct from "../js/components/builder/BuilderNewProduct";
 
 
 
+ // import OrgSettings from "../js/components/settings/OrgSettings"
 
 var routes = [{
   path: "/",
@@ -90714,11 +91075,17 @@ var routes = [{
 //     component: EditPost,
 //     props: true
 // },
+// { // Org Settings
+//     path: "/settings/organization",
+//     name: 'OrgSettings',
+//     component: OrgSettings,
+//     props: true
+// },
 {
   // Org Settings
-  path: "/settings/organization",
-  name: 'OrgSettings',
-  component: _js_components_settings_OrgSettings__WEBPACK_IMPORTED_MODULE_4__["default"],
+  path: "/settings/teams",
+  name: 'Teams',
+  component: _js_components_settings_Teams__WEBPACK_IMPORTED_MODULE_4__["default"],
   props: true
 }];
 

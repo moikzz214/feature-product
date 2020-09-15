@@ -39,6 +39,9 @@ Route::get('/settings/organization', 'BuilderController@index')->name('settings.
 Route::get('/settings/get-org-users/{id}', 'SettingsController@getOrgUsers')->name('settings.org.users');
 Route::get('/settings/account', 'BuilderController@index')->name('settings.account');
 Route::get('/settings/companies', 'BuilderController@index')->name('settings.companies');
+Route::get('/settings/teams', 'BuilderController@index')->name('settings.teams');
+Route::post('/settings/team/delete/{id}', 'SettingsController@deleteOrgUser')->name('settings.team.delete');
+Route::post('/settings/team/update/{id}', 'SettingsController@updateOrgUser')->name('settings.team.update');
 
 Route::get('/product/{slug}', 'ProductsController@show')->name('single.product');
 

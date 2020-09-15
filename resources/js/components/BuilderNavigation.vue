@@ -117,7 +117,7 @@ export default {
         {
           icon: "mdi-account-group",
           text: "Teams",
-          location: "/settings/Teams",
+          location: "/settings/teams",
         },
         {
           icon: "mdi-account",

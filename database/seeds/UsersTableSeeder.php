@@ -41,5 +41,18 @@ class UsersTableSeeder extends Seeder
             'company_id'    => 3,
         ]);
         $user->save();
+
+        $faker = Faker\Factory::create();
+    	foreach (range(1,50) as $index) {
+	        DB::table('users')->insert([
+                'name'          => $faker->name,
+                'email'         => $faker->email,
+                'password'      => Hash::make('123456789'),
+                'phone'         => '05012345678',
+                'role'          => 4,
+                'status'        => true,
+                'company_id'    => 1,
+	        ]);
+	    }
     }
 }

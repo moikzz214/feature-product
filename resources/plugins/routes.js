@@ -4,7 +4,8 @@ import BuilderProducts from "../js/components/builder/BuilderProducts";
 import BuilderEditProduct from "../js/components/builder/BuilderEditProduct";
 import UploadVideo from "../js/components/builder/UploadVideo";
 
-import OrgSettings from "../js/components/settings/OrgSettings"
+import Teams from "../js/components/settings/Teams"
+// import OrgSettings from "../js/components/settings/OrgSettings"
 
 export const routes = [
     {
@@ -44,10 +45,16 @@ export const routes = [
     //     props: true
     // },
 
+    // { // Org Settings
+    //     path: "/settings/organization",
+    //     name: 'OrgSettings',
+    //     component: OrgSettings,
+    //     props: true
+    // },
     { // Org Settings
-        path: "/settings/organization",
-        name: 'OrgSettings',
-        component: OrgSettings,
+        path: "/settings/teams",
+        name: 'Teams',
+        component: Teams,
         props: true
     }
 ];
