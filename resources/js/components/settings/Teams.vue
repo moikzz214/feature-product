@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="12" class="px-5">
-      <h3 class="font-weight-light mb-5">Teams</h3>
+      <h3 class="font-weight-light mb-5">Team Settings</h3>
       <v-card>
         <v-simple-table>
           <template v-slot:default>

@@ -41,7 +41,7 @@
     <v-app-bar app clipped-left color="indigo darken-4" dense>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" color="white"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center">
-        <span class="title white--text">Gallega Demo</span>
+        <span class="title white--text">Gallega Spinner</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-menu

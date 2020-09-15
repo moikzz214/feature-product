@@ -35,7 +35,11 @@ Route::get('/builder/scenes/product/{id}', 'ScenesController@scenesByProductId')
 Route::post('/builder/scene/store', 'ScenesController@store')->name('builder.store.scene');
 
 // Settings
+Route::get('/settings/account', 'BuilderController@index')->name('settings.watermark');
+Route::get('/settings/watermark', 'BuilderController@index')->name('settings.watermark');
 Route::get('/settings/organization', 'BuilderController@index')->name('settings.organization');
+Route::get('/settings/organization/fetch', 'SettingsController@fetchOrg')->name('settings.fetch.org');
+Route::post('/settings/organization/update', 'SettingsController@updateOrg')->name('settings.update.org');
 Route::get('/settings/get-org-users/{id}', 'SettingsController@getOrgUsers')->name('settings.org.users');
 Route::get('/settings/account', 'BuilderController@index')->name('settings.account');
 Route::get('/settings/companies', 'BuilderController@index')->name('settings.companies');

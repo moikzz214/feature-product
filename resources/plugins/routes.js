@@ -4,8 +4,12 @@ import BuilderProducts from "../js/components/builder/BuilderProducts";
 import BuilderEditProduct from "../js/components/builder/BuilderEditProduct";
 import UploadVideo from "../js/components/builder/UploadVideo";
 
+// Settings
+import Account from "../js/components/settings/Account"
+import Watermark from "../js/components/settings/Watermark"
 import Teams from "../js/components/settings/Teams"
-// import OrgSettings from "../js/components/settings/OrgSettings"
+import Organization from "../js/components/settings/Organization"
+import Companies from "../js/components/settings/Companies"
 
 export const routes = [
     {
@@ -51,7 +55,35 @@ export const routes = [
     //     component: OrgSettings,
     //     props: true
     // },
-    { // Org Settings
+
+    /**
+     * Settings
+     */
+     {
+        path: "/settings/companies",
+        name: 'Companies',
+        component: Companies,
+        props: true
+    },
+    {
+        path: "/settings/account",
+        name: 'Account',
+        component: Account,
+        props: true
+    },
+    {
+        path: "/settings/watermark",
+        name: 'Watermark',
+        component: Watermark,
+        props: true
+    },
+    {
+        path: "/settings/organization",
+        name: 'Organization',
+        component: Organization,
+        props: true
+    },
+    {
         path: "/settings/teams",
         name: 'Teams',
         component: Teams,
