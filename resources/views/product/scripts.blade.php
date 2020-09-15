@@ -142,7 +142,7 @@ var slideIndex = 1;
 
                         hpSlider += '<div class="mySlides text-center" id="'+o.id+'">';
                         if(o.title){
-                          hpSlider +=       '<h2 class="text-uppercase">'+o.title+'</h2>';
+                          hpSlider +=       '<h2 class="text-uppercase" style="position: absolute;text-align: center; width: 100%; background: rgb(14 14 14 / 10%);">'+o.title+'</h2>';
                         }
                         if(hpContents && hpContents.description){
                           hpSlider +=       '<p> '+hpContents.description+' </p>';
