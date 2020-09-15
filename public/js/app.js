@@ -3013,6 +3013,10 @@ __webpack_require__.r(__webpack_exports__);
       // { icon: "mdi-cloud-upload-outline", text: "Upload Video", location: "/builder/product/upload-video" },
       ],
       clientSettings: [{
+        icon: "mdi-watermark",
+        text: "Watermark",
+        location: "/settings/watermark"
+      }, {
         icon: "mdi-star",
         text: "Organization",
         location: "/settings/organization"
@@ -5675,9 +5679,9 @@ __webpack_require__.r(__webpack_exports__);
 
       if (this.email != this.dialogData.email) {
         data.email = this.email;
-      }
+      } // console.log(data);
 
-      console.log(data);
+
       axios.post("/settings/team/" + route, data).then(function (response) {
         if (action == "update") {
           _this2.userFormDialog = false;
@@ -5695,8 +5699,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       axios.get("/settings/get-org-users/" + this.authUser.company_id).then(function (response) {
-        _this3.orgUsers = response.data;
-        console.log(response);
+        _this3.orgUsers = response.data; // console.log(response);
       })["catch"](function (error) {
         console.log("Error Fetching Org Users");
         console.log("Error: " + error);

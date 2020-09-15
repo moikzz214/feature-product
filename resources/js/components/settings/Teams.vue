@@ -177,7 +177,7 @@ export default {
       if(this.email != this.dialogData.email){
         data.email = this.email;
       }
-      console.log(data);
+      // console.log(data);
       axios
         .post("/settings/team/" + route, data)
         .then((response) => {
@@ -197,7 +197,7 @@ export default {
         .get("/settings/get-org-users/" + this.authUser.company_id)
         .then((response) => {
           this.orgUsers = response.data;
-          console.log(response);
+          // console.log(response);
         })
         .catch((error) => {
           console.log("Error Fetching Org Users");

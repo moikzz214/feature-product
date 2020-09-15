@@ -110,6 +110,11 @@ export default {
       ],
       clientSettings: [
         {
+          icon: "mdi-watermark",
+          text: "Watermark",
+          location: "/settings/watermark",
+        },
+        {
           icon: "mdi-star",
           text: "Organization",
           location: "/settings/organization",
