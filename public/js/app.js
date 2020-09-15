@@ -5254,9 +5254,9 @@ var toSaveHotspot = [];
 
       this.loading = true;
       axios.get("/item/scenes/by-product/" + this.product).then(function (response) {
-        _this4.scenes = Object.assign({}, response.data);
-        _this4.loading = false;
-        console.log(_this4.scenes);
+        // this.scenes = Object.assign({}, response.data);
+        _this4.scenes = response.data;
+        _this4.loading = false; // console.log(this.scenes.length);
       })["catch"](function (error) {
         console.log("Error: " + error);
         console.log(_this4.scenes);
@@ -29798,26 +29798,28 @@ var render = function() {
         "div",
         { staticClass: "col-12 pt-0 col-md-12 d-flex align-center flex-start" },
         [
-          _c(
-            "v-card",
-            {
-              staticClass: "text-center pa-2 mr-2",
-              on: {
-                click: function($event) {
-                  $event.stopPropagation()
-                  return _vm.openMediaFiles($event)
-                }
-              }
-            },
-            [
-              _c("v-icon", { attrs: { small: "" } }, [_vm._v("mdi-plus")]),
-              _vm._v(" "),
-              _c("h5", { staticClass: "font-weight-light" }, [
-                _vm._v("Add Scene")
-              ])
-            ],
-            1
-          ),
+          _vm.scenes.length == 0
+            ? _c(
+                "v-card",
+                {
+                  staticClass: "text-center pa-2 mr-2",
+                  on: {
+                    click: function($event) {
+                      $event.stopPropagation()
+                      return _vm.openMediaFiles($event)
+                    }
+                  }
+                },
+                [
+                  _c("v-icon", { attrs: { small: "" } }, [_vm._v("mdi-plus")]),
+                  _vm._v(" "),
+                  _c("h5", { staticClass: "font-weight-light" }, [
+                    _vm._v("Add Scene")
+                  ])
+                ],
+                1
+              )
+            : _vm._e(),
           _vm._v(" "),
           _c(
             "v-skeleton-loader",

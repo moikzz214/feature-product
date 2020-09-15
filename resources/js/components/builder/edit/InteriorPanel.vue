@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-12 pt-0 col-md-12 d-flex align-center flex-start">
-      <v-card class="text-center pa-2 mr-2" @click.stop="openMediaFiles">
+      <v-card v-if="scenes.length == 0" class="text-center pa-2 mr-2" @click.stop="openMediaFiles">
         <v-icon small>mdi-plus</v-icon>
         <h5 class="font-weight-light">Add Scene</h5>
       </v-card>
@@ -343,9 +343,10 @@ export default {
       axios
         .get("/item/scenes/by-product/" + this.product)
         .then((response) => {
-          this.scenes = Object.assign({}, response.data);
+          // this.scenes = Object.assign({}, response.data);
+          this.scenes = response.data;
           this.loading = false;
-          console.log(this.scenes);
+          // console.log(this.scenes.length);
         })
         .catch((error) => {
           console.log("Error: " + error);
