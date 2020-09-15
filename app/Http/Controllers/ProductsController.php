@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use App\Hotspot;
+use App\Video;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -38,8 +39,10 @@ class ProductsController extends Controller
         })->with('user','items','items.media_file','items.hotspot_setting')->get();
 
         $hotspot = Hotspot::where('product_id', '=', $products[0]->id)->get(); 
+
+        $videos = Video::where('product_id', '=', $products[0]->id)->get(); 
        
-        return response()->json(["dataItems" => $products, "hpItems" => $hotspot]);
+        return response()->json(["dataItems" => $products, "hpItems" => $hotspot, "videos" => $videos]);
     }
 
     /**

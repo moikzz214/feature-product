@@ -46,33 +46,7 @@ var slideIndex = 1;
      
     slides[slideIndex-1].style.display = "block"; 
     
-  }
-
-var x = 1;
-  $('body').on('click','.videos', function(e){
-    e.preventDefault(); 
-
-    showVideo();
-
-    if(x == 1){
-      $(".video-slider").html('<div> <video preload="metadata"  width="220" height="140" controls>'+
-                                    '<source src="{{URL::to("/")}}/storage/uploads/1/videos/vid1.mp4" type="video/mp4">'+
-                                    'Your browser does not support the video tag.'+
-                                  '</video>'+
-                              '</div>' );
-
-        setTimeout(() => {
-            $('.video-slider').slick({
-                infinite: true,
-                slidesToShow: 4,
-                slidesToScroll: 4
-            });
-        }, 500);
-    }
-    x++;
-  });
-
-
+  } 
  
   </script>
   <script type="text/javascript">
@@ -121,7 +95,41 @@ var x = 1;
                 var hpLabel = '';  
                
                 let hpSlider = '';
-                
+
+
+                var x = 1;
+
+                if(data.videos.length > 0){
+                  $(".videos.img").show();
+                }
+
+                $('body').on('click','.videos', function(e){
+                  e.preventDefault();  
+
+                      if(x == 1){ 
+                      var vds = '';
+                          $.each(data.videos, function(i,o){   
+                              vds +=  '<div> <video preload="metadata"  width="220" height="140" controls>'+
+                                              '<source src="'+o.video_path+'" type="video/mp4">'+
+                                              'Your browser does not support the video tag.'+
+                                            '</video>'+
+                                        '</div>';
+                          });
+                        $(".video-slider").html( vds );
+
+                          setTimeout(() => {
+                              $('.video-slider').slick({
+                                  infinite: true,
+                                  slidesToShow: 4,
+                                  slidesToScroll: 4
+                              });
+                          }, 500);
+                      }
+                      x++;
+
+                      showVideo();
+                });
+
                
                 $.each(data.hpItems, function(i,o){   
                   
