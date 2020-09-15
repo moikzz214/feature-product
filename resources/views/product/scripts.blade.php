@@ -229,7 +229,9 @@ var slideIndex = 1;
                 }); 
 
                 let imagesArray = imgs;   
-                 
+             
+                function init360(){ 
+
                 api = $(".spritespin")
                 .spritespin({
                      
@@ -294,6 +296,8 @@ var slideIndex = 1;
                     },
                 })
                 .spritespin("api");  
+              }
+              init360();
                 
                 if(data.hpItems.length > 0){
                   $(".photos.img").show();
@@ -363,6 +367,7 @@ var slideIndex = 1;
                       });
                       $exteriorBtn.on("click", function () {
                         hideVideo();
+                        init360();
                         $exteriorBtn.addClass("active");
                         $interiorBtn.removeClass("active");
                         $interior.hide();
