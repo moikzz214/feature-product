@@ -205,7 +205,7 @@
   display: none;
   position: fixed;
   z-index: 99999;
-  padding-top: 20PX;
+  padding-top: 0;
   left: 0;
   top: 0;
   width: 100%;
