@@ -3542,10 +3542,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      selected_panel_prop: "video",
-      activateExterior: false,
+      selected_panel_prop: "exterior",
+      activateExterior: true,
       activateInterior: false,
-      activateVideo: true,
+      activateVideo: false,
       selected_item: null,
       selected_hotspot_prop: null,
       selected_interior_hotspot_prop: null

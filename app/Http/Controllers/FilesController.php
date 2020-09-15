@@ -91,10 +91,9 @@ class FilesController extends Controller
                 $img->save($userStorageDir . '/' . $path); // FHD
             }
 
-
-
-
-
+            /** 
+             * Set item array
+             */
             if ($request->add_items == 'true') {
                 array_push($itemsArray, array(
                     'item_type' => $request->item_type,
@@ -104,7 +103,9 @@ class FilesController extends Controller
                 ));
             }
 
-            // Prepare object before saving
+            /**
+             * Set file array
+             */
             $mediaFileType = "";
             if($request->item_type == 'video'){
                 $mediaFileType = "video";
@@ -118,6 +119,7 @@ class FilesController extends Controller
                 'disk' => 'uploads',
                 'path' => $path,
                 'user_id' => auth()->id(),
+                'company_id' => $companyId,
                 'item_id' => null,
                 'created_at' => Carbon::now(),
             ));

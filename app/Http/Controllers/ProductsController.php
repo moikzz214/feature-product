@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller
 {
@@ -25,7 +26,8 @@ class ProductsController extends Controller
 
     public function productsAPI()
     {
-        $products = Product::orderBy('created_at', 'desc')->paginate(10);
+        $company_id = Auth::user()->company_id;
+        $products = Product::where('company_id', $company_id)->orderBy('created_at', 'desc')->paginate(10);
         return response()->json($products, 200);
     }
 
@@ -37,6 +39,7 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
+        $company_id = Auth::user()->company_id;
         // validate request
         $this->validateRequest();
         // store request
@@ -44,6 +47,7 @@ class ProductsController extends Controller
             'title' => $request->title,
             'slug' => $request->slug,
             'user_id' => auth()->id(),
+            'company_id' => $company_id,
         ]);
         // response
         return response()->json([
@@ -77,6 +81,7 @@ class ProductsController extends Controller
         return request()->validate([
             'title' => ['required', 'min:1', 'max:50', 'string'],
             'slug' => ['min:1', 'max:50', 'string', 'alpha_dash', 'unique:products'],
+            'company_id' => [''],
         ]);
 
     }

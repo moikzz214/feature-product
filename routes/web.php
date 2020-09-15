@@ -22,7 +22,7 @@ Auth::routes();
 Route::get('/dashboard', 'BuilderController@index')->name('builder.dashboard');
 Route::get('/builder', 'BuilderController@index')->name('builder');
 Route::get('/builder/product/new', 'BuilderController@index')->name('builder.new.product');
-Route::get('/builder/product/edit/{id}', 'BuilderController@edit')->name('builder.edit.product');
+Route::get('/builder/product/edit/{id}', 'BuilderController@edit')->name('builder.edit.product'); //->middleware('can:accessCompanyPages');
 Route::get('/builder/products', 'BuilderController@index')->name('builder.products');
 
 Route::get('/builder/products/all', 'ProductsController@productsAPI')->name('builder.all.products');
@@ -47,9 +47,12 @@ Route::get('/product/{slug}', 'ProductsController@show')->name('single.product')
 
 // Media_files
 Route::post('/files/upload', 'FilesController@upload')->name('upload');
-Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files');
-// Route::get('/display/file/{msgid}/{extn}/{filename}', 'FileController@show')->name('file.show');
-Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file');
+
+
+Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files'); // has static
+Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file'); // has static
+
+
 Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.user.files');
 
 
