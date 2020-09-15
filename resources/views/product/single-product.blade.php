@@ -36,9 +36,7 @@
     <span class="close cursor" onclick="closeModal()">&times;</span>
     <div class="modal-content">
 
-      <div class="slider-content">
-        <div class="mySlides"><img src="{{URL::to('/')}}/storage/uploads/user-1/_A739845.JPG"  width="100%" height="auto"> </div>
-        <div class="mySlides"><img src="{{URL::to('/')}}/storage/uploads/user-1/_A739846.JPG"  width="100%" height="auto"> </div>
+      <div class="slider-content"> 
 
       </div> 
               

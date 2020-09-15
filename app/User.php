@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Company;
+use App\Product;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -44,5 +45,10 @@ class User extends Authenticatable
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function product()
+    {
+        return $this->hasMany(Product::class);
     }
 }

@@ -56,7 +56,7 @@ var x = 1;
 
     if(x == 1){
       $(".video-slider").html('<div> <video preload="metadata"  width="220" height="140" controls>'+
-                                    '<source src="{{URL::to("/")}}/storage/uploads/user-1/videos/vid1.mp4" type="video/mp4">'+
+                                    '<source src="{{URL::to("/")}}/storage/uploads/1/videos/vid1.mp4" type="video/mp4">'+
                                     'Your browser does not support the video tag.'+
                                   '</video>'+
                               '</div>' );
@@ -163,11 +163,11 @@ var x = 1;
                     
                     Object.keys(items).map(function (ii) {  
                             if(items[ii].item_type == "panorama"){
-                              panaromicImg[ii] = base_url + '/storage/uploads/user-'+o.author+'/'+items[ii].media_file.path; 
+                              panaromicImg[ii] = base_url + '/storage/uploads/'+o.user.company_id+'/'+items[ii].media_file.path; 
                             } else{
                               conf_hotspots[ii] = [];      
                               conf_hotspots[ii]['hotspot_setting'] = [];    
-                              imgs[ii] = base_url + '/storage/uploads/user-'+o.author+'/'+items[ii].media_file.path;
+                              imgs[ii] = base_url + '/storage/uploads/'+o.user.company_id+'/'+items[ii].media_file.path;
                             }
                             if(items[ii].hotspot_setting){
                                     Object.keys(items[ii].hotspot_setting).map(function (iii) {  
@@ -259,9 +259,10 @@ var x = 1;
                             }); 
                         }
                     },
-                    onInit: function (e, data) { 
+                    onInit: function (e) { 
                       $('#hp-draggable li').hide();
-                      $(".spritespin-wrapper").css({"background-image":'url("'+ "{{URL::to('/')}}" +'/product/images/360/1.png")', "background-size": "cover","background-position": "center", "background-repeat": "no-repeat"});
+                      
+                       $(".spritespin-wrapper").css({"background-image":'url("'+ base_url + '/storage/uploads/'+data.dataItems[0].user.company_id+'/'+data.dataItems[0].items[0].media_file.path +'")', "background-size": "cover","background-position": "center", "background-repeat": "no-repeat"});
                     },
                     onLoad: function (e, data) {
                       if(conf_hotspots){

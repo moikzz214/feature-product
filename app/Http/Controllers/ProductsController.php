@@ -35,7 +35,7 @@ class ProductsController extends Controller
         $products = Product::where(function ($query) use ($id) {
             $query->where('id', '=', $id)
                   ->orWhere('slug', '=', $id);
-        })->with('items','items.media_file','items.hotspot_setting')->get();
+        })->with('user','items','items.media_file','items.hotspot_setting')->get();
 
         $hotspot = Hotspot::where('product_id', '=', $products[0]->id)->get(); 
        
@@ -56,7 +56,7 @@ class ProductsController extends Controller
         $product = Product::create([
             'title' => $request->title,
             'slug' => $request->slug,
-            'author' => auth()->id(),
+            'user_id' => auth()->id(),
         ]);
         // response
         return response()->json([

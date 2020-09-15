@@ -18,7 +18,7 @@ class ProductsTableSeeder extends Seeder
 	            'title' => $faker->words(3, true),
 	            'slug' => $faker->slug,
 	            'status' => $faker->biasedNumberBetween(0,1),
-	            'author' => $faker->biasedNumberBetween(1,3),
+	            'user_id' => $faker->biasedNumberBetween(1,3),
                 'created_at' => $faker->dateTimeBetween('-2 years', 'now')
 	        ]);
 	    }
