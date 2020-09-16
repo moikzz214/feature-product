@@ -3372,7 +3372,7 @@ __webpack_require__.r(__webpack_exports__);
         autoProcessQueue: false,
         maxFiles: 100,
         parallelUploads: 100,
-        maxFilesize: this.itemType == 'video' ? 30 : 1,
+        maxFilesize: this.itemType == 'video' ? 30 : this.itemType == 'panorama' ? 3 : 1,
         timeout: 180000,
         previewTemplate: this.dropzoneTemplate(),
         clickable: ".open-uploader",
@@ -3714,7 +3714,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     openCode: function openCode(slug, title) {
       this.dialog = true;
-      this.code = '<iframe src="' + window.location.origin + "/product/" + slug + '" height="768px" width="100%" title="' + title + '"></iframe>';
+      this.code = '<iframe src="' + window.location.origin + "/product/" + slug + '" height="450px" width="100%" title="' + title + '" scrolling="no" allowfullscreen="allowfullscreen"></iframe>';
     },
     selectCode: function selectCode() {
       var theCode = this.$refs.code.$el.querySelector("textarea");
@@ -4202,20 +4202,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-<<<<<<< HEAD
-=======
-//
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
 
 /**
  * To update
  * 1. Add onframe event - hotspots should be set when onframe is triggered.
  */
-<<<<<<< HEAD
-=======
 var temp_hotspots = [];
 var allHps = [];
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4310,26 +4303,6 @@ var allHps = [];
   methods: {
     removeHotspotSettings: function removeHotspotSettings(spotId) {
       var refId = spotId;
-<<<<<<< HEAD
-      var data = {
-        item_id: this.tempItemID,
-        hotspot_id: spotId
-      };
-      axios.post("/hotspot/setting/delete", data).then(function (response) {
-        console.log(response);
-        $("#" + spotId).css({
-          'left': '5%',
-          "top": "5%"
-        }); // remove the hotspot from 360
-        //   this.getHotspotSettings();
-      })["catch"](function (error) {
-        console.log("Error Deleting Hotspot Setting");
-        console.log(error);
-      });
-    },
-    closeHotspot: function closeHotspot() {
-      console.log("close hotspot");
-=======
       $("#" + spotId).css({
         'display': "none"
       });
@@ -4350,7 +4323,6 @@ var allHps = [];
       console.log(tempHotspots);
     },
     closeHotspot: function closeHotspot() {//console.log("close hotspot");
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
     },
     applyHotspot: function applyHotspot() {
       var _this = this;
@@ -4359,13 +4331,8 @@ var allHps = [];
       // Get the hotspot hotspot_id
       var data = {
         hotspot_settings: tempHotspots
-<<<<<<< HEAD
-      };
-      console.log(data);
-=======
       }; // console.log(data);
 
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
       axios.post("/hotspot/apply", data).then(function (response) {
         tempHotspots = [];
 
@@ -4411,10 +4378,7 @@ var allHps = [];
     confirmDelete: function confirmDelete(item) {
       var _this3 = this;
 
-<<<<<<< HEAD
-=======
       // console.log(hotspotsID)
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
       this.dialogLoading = true;
       axios.post("/item/delete/" + item).then(function (response) {
         _this3.dialogLoading = false;
@@ -4441,9 +4405,6 @@ var allHps = [];
     },
     selected: function selected(index) {
       var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-<<<<<<< HEAD
-      //   $(".cd-single-point").hide();
-=======
       allHps = this.hotspots;
       $(".draggable-hotspot").css({
         left: "5%",
@@ -4452,30 +4413,12 @@ var allHps = [];
       });
       $(".default-hp").show(); //   $(".cd-single-point").hide();
 
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
       var dItemId = id.id; // Current Item ID
 
       this.settingsInCurrentScene = []; // Settings Variable
 
       var tempSettings = [];
       this.hotspots.map(function (k, i) {
-<<<<<<< HEAD
-        k.hotspot_settings.map(function (inner, index) {
-          if (inner.item_id == dItemId) {
-            // Insert all the settings on the selected Item ID
-            tempSettings.push(inner);
-          }
-        });
-      });
-      tempSettings.map(function (s, index) {
-        var parseData = JSON.parse(s.hotspot_settings); // Apply hotspot style from the settings variable
-
-        $(".draggable-hotspot.hotspot-id-" + s.hotspot_id).css({
-          left: parseData.left ? parseData.left + "%" : "5%",
-          top: parseData.top ? parseData.top + "%" : "5%",
-          display: parseData.display
-        });
-=======
         if (k) {
           k.hotspot_settings.map(function (inner, index) {
             if (inner.item_id == dItemId) {
@@ -4501,7 +4444,6 @@ var allHps = [];
             $(".hp-" + s.hotspot_id).hide();
           }
         }
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
       });
       this.settingsInCurrentScene = tempSettings; //   console.log(this.settingsInCurrentScene);
 
@@ -4516,10 +4458,6 @@ var allHps = [];
           if (o.itemID == id.id) {
             $("#" + o.hotspotsID).css({
               left: o.hotspotSettings.left + "%",
-<<<<<<< HEAD
-              top: o.hotspotSettings.top + "%"
-            });
-=======
               top: o.hotspotSettings.top + "%",
               display: o.hotspotSettings.display
             });
@@ -4529,21 +4467,16 @@ var allHps = [];
             } else {
               $(".hp-" + o.hotspotsID).hide();
             }
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
           }
         });
       }
 
       $("#cur-frame").val(id.id);
-<<<<<<< HEAD
-      this.$refs.spritespin.api.updateFrame(index);
-=======
 
       if (this.$refs.spritespin) {
         this.$refs.spritespin.api.updateFrame(index);
       }
 
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
     },
@@ -4588,12 +4521,7 @@ var allHps = [];
       // console.log(i + " : ss");
       var hotspotObject = this.toSetHotspot;
       var topPercentage;
-<<<<<<< HEAD
-      var leftPercentage;
-      var temp_hotspots = []; // this.$nextTick(function () {
-=======
       var leftPercentage; // this.$nextTick(function () {
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
 
       $(function () {
         $(".draggable-hotspot").draggable({
@@ -4623,20 +4551,8 @@ var allHps = [];
               hotspotsID: hpsId,
               itemID: ieID,
               hotspotSettings: hpSettings
-<<<<<<< HEAD
-            }; // var theProperty = ieID + hpsId;
-            // temp_hotspots = {
-            //   theProperty: {
-            //     hotspotsID: hpsId,
-            //     itemID: ieID,
-            //     hotspotSettings: hpSettings,
-            //   },
-            // };
-
-=======
             };
             console.log(allHps);
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
             var filtered = temp_hotspots.filter(function (el) {
               return el != null;
             });
@@ -6073,11 +5989,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-<<<<<<< HEAD
-exports.push([module.i, "/** Hotspot Action */\n.hotspot-action[data-v-17095d80] {\n  position: absolute;\n  top: 5px;\n  right: 5px;\n  left: auto;\n  bottom: auto;\n}\n.cd-label[data-v-17095d80] {\n  cursor: move;\n  position: absolute;\n  top: 0;\n  left: 100%;\n  padding: 0 5px;\n  background-color: #fff;\n  border-radius: 10px;\n  margin-left: 5px;\n  bottom: auto;\n  right: auto;\n  max-width: 120px;\n  width: 120px;\n}\n.cd-label[data-v-17095d80]::after {\n  content: \"\";\n  width: 0px;\n  height: 0px;\n  border-top: 8px solid transparent;\n  border-bottom: 8px solid transparent;\n  border-right: 8px solid #fff;\n  position: absolute;\n  right: 98%;\n  top: 0;\n  bottom: auto;\n  left: auto;\n  margin-top: 4px;\n}\n\n/** Draggrable */\n.hotspot-draggable-wrapper[data-v-17095d80] {\n  background-color: rgba(0, 0, 0, 0.25);\n  max-width: 800px;\n  width: 800px;\n  height: 450px;\n  max-height: 450px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: absolute;\n  top: 0;\n  left: 50%;\n  bottom: 0;\n  right: 0;\n  transform: translateX(-50%);\n}\n\n/**.hotspot */\n.spritespin-wrapper[data-v-17095d80] {\n  position: relative;\n}\n.hotspot-wrapper[data-v-17095d80] {\n  background-color: rgba(0, 0, 0, 0.25);\n  height: 100%;\n  width: 100%;\n  z-index: 9999999;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.action-wrapper[data-v-17095d80] {\n  position: absolute;\n  left: auto;\n  right: auto;\n  top: auto;\n  bottom: 34px;\n  width: 100%;\n}\n.spritespin-buttons-wrapper[data-v-17095d80] {\n  /* margin-top: 30px; */\n  display: flex;\n  justify-content: center;\n  width: 200px;\n  margin: 0 auto;\n}\n.spritespin-slider[data-v-17095d80] {\n  width: 100%;\n}\n.spritespin-buttons-wrapper .button[data-v-17095d80] {\n  font-size: 24px;\n  line-height: 24px;\n  padding: 0 10px 5px;\n  margin: 0 10px;\n  cursor: pointer;\n  color: #fff;\n  background-color: #191e47;\n}\n.content-action[data-v-17095d80] {\n  margin-top: 15px;\n  display: flex;\n  justify-content: center;\n}\n.open-exterior[data-v-17095d80],\n.open-interior[data-v-17095d80] {\n  text-transform: uppercase;\n  cursor: pointer;\n  color: #fff;\n  padding: 13px 20px;\n  background-color: #191e47;\n  font-size: 24px;\n  line-height: 24px;\n}\n.active[data-v-17095d80] {\n  background-color: #fbad18;\n}\n\n/* HotSpot */\n.cd-img-replace[data-v-17095d80] {\n  /* replace text with background images */\n  display: inline-block;\n  overflow: hidden;\n  text-indent: 100%;\n  white-space: nowrap;\n}\nul[data-v-17095d80] {\n  list-style: none;\n}\n.hotspot[data-v-17095d80] {\n  position: absolute;\n  display: block;\n}\n.hotspot--title[data-v-17095d80] {\n  display: inline-block;\n  padding-right: 10px;\n  color: #ff0000;\n  text-transform: uppercase;\n  line-height: 50px;\n  font-size: 12px;\n  letter-spacing: 1px;\n  transition: all cubic-bezier(0.8, 0, 0.2, 1) 0.4s;\n}\n.hotspot--title__right[data-v-17095d80] {\n  float: right;\n  padding-right: 0;\n  padding-left: 10px;\n}\n.hotspot--cta[data-v-17095d80] {\n  position: relative;\n  display: inline-block;\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  background: #ff0000;\n  transition: all cubic-bezier(0.8, 0, 0.2, 1) 0.4s;\n}\n.hotspot--cta[data-v-17095d80]::after {\n  content: \"\";\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  margin: auto;\n  width: 10px;\n  height: 10px;\n  border-radius: 50%;\n  background: #fff;\n  z-index: 2;\n  transition: opacity 0.6s;\n  -webkit-animation: pulse-data-v-17095d80 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0s infinite;\n          animation: pulse-data-v-17095d80 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0s infinite;\n}\n.hotspot:hover .hotspot--cta[data-v-17095d80] {\n  transform: scale(0.6);\n}\n.hotspot:hover .hotspot--cta[data-v-17095d80]:after {\n  opacity: 0;\n}\n@-webkit-keyframes pulse-data-v-17095d80 {\n0% {\n    transform: scale(0.4);\n}\n33% {\n    transform: scale(1);\n}\n66% {\n    transform: scale(0.4);\n}\n100% {\n    transform: scale(0.4);\n}\n}\n@keyframes pulse-data-v-17095d80 {\n0% {\n    transform: scale(0.4);\n}\n33% {\n    transform: scale(1);\n}\n66% {\n    transform: scale(0.4);\n}\n100% {\n    transform: scale(0.4);\n}\n}\n.hotspot--iphone[data-v-17095d80] {\n  top: 62%;\n  right: 68%;\n}\n.hotspot--macbook[data-v-17095d80] {\n  top: 22%;\n  right: 48%;\n}\n.hotspot--watch[data-v-17095d80] {\n  top: 72%;\n  left: 45%;\n}\n@media screen and (max-width: 640px) {\n.hotspot--title[data-v-17095d80] {\n    line-height: 40px;\n    font-size: 10px;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 40px;\n    height: 40px;\n}\n}\n@media screen and (max-width: 420px) {\n.hotspot--title[data-v-17095d80] {\n    line-height: 30px;\n    font-size: 9px;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 30px;\n    height: 30px;\n}\n}\n@media screen and (max-width: 320px) {\n.hotspot--title[data-v-17095d80] {\n    display: none;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 20px;\n    height: 20px;\n}\n.hotspot--cta[data-v-17095d80]::after {\n    width: 5px;\n    height: 5px;\n}\n}\n.cd-product[data-v-17095d80] {\n  text-align: center;\n}\n.cd-product-wrapper[data-v-17095d80] {\n  display: inline-block;\n  position: relative;\n  margin: 0 auto;\n  width: 90%;\n  max-width: 800px;\n}\n.cd-product-wrapper > img[data-v-17095d80] {\n  display: block;\n}\n.cd-single-point[data-v-17095d80] {\n  position: absolute;\n  border-radius: 50%;\n  width: 25px;\n  height: 25px;\n}\n.cd-single-point > a[data-v-17095d80] {\n  cursor: move;\n  position: relative;\n  z-index: 2;\n  display: block;\n  width: 25px;\n  height: 25px;\n  border-radius: inherit;\n  background: #d95353;\n  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);\n  transition: background-color 0.2s;\n}\n.cd-single-point > a[data-v-17095d80]::after,\n.cd-single-point > a[data-v-17095d80]:before {\n  /* rotating plus icon */\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n}\n.cd-single-point > a[data-v-17095d80]::after {\n  height: 2px;\n  width: 12px;\n}\n.cd-single-point > a[data-v-17095d80]::before {\n  height: 12px;\n  width: 2px;\n}\n.hotspot-default-position[data-v-17095d80] {\n  left: 5%;\n  bottom: 5%;\n}\n.cd-single-point.is-open > a[data-v-17095d80] {\n  background-color: #191e47;\n}\n.cd-single-point.is-open > a[data-v-17095d80]::after,\n.cd-single-point.is-open > a[data-v-17095d80]::before {\n  transform: translateX(-50%) translateY(-50%) rotate(135deg);\n}\n.cd-single-point.is-open[data-v-17095d80]::after {\n  /* remove pulse effect */\n  display: none;\n}\n.cd-single-point.is-open .cd-more-info[data-v-17095d80] {\n  visibility: visible;\n  opacity: 1;\n  transform: scale(1);\n  transition: opacity 0.3s 0s, visibility 0s 0s, transform 0.3s 0s, top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;\n}\n\n/* .cd-single-point.visited > a {\n  background-color: #475f74;\n  background-color: #fff;\n}\n.cd-single-point.visited > a::after,\n.cd-single-point.visited > a::before {\n  background-color: #191e47;\n} */\n.cd-single-point.visited[data-v-17095d80]::after {\n  /* pulse effect no more active on visited elements */\n  display: none;\n}\n@media only screen and (min-width: 600px) {\n.cd-single-point.is-open .cd-more-info.cd-left[data-v-17095d80] {\n    right: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-right[data-v-17095d80] {\n    left: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-top[data-v-17095d80] {\n    bottom: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-bottom[data-v-17095d80] {\n    top: 140%;\n}\n}\n@-webkit-keyframes cd-pulse-data-v-17095d80 {\n0% {\n    -webkit-transform: scale(1);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n50% {\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n100% {\n    -webkit-transform: scale(1.6);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0);\n}\n}\n@keyframes cd-pulse-data-v-17095d80 {\n0% {\n    transform: scale(1);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n50% {\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n100% {\n    transform: scale(1.6);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0);\n}\n}\n.cd-single-point .cd-more-info[data-v-17095d80] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 3;\n  width: 100%;\n  height: 100%;\n  overflow-y: auto;\n  -webkit-overflow-scrolling: touch;\n  text-align: left;\n  line-height: 1.5;\n  background-color: rgba(255, 255, 255, 0.95);\n  padding: 2em 1em 1em;\n  visibility: hidden;\n  opacity: 0;\n  transform: scale(0.8);\n  transition: opacity 0.3s 0s, visibility 0s 0.3s, transform 0.3s 0s, top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;\n}\n.cd-single-point .cd-more-info[data-v-17095d80]::before {\n  /* triangle next to the interest point description - hidden on mobile */\n  content: \"\";\n  position: absolute;\n  height: 0;\n  width: 0;\n  display: none;\n  border: 8px solid transparent;\n}\n.cd-single-point .cd-more-info h2[data-v-17095d80] {\n  font-size: 22px;\n  font-size: 1.375rem;\n  margin-bottom: 0.6em;\n}\n.cd-single-point .cd-more-info p[data-v-17095d80] {\n  color: #758eb1;\n}\n@media only screen and (min-width: 600px) {\n.cd-single-point .cd-more-info[data-v-17095d80] {\n    position: absolute;\n    width: 430px;\n    height: 260px;\n    padding: 1em;\n    overflow-y: visible;\n    line-height: 1.4;\n    border-radius: 0.25em;\n    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);\n}\n.cd-single-point .cd-more-info[data-v-17095d80]::before {\n    display: block;\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80],\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80] {\n    top: 50%;\n    bottom: auto;\n    transform: translateY(-50%);\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80]::before,\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80]::before {\n    top: 50%;\n    bottom: auto;\n    transform: translateY(-50%);\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80] {\n    right: 160%;\n    left: auto;\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80]::before {\n    border-left-color: rgba(255, 255, 255, 0.95);\n    left: 100%;\n}\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80] {\n    left: 160%;\n}\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80]::before {\n    border-right-color: rgba(255, 255, 255, 0.95);\n    right: 100%;\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80],\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80] {\n    left: 50%;\n    right: auto;\n    transform: translateX(-50%);\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80]::before,\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80]::before {\n    left: 50%;\n    right: auto;\n    transform: translateX(-50%);\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80] {\n    bottom: 160%;\n    top: auto;\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80]::before {\n    border-top-color: rgba(255, 255, 255, 0.95);\n    top: 100%;\n}\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80] {\n    top: 160%;\n}\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80]::before {\n    border-bottom-color: rgba(255, 255, 255, 0.95);\n    bottom: 100%;\n}\n.cd-single-point .cd-more-info h2[data-v-17095d80] {\n    font-size: 20px;\n    font-size: 1.25rem;\n    margin-bottom: 0;\n}\n.cd-single-point .cd-more-info p[data-v-17095d80] {\n    font-size: 14px;\n    font-size: 0.875rem;\n}\n}\n/* close the interest point description - only on mobile */\n.cd-close-info[data-v-17095d80] {\n  position: fixed;\n  top: 0;\n  right: 0;\n  height: 44px;\n  width: 44px;\n}\n.cd-close-info[data-v-17095d80]::after,\n.cd-close-info[data-v-17095d80]:before {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%) rotate(45deg);\n  background-color: #475f74;\n  transition-property: transform;\n  transition-duration: 0.2s;\n}\n.cd-close-info[data-v-17095d80]::after {\n  height: 2px;\n  width: 16px;\n}\n.cd-close-info[data-v-17095d80]::before {\n  height: 16px;\n  width: 2px;\n}\n@media only screen and (min-width: 600px) {\n.cd-close-info[data-v-17095d80] {\n    display: none;\n}\n}\n#panorama[data-v-17095d80] {\n  width: 100%;\n  height: 400px;\n}\n.custom-hotspot[data-v-17095d80] {\n  width: 30px;\n  height: 30px;\n  border-radius: 50%;\n  background-color: #fbad18;\n}\ndiv.custom-tooltip span[data-v-17095d80] {\n  visibility: hidden;\n  position: absolute;\n  border-radius: 3px;\n  background-color: #fff;\n  color: #000;\n  text-align: center;\n  max-width: 300px;\n  min-width: 200px;\n  padding: 5px 10px;\n  margin-left: -220px;\n  cursor: default;\n  bottom: -50px;\n  border: 1px solid #eee;\n}\ndiv.custom-tooltip:hover span[data-v-17095d80] {\n  visibility: visible;\n}", ""]);
-=======
 exports.push([module.i, "/** Hotspot Action */\n.hotspot-action[data-v-17095d80] {\n  position: absolute;\n  top: 5px;\n  right: 5px;\n  left: auto;\n  bottom: auto;\n}\n.cd-label[data-v-17095d80] {\n  cursor: move;\n  position: absolute;\n  top: 0;\n  left: 100%;\n  padding: 0 5px;\n  background-color: #fff;\n  border-radius: 10px;\n  margin-left: 5px;\n  bottom: auto;\n  right: auto;\n  max-width: 120px;\n  width: 120px;\n}\n.cd-label[data-v-17095d80]::after {\n  content: \"\";\n  width: 0px;\n  height: 0px;\n  border-top: 8px solid transparent;\n  border-bottom: 8px solid transparent;\n  border-right: 8px solid #fff;\n  position: absolute;\n  right: 98%;\n  top: 0;\n  bottom: auto;\n  left: auto;\n  margin-top: 4px;\n}\n\n/** Draggrable */\n.hotspot-draggable-wrapper[data-v-17095d80] {\n  background-color: rgba(0, 0, 0, 0.25);\n  max-width: 800px;\n  width: 800px;\n  height: 450px;\n  max-height: 450px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: absolute;\n  top: 0;\n  left: 50%;\n  bottom: 0;\n  right: 0;\n  transform: translateX(-50%);\n}\n\n/**.hotspot */\n.spritespin-wrapper[data-v-17095d80] {\n  width: 800px;\n  height: 450px;\n  margin: 0 auto;\n  position: relative;\n}\n.hotspot-wrapper[data-v-17095d80] {\n  background-color: rgba(0, 0, 0, 0.25);\n  height: 100%;\n  width: 100%;\n  z-index: 9999999;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: auto;\n  bottom: auto;\n}\n.action-wrapper[data-v-17095d80] {\n  position: absolute;\n  left: auto;\n  right: auto;\n  top: auto;\n  bottom: 34px;\n  width: 100%;\n}\n.spritespin-buttons-wrapper[data-v-17095d80] {\n  /* margin-top: 30px; */\n  display: flex;\n  justify-content: center;\n  width: 200px;\n  margin: 0 auto;\n}\n.spritespin-slider[data-v-17095d80] {\n  width: 100%;\n}\n.spritespin-buttons-wrapper .button[data-v-17095d80] {\n  font-size: 24px;\n  line-height: 24px;\n  padding: 0 10px 5px;\n  margin: 0 10px;\n  cursor: pointer;\n  color: #fff;\n  background-color: #191e47;\n}\n.content-action[data-v-17095d80] {\n  margin-top: 15px;\n  display: flex;\n  justify-content: center;\n}\n.open-exterior[data-v-17095d80],\n.open-interior[data-v-17095d80] {\n  text-transform: uppercase;\n  cursor: pointer;\n  color: #fff;\n  padding: 13px 20px;\n  background-color: #191e47;\n  font-size: 24px;\n  line-height: 24px;\n}\n.active[data-v-17095d80] {\n  background-color: #fbad18;\n}\n\n/* HotSpot */\n.cd-img-replace[data-v-17095d80] {\n  /* replace text with background images */\n  display: inline-block;\n  overflow: hidden;\n  text-indent: 100%;\n  white-space: nowrap;\n}\nul[data-v-17095d80] {\n  list-style: none;\n}\n.hotspot[data-v-17095d80] {\n  position: absolute;\n  display: block;\n}\n.hotspot--title[data-v-17095d80] {\n  display: inline-block;\n  padding-right: 10px;\n  color: #ff0000;\n  text-transform: uppercase;\n  line-height: 50px;\n  font-size: 12px;\n  letter-spacing: 1px;\n  transition: all cubic-bezier(0.8, 0, 0.2, 1) 0.4s;\n}\n.hotspot--title__right[data-v-17095d80] {\n  float: right;\n  padding-right: 0;\n  padding-left: 10px;\n}\n.hotspot--cta[data-v-17095d80] {\n  position: relative;\n  display: inline-block;\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  background: #ff0000;\n  transition: all cubic-bezier(0.8, 0, 0.2, 1) 0.4s;\n}\n.hotspot--cta[data-v-17095d80]::after {\n  content: \"\";\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  margin: auto;\n  width: 10px;\n  height: 10px;\n  border-radius: 50%;\n  background: #fff;\n  z-index: 2;\n  transition: opacity 0.6s;\n  -webkit-animation: pulse-data-v-17095d80 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0s infinite;\n          animation: pulse-data-v-17095d80 1.5s cubic-bezier(0.8, 0, 0.2, 1) 0s infinite;\n}\n.hotspot:hover .hotspot--cta[data-v-17095d80] {\n  transform: scale(0.6);\n}\n.hotspot:hover .hotspot--cta[data-v-17095d80]:after {\n  opacity: 0;\n}\n@-webkit-keyframes pulse-data-v-17095d80 {\n0% {\n    transform: scale(0.4);\n}\n33% {\n    transform: scale(1);\n}\n66% {\n    transform: scale(0.4);\n}\n100% {\n    transform: scale(0.4);\n}\n}\n@keyframes pulse-data-v-17095d80 {\n0% {\n    transform: scale(0.4);\n}\n33% {\n    transform: scale(1);\n}\n66% {\n    transform: scale(0.4);\n}\n100% {\n    transform: scale(0.4);\n}\n}\n.hotspot--iphone[data-v-17095d80] {\n  top: 62%;\n  right: 68%;\n}\n.hotspot--macbook[data-v-17095d80] {\n  top: 22%;\n  right: 48%;\n}\n.hotspot--watch[data-v-17095d80] {\n  top: 72%;\n  left: 45%;\n}\n@media screen and (max-width: 640px) {\n.hotspot--title[data-v-17095d80] {\n    line-height: 40px;\n    font-size: 10px;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 40px;\n    height: 40px;\n}\n}\n@media screen and (max-width: 420px) {\n.hotspot--title[data-v-17095d80] {\n    line-height: 30px;\n    font-size: 9px;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 30px;\n    height: 30px;\n}\n}\n@media screen and (max-width: 320px) {\n.hotspot--title[data-v-17095d80] {\n    display: none;\n}\n.hotspot--cta[data-v-17095d80] {\n    width: 20px;\n    height: 20px;\n}\n.hotspot--cta[data-v-17095d80]::after {\n    width: 5px;\n    height: 5px;\n}\n}\n.cd-product[data-v-17095d80] {\n  text-align: center;\n}\n.cd-product-wrapper[data-v-17095d80] {\n  display: inline-block;\n  position: relative;\n  margin: 0 auto;\n  width: 90%;\n  max-width: 800px;\n}\n.cd-product-wrapper > img[data-v-17095d80] {\n  display: block;\n}\n.cd-single-point[data-v-17095d80] {\n  position: absolute;\n  border-radius: 50%;\n  width: 25px;\n  height: 25px;\n}\n.cd-single-point > a[data-v-17095d80] {\n  cursor: move;\n  position: relative;\n  z-index: 2;\n  display: block;\n  width: 25px;\n  height: 25px;\n  border-radius: inherit;\n  background: #d95353;\n  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);\n  transition: background-color 0.2s;\n}\n.cd-single-point > a[data-v-17095d80]::after,\n.cd-single-point > a[data-v-17095d80]:before {\n  /* rotating plus icon */\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #ffffff;\n  transition-property: transform;\n  transition-duration: 0.2s;\n}\n.cd-single-point > a[data-v-17095d80]::after {\n  height: 2px;\n  width: 12px;\n}\n.cd-single-point > a[data-v-17095d80]::before {\n  height: 12px;\n  width: 2px;\n}\n.hotspot-default-position[data-v-17095d80] {\n  left: 5%;\n  top: 5%;\n}\n.cd-single-point.is-open > a[data-v-17095d80] {\n  background-color: #191e47;\n}\n.cd-single-point.is-open > a[data-v-17095d80]::after,\n.cd-single-point.is-open > a[data-v-17095d80]::before {\n  transform: translateX(-50%) translateY(-50%) rotate(135deg);\n}\n.cd-single-point.is-open[data-v-17095d80]::after {\n  /* remove pulse effect */\n  display: none;\n}\n.cd-single-point.is-open .cd-more-info[data-v-17095d80] {\n  visibility: visible;\n  opacity: 1;\n  transform: scale(1);\n  transition: opacity 0.3s 0s, visibility 0s 0s, transform 0.3s 0s, top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;\n}\n\n/* .cd-single-point.visited > a {\n  background-color: #475f74;\n  background-color: #fff;\n}\n.cd-single-point.visited > a::after,\n.cd-single-point.visited > a::before {\n  background-color: #191e47;\n} */\n.cd-single-point.visited[data-v-17095d80]::after {\n  /* pulse effect no more active on visited elements */\n  display: none;\n}\n@media only screen and (min-width: 600px) {\n.cd-single-point.is-open .cd-more-info.cd-left[data-v-17095d80] {\n    right: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-right[data-v-17095d80] {\n    left: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-top[data-v-17095d80] {\n    bottom: 140%;\n}\n.cd-single-point.is-open .cd-more-info.cd-bottom[data-v-17095d80] {\n    top: 140%;\n}\n}\n@-webkit-keyframes cd-pulse-data-v-17095d80 {\n0% {\n    -webkit-transform: scale(1);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n50% {\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n100% {\n    -webkit-transform: scale(1.6);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0);\n}\n}\n@keyframes cd-pulse-data-v-17095d80 {\n0% {\n    transform: scale(1);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n50% {\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0.8);\n}\n100% {\n    transform: scale(1.6);\n    box-shadow: inset 0 0 1px 1px rgba(217, 83, 83, 0);\n}\n}\n.cd-single-point .cd-more-info[data-v-17095d80] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 3;\n  width: 100%;\n  height: 100%;\n  overflow-y: auto;\n  -webkit-overflow-scrolling: touch;\n  text-align: left;\n  line-height: 1.5;\n  background-color: rgba(255, 255, 255, 0.95);\n  padding: 2em 1em 1em;\n  visibility: hidden;\n  opacity: 0;\n  transform: scale(0.8);\n  transition: opacity 0.3s 0s, visibility 0s 0.3s, transform 0.3s 0s, top 0.3s 0s, bottom 0.3s 0s, left 0.3s 0s, right 0.3s 0s;\n}\n.cd-single-point .cd-more-info[data-v-17095d80]::before {\n  /* triangle next to the interest point description - hidden on mobile */\n  content: \"\";\n  position: absolute;\n  height: 0;\n  width: 0;\n  display: none;\n  border: 8px solid transparent;\n}\n.cd-single-point .cd-more-info h2[data-v-17095d80] {\n  font-size: 22px;\n  font-size: 1.375rem;\n  margin-bottom: 0.6em;\n}\n.cd-single-point .cd-more-info p[data-v-17095d80] {\n  color: #758eb1;\n}\n@media only screen and (min-width: 600px) {\n.cd-single-point .cd-more-info[data-v-17095d80] {\n    position: absolute;\n    width: 430px;\n    height: 260px;\n    padding: 1em;\n    overflow-y: visible;\n    line-height: 1.4;\n    border-radius: 0.25em;\n    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);\n}\n.cd-single-point .cd-more-info[data-v-17095d80]::before {\n    display: block;\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80],\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80] {\n    top: 50%;\n    bottom: auto;\n    transform: translateY(-50%);\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80]::before,\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80]::before {\n    top: 50%;\n    bottom: auto;\n    transform: translateY(-50%);\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80] {\n    right: 160%;\n    left: auto;\n}\n.cd-single-point .cd-more-info.cd-left[data-v-17095d80]::before {\n    border-left-color: rgba(255, 255, 255, 0.95);\n    left: 100%;\n}\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80] {\n    left: 160%;\n}\n.cd-single-point .cd-more-info.cd-right[data-v-17095d80]::before {\n    border-right-color: rgba(255, 255, 255, 0.95);\n    right: 100%;\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80],\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80] {\n    left: 50%;\n    right: auto;\n    transform: translateX(-50%);\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80]::before,\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80]::before {\n    left: 50%;\n    right: auto;\n    transform: translateX(-50%);\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80] {\n    bottom: 160%;\n    top: auto;\n}\n.cd-single-point .cd-more-info.cd-top[data-v-17095d80]::before {\n    border-top-color: rgba(255, 255, 255, 0.95);\n    top: 100%;\n}\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80] {\n    top: 160%;\n}\n.cd-single-point .cd-more-info.cd-bottom[data-v-17095d80]::before {\n    border-bottom-color: rgba(255, 255, 255, 0.95);\n    bottom: 100%;\n}\n.cd-single-point .cd-more-info h2[data-v-17095d80] {\n    font-size: 20px;\n    font-size: 1.25rem;\n    margin-bottom: 0;\n}\n.cd-single-point .cd-more-info p[data-v-17095d80] {\n    font-size: 14px;\n    font-size: 0.875rem;\n}\n}\n/* close the interest point description - only on mobile */\n.cd-close-info[data-v-17095d80] {\n  position: fixed;\n  top: 0;\n  right: 0;\n  height: 44px;\n  width: 44px;\n}\n.cd-close-info[data-v-17095d80]::after,\n.cd-close-info[data-v-17095d80]:before {\n  content: \"\";\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  bottom: auto;\n  right: auto;\n  transform: translateX(-50%) translateY(-50%) rotate(45deg);\n  background-color: #475f74;\n  transition-property: transform;\n  transition-duration: 0.2s;\n}\n.cd-close-info[data-v-17095d80]::after {\n  height: 2px;\n  width: 16px;\n}\n.cd-close-info[data-v-17095d80]::before {\n  height: 16px;\n  width: 2px;\n}\n@media only screen and (min-width: 600px) {\n.cd-close-info[data-v-17095d80] {\n    display: none;\n}\n}\n#panorama[data-v-17095d80] {\n  width: 100%;\n  height: 400px;\n}\n.custom-hotspot[data-v-17095d80] {\n  width: 30px;\n  height: 30px;\n  border-radius: 50%;\n  background-color: #fbad18;\n}\ndiv.custom-tooltip span[data-v-17095d80] {\n  visibility: hidden;\n  position: absolute;\n  border-radius: 3px;\n  background-color: #fff;\n  color: #000;\n  text-align: center;\n  max-width: 300px;\n  min-width: 200px;\n  padding: 5px 10px;\n  margin-left: -220px;\n  cursor: default;\n  bottom: -50px;\n  border: 1px solid #eee;\n}\ndiv.custom-tooltip:hover span[data-v-17095d80] {\n  visibility: visible;\n}", ""]);
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
 
 // exports
 
@@ -29192,24 +29104,36 @@ var render = function() {
             staticStyle: { "min-height": "450px", "background-color": "#eee" }
           },
           [
-            _vm.uploader == true
-              ? _c("upload-zone", {
-                  attrs: { "add-items": true, "item-type": "360" },
-                  on: { uploaded: _vm.getImagesByProduct }
-                })
-              : _vm._e(),
+            _c("upload-zone", {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.uploader == true,
+                  expression: "uploader == true"
+                }
+              ],
+              attrs: { "add-items": true, "item-type": "360" },
+              on: { uploaded: _vm.getImagesByProduct }
+            }),
             _vm._v(" "),
             _c(
               "div",
-              { staticClass: "spritespin-wrapper" },
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.uploader == false,
+                    expression: "uploader == false"
+                  }
+                ],
+                staticClass: "spritespin-wrapper"
+              },
               [
                 _vm.show && _vm.uploader == false
                   ? _c("spritespin", {
                       ref: "spritespin",
-<<<<<<< HEAD
-=======
-                      staticClass: "sp-wrapper",
->>>>>>> 4a9e952efc1bd75080c6f1d1b35c93b0c849a030
                       staticStyle: { margin: "0 auto" },
                       attrs: { options: _vm.options }
                     })

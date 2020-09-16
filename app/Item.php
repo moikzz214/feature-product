@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Hotspot;
+use App\Hotspot_setting;
 use App\Product;
 use App\User_file;
 use App\Media_file;
@@ -24,5 +25,9 @@ class Item extends Model
     {
         return $this->belongsTo(Media_file::class);
         // return $this->hasMany(Media_file::class);
+    }
+    public function hotspot_setting()
+    {
+        return $this->hasMany(Hotspot_setting::class);
     }
 }

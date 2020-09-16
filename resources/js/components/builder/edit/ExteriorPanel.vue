@@ -15,13 +15,12 @@
     <!-- </div> -->
     <div>
       <div style="min-height:450px;background-color:#eee;">
-        <upload-zone v-if="uploader == true" :add-items="true" :item-type="'360'" @uploaded="getImagesByProduct"></upload-zone>
-        <div class="spritespin-wrapper">
+        <upload-zone v-show="uploader == true" :add-items="true" :item-type="'360'" @uploaded="getImagesByProduct"></upload-zone>
+        <div class="spritespin-wrapper" v-show="uploader == false" >
           <spritespin
             v-bind:options="options"
             v-if="show && uploader == false"
-            ref="spritespin"
-            class="sp-wrapper"
+            ref="spritespin" 
             style="margin:0 auto;"
           />
           <!-- :data-hps="`${spot.hotspotObjectToEmit.id}`" -->

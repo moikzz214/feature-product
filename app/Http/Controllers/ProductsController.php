@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\Hotspot;
+use App\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +13,7 @@ class ProductsController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth')->except(['show']);
+        $this->middleware('auth')->except(['publicproductsAPI','show']);
     }
 
     /**
@@ -29,6 +31,20 @@ class ProductsController extends Controller
         $company_id = Auth::user()->company_id;
         $products = Product::where('company_id', $company_id)->orderBy('created_at', 'desc')->paginate(10);
         return response()->json($products, 200);
+    }
+
+    public function publicproductsAPI($id)
+    {
+        $products = Product::where(function ($query) use ($id) {
+            $query->where('id', '=', $id)
+                  ->orWhere('slug', '=', $id);
+        })->with('user','items','items.media_file','items.hotspot_setting')->get();
+
+        $hotspot = Hotspot::where('product_id', '=', $products[0]->id)->get(); 
+
+        $videos = Video::where('product_id', '=', $products[0]->id)->get(); 
+       
+        return response()->json(["dataItems" => $products, "hpItems" => $hotspot, "videos" => $videos]);
     }
 
     /**
@@ -64,7 +80,7 @@ class ProductsController extends Controller
      */
     public function show($slug)
     {
-        return view('product.single-product');
+        return view('product.single-product', compact('slug'));
     }
 
     public function uploadVideo()
