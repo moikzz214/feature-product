@@ -17,7 +17,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+// Auth::routes();
+Auth::routes([
+    'register' => false, // Registration Routes...
+    'reset' => false, // Password Reset Routes...
+    'verify' => false, // Email Verification Routes...
+]);
 
 Route::get('/dashboard', 'BuilderController@index')->name('builder.dashboard');
 Route::get('/builder', 'BuilderController@index')->name('builder');
@@ -52,13 +57,10 @@ Route::get('/product/{slug}', 'ProductsController@show')->name('single.product')
 // Media_files
 Route::post('/files/upload', 'FilesController@upload')->name('upload');
 
-
 Route::get('/files/fetch', 'FilesController@getItemImages')->name('fetch.item.files'); // has static
 Route::get('/display/file/{path}', 'FilesController@showImage')->name('show.file'); // has static
 
-
 Route::get('/user/files/{id}', 'FilesController@getUserFilesByID')->name('get.user.files');
-
 
 // Items Controller
 Route::get('/items/by-product/{id}', 'ItemsController@getItemsByProduct')->name('items.by.product');
