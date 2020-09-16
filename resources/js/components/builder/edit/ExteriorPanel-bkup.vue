@@ -21,7 +21,6 @@
             v-bind:options="options"
             v-if="show && uploader == false"
             ref="spritespin"
-            class="sp-wrapper"
             style="margin:0 auto;"
           />
           <!-- :data-hps="`${spot.hotspotObjectToEmit.id}`" -->
@@ -134,8 +133,7 @@
  * To update
  * 1. Add onframe event - hotspots should be set when onframe is triggered.
  */
-var temp_hotspots = [];
-var allHps = [];
+
 import MediaFiles from "../../MediaFiles";
 import UploadZone from "../../UploadZone";
 export default {
@@ -235,30 +233,25 @@ export default {
   methods: {
     removeHotspotSettings(spotId) {
       let refId = spotId;
-     
-        $("#"+spotId).css({'display': "none"});
-        $(".hp-"+spotId).show();
-        
-        var hpSettings = {};
-        hpSettings.top = 5;
-        hpSettings.left = 5;
-        hpSettings.display = 'none';
-         
-          temp_hotspots[spotId+this.tempItemID] = {
-          hotspotsID: spotId,
-          itemID: this.tempItemID,
-          hotspotSettings: hpSettings,
-        };
-        var filtered = temp_hotspots.filter(function (el) {
-              return el != null;
-            });
-
-        tempHotspots = JSON.stringify(filtered);
-       
-        console.log(tempHotspots)
+      let data = {
+        item_id: this.tempItemID,
+        hotspot_id: spotId,
+      };
+      axios
+        .post("/hotspot/setting/delete", data)
+        .then((response) => {
+          console.log(response);
+          $("#"+spotId).css({'left':'5%',"top": "5%"});
+          // remove the hotspot from 360
+          //   this.getHotspotSettings();
+        })
+        .catch((error) => {
+          console.log("Error Deleting Hotspot Setting");
+          console.log(error);
+        });
     },
     closeHotspot() {
-      //console.log("close hotspot");
+      console.log("close hotspot");
     },
     applyHotspot() {
       // Get the selected item_id
@@ -266,7 +259,7 @@ export default {
       let data = {
         hotspot_settings: tempHotspots,
       };
-     // console.log(data);
+      console.log(data);
       axios
         .post("/hotspot/apply", data)
         .then((response) => {
@@ -311,14 +304,12 @@ export default {
       this.dialogItem = Object.assign({}, item);
     },
     confirmDelete(item) {
-     // console.log(hotspotsID)
       this.dialogLoading = true;
       axios
         .post("/item/delete/" + item)
         .then((response) => {
           this.dialogLoading = false;
           this.actionDialog = false;
-          
           this.getImagesByProduct();
         })
         .catch((error) => {
@@ -341,50 +332,28 @@ export default {
       }
     },
     selected(index, id = null) {
-      
-      allHps = this.hotspots;
-       $(".draggable-hotspot").css({
-          left:  "5%",
-          top: "5%",
-          display: "none",
-        });
-
-      $(".default-hp").show();
-
       //   $(".cd-single-point").hide();
       let dItemId = id.id; // Current Item ID
       this.settingsInCurrentScene = []; // Settings Variable
       let tempSettings = [];
-    
-      this.hotspots.map(function (k, i) { 
-        if(k){
+
+      this.hotspots.map(function (k, i) {
         k.hotspot_settings.map(function (inner, index) {
           if (inner.item_id == dItemId) {
             // Insert all the settings on the selected Item ID
             tempSettings.push(inner);
-          
           } 
-        }); 
-        }
+        });
       });
-
       tempSettings.map(function (s, index) {
-        if(s){
-          let parseData = JSON.parse(s.hotspot_settings);   
-         
-          // Apply hotspot style from the settings variable
-          $(".draggable-hotspot.hotspot-id-" + s.hotspot_id).css({
-            left: parseData.left ? parseData.left+"%" : "5%",
-            top: parseData.top ? parseData.top+"%" : "5%",
-            display: parseData.display,
-          });
-
-          if($(".hotspot-id-"+s.hotspot_id).is(":hidden")){
-            $(".hp-"+s.hotspot_id).show();
-          }else{
-            $(".hp-"+s.hotspot_id).hide();
-          }
-        }
+        let parseData = JSON.parse(s.hotspot_settings); 
+        
+        // Apply hotspot style from the settings variable
+        $(".draggable-hotspot.hotspot-id-" + s.hotspot_id).css({
+          left: parseData.left ? parseData.left+"%" : "5%",
+          top: parseData.top ? parseData.top+"%" : "5%",
+          display: parseData.display,
+        });
       });
       this.settingsInCurrentScene = tempSettings;
       //   console.log(this.settingsInCurrentScene);
@@ -395,26 +364,16 @@ export default {
       }
       if (hpItems.length > 0) {
         $.each(hpItems, function (i, o) {
-          if (o.itemID == id.id) {   
-
+          if (o.itemID == id.id) {
             $("#" + o.hotspotsID).css({
               left: o.hotspotSettings.left + "%",
               top: o.hotspotSettings.top + "%",
-              display: o.hotspotSettings.display,
             });
-
-            if($(".hotspot-id-"+o.hotspotsID).is(":hidden")){
-              $(".hp-"+o.hotspotsID).show();
-            }else{
-              $(".hp-"+o.hotspotsID).hide(); 
-            }
           }
         });
       }
       $("#cur-frame").val(id.id);
-      if(this.$refs.spritespin){
       this.$refs.spritespin.api.updateFrame(index);
-      }
       this.$emit("selectedItem", id.id);
       this.tempItemID = id.id;
     },
@@ -470,7 +429,7 @@ export default {
       var hotspotObject = this.toSetHotspot;
       var topPercentage;
       var leftPercentage;
-      
+      var temp_hotspots = [];
       // this.$nextTick(function () {
       $(function () {
         $(".draggable-hotspot").draggable({
@@ -502,8 +461,14 @@ export default {
               itemID: ieID,
               hotspotSettings: hpSettings,
             };
-            
-            console.log(allHps)
+            // var theProperty = ieID + hpsId;
+            // temp_hotspots = {
+            //   theProperty: {
+            //     hotspotsID: hpsId,
+            //     itemID: ieID,
+            //     hotspotSettings: hpSettings,
+            //   },
+            // };
 
             var filtered = temp_hotspots.filter(function (el) {
               return el != null;
@@ -585,9 +550,6 @@ export default {
 
 /**.hotspot */
 .spritespin-wrapper {
-  width: 800px;
-    height: 450px;
-    margin: 0 auto;
   position: relative;
 }
 .hotspot-wrapper {
@@ -888,7 +850,7 @@ ul {
   // left: 50%;
   // bottom: 50%;
   left: 5%;
-  top: 5%; 
+  bottom: 5%;
 }
 // .cd-single-point.hotspot-1 {
 //   bottom: 54%;
