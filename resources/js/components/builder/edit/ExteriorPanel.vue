@@ -4,7 +4,7 @@
     <!-- <div id="results"></div> -->
     <!-- <div class="col-12 py-0 d-flex justify-space-between align-center"> -->
     <v-toolbar dense class="elevation-1">
-      <v-toolbar-title>Title</v-toolbar-title>
+      <v-toolbar-title>Product ID: {{product}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <div v-show="hotspots.length != 0">
         <v-btn color="primary" small @click="applyHotspot">

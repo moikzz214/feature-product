@@ -29060,7 +29060,7 @@ var render = function() {
         "v-toolbar",
         { staticClass: "elevation-1", attrs: { dense: "" } },
         [
-          _c("v-toolbar-title", [_vm._v("Title")]),
+          _c("v-toolbar-title", [_vm._v("Product ID: " + _vm._s(_vm.product))]),
           _vm._v(" "),
           _c("v-spacer"),
           _vm._v(" "),
